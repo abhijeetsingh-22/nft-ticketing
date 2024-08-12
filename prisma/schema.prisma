@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,16 +8,49 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
   name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  password      String
-  // role          Role      @default(USER)
-  image         String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  walletAddress String   @unique
+  tickets       Ticket[]
+  events        Event[]  @relation("EventOrganizer")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("users")
+}
+
+model Event {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  organizer   User     @relation("EventOrganizer", fields: [organizerId], references: [id])
+  organizerId Int
+  tickets     Ticket[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("event")
+}
+
+model Ticket {
+  id        Int          @id @default(autoincrement())
+  tokenId   String       @unique
+  owner     User         @relation(fields: [ownerId], references: [id])
+  ownerId   Int
+  event     Event        @relation(fields: [eventId], references: [id])
+  eventId   Int
+  price     Float
+  status    TicketStatus
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@map("ticket")
+}
+
+enum TicketStatus {
+  AVAILABLE
+  SOLD
+  TRANSFERRED
+  REDEEMED
 }
