@@ -1,17 +1,19 @@
 'use client'
 
-import { useFormState, useFormStatus } from 'react-dom'
+import { useFormStatus } from 'react-dom'
 import { signup } from './server'
 import Link from 'next/link'
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 
 export default function Login() {
-  const router = useRouter()
+
+  async function handleSubmit(formData: FormData) {
+    const result = await signup(formData)
+    console.log(result)
+  }
 
   return (
     <form
-      action={signup}
+      action={handleSubmit}
       className="flex flex-col items-center gap-4 space-y-3 mt-4"
     >
       <div className="flex-1 bg-white dark:bg-zinc-950 shadow-md px-6 pt-8 pb-4 border rounded-lg w-full md:w-96">
@@ -35,25 +37,43 @@ export default function Login() {
               />
             </div>
           </div>
-          <div className="mt-4">
+          <div>
             <label
               className="block mt-5 mb-3 font-medium text-xs text-zinc-400"
-              htmlFor="password"
+              htmlFor="name"
             >
-              Password
+              Name
             </label>
             <div className="relative">
               <input
                 className="block dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-2 py-[9px] border rounded-md w-full text-sm placeholder:text-zinc-500 outline-none peer"
-                id="password"
-                type="password"
-                name="password"
-                placeholder="Enter password"
+                id="name"
+                type="text"
+                name="name"
+                placeholder="Enter your name"
                 required
-                minLength={6}
               />
             </div>
+            <div>
+              <label
+                className="block mt-5 mb-3 font-medium text-xs text-zinc-400"
+                htmlFor="walletAddress"
+              >
+                Wallet Address
+              </label>
+              <div className="relative">
+                <input
+                  className="block dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-2 py-[9px] border rounded-md w-full text-sm placeholder:text-zinc-500 outline-none peer"
+                  id="walletAddress"
+                  type="text"
+                  name="walletAddress"
+                  placeholder="Enter your wallet address"
+                  required
+                />
+              </div>
+            </div>
           </div>
+
         </div>
         <LoginButton />
       </div>

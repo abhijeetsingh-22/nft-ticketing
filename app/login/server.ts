@@ -1,44 +1,28 @@
 'use server'
-import { prisma } from "@/lib/db";
+import { createUser } from "@/db/users"
 
 export async function signup(formData: FormData) {
   const email = formData.get('email') as string
-  const password = formData.get('password') as string
+  const walletAddress = formData.get('walletAddress') as string
+  const name = formData.get('name') as string
 
-  console.log("Email:", email);
-  console.log("Password:", password);
-
-
-  if (!email || !password) {
+  if (!email || !walletAddress || !name) {
     console.log("Missing fields");
-    return { type: 'error', resultCode: 'MISSING_FIELDS' }
+    // return { type: 'error', resultCode: 'MISSING_FIELDS' }
+    return 'Missing Fields'
   }
 
-
   try {
-    const existingUser = await prisma.users.findUnique({
-      where: { email },
-    })
-
-    if (existingUser) {
-      console.log("User exists");
-      return { type: 'error', resultCode: 'USER_EXISTS' }
+    const { type, resultCode, userId } = await createUser({ email: email, walletAddress: walletAddress, name: name })
+    if (resultCode === "USER_CREATED") {
+      return 'User Created Successfully'
+    } else {
+      return resultCode
     }
 
-
-    const newUser = await prisma.users.create({
-      data: {
-        email,
-        name: email.split('@')[0], // Using part of email as name for now
-        walletAddress: '', // Empty for now, can be updated later
-        updatedAt: new Date(),
-      },
-    })
-
-    console.log("User created");
-    return { type: 'success', resultCode: 'USER_CREATED', userId: newUser.id }
   } catch (error) {
     console.error('Signup error:', error)
-    return { type: 'error', resultCode: 'SERVER_ERROR' }
+    // return { type: 'error', resultCode: 'SERVER_ERROR' }
+    return 'Internal Server Error'
   }
 }
