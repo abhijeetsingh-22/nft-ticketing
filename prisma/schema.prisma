@@ -7,45 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id            Int      @id @default(autoincrement())
-  email         String   @unique
-  name          String?
-  walletAddress String   @unique
-  tickets       Ticket[]
-  events        Event[]  @relation("EventOrganizer")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@map("users")
-}
-
-model Event {
+model event {
   id          Int      @id @default(autoincrement())
   name        String
   description String?
-  organizer   User     @relation("EventOrganizer", fields: [organizerId], references: [id])
   organizerId Int
-  tickets     Ticket[]
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("event")
+  updatedAt   DateTime
+  ticket      ticket[]
 }
 
-model Ticket {
+model ticket {
   id        Int          @id @default(autoincrement())
   tokenId   String       @unique
-  owner     User         @relation(fields: [ownerId], references: [id])
   ownerId   Int
-  event     Event        @relation(fields: [eventId], references: [id])
   eventId   Int
   price     Float
   status    TicketStatus
   createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  updatedAt DateTime
+  userId    Int?
+  event     event        @relation(fields: [eventId], references: [id])
+  users     users?       @relation(fields: [userId], references: [id])
+}
 
-  @@map("ticket")
+model users {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  name          String?
+  walletAddress String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime
+  ticket        ticket[]
 }
 
 enum TicketStatus {

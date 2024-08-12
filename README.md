@@ -92,3 +92,28 @@ An NFT Ticketing System that uses blockchain technology to solve problems of the
 ### Week 4 (27th to 29th)
 - Final testing
 - Improving the UI/UX
+
+
+# How to set up locally 
+
+### Setup the repository with nextjs
+
+1. Install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Sync & Seed your database:
+
+   ```bash
+   npx prisma db push
+   npx prisma db seed
+   ```
+
+3. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+Now, you can run the project and make changes as needed.
