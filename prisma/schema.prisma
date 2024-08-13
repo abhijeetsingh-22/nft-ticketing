@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model event {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  organizerId Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  ticket      ticket[]
+}
+
+model ticket {
+  id        Int          @id @default(autoincrement())
+  tokenId   String       @unique
+  ownerId   Int
+  eventId   Int
+  price     Float
+  status    TicketStatus
+  createdAt DateTime     @default(now())
+  updatedAt DateTime
+  userId    Int?
+  event     event        @relation(fields: [eventId], references: [id])
+  users     users?       @relation(fields: [userId], references: [id])
+}
+
+model users {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  name          String?
+  walletAddress String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime
+  ticket        ticket[]
+}
+
+enum TicketStatus {
+  AVAILABLE
+  SOLD
+  TRANSFERRED
+  REDEEMED
+}
