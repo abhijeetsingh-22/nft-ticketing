@@ -27,7 +27,7 @@ export default function Home() {
             size: 'lg',
             className: 'mt-5',
           })}
-          href='/'>
+          href='/events'>
           Get started{' '}
           <ArrowRight className='ml-2 w-5 h-5' />
         </Link>

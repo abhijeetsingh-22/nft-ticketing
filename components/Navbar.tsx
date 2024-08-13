@@ -31,7 +31,7 @@ const Navbar = () => {
                   <Github className='w-5 h-5' />
                 </Link>
                 <Link
-                  href='/'
+                  href='/events'
                   className={buttonVariants({
                     variant: 'ghost',
                     size: 'sm',
