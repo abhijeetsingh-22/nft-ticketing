@@ -23,7 +23,7 @@ const Navbar = () => {
               <>
                 <Link
                   target='_blank'
-                  href='https://github.com/rohitt-gupta/chatpdf-saas'
+                  href='https://github.com/abhijeetsingh-22/nft-ticketing'
                   className={buttonVariants({
                     variant: 'ghost',
                     size: 'sm',
