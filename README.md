@@ -57,6 +57,7 @@ An NFT Ticketing System that uses blockchain technology to solve problems of the
 
 # High level Overview of architecture
 
+Not this exactly but something like this. Found this on the internet tbh.
 ![NFTs in Ticketing](https://d3lkc3n5th01x7.cloudfront.net/wp-content/uploads/2022/03/06235432/nfts-in-ticketing.svg)
 
 # Technical Aspects
