@@ -55,6 +55,10 @@ An NFT Ticketing System that uses blockchain technology to solve problems of the
 - Post-event, NFT tickets can retain value as collectibles or provide access to additional content.
 - Event organizers can send updates or exclusive offers to ticket holders via the platform.
 
+# High level Overview of architecture
+
+![NFTs in Ticketing](https://d3lkc3n5th01x7.cloudfront.net/wp-content/uploads/2022/03/06235432/nfts-in-ticketing.svg)
+
 # Technical Aspects
 
 ### NFT Minting:
