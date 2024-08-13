@@ -13,7 +13,7 @@ const Navbar = () => {
           <Link
             href='/'
             className='z-40 flex font-semibold'>
-            <span>ReadifyAI</span>
+            <span>BolTix</span>
           </Link>
 
           <MobileNav isAuth={false} />
