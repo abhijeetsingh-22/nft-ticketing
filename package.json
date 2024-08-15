@@ -10,9 +10,14 @@
 		"postinstall": "prisma generate"
 	},
 	"dependencies": {
+		"@metaplex-foundation/mpl-candy-machine": "^6.0.1",
+		"@metaplex-foundation/mpl-token-metadata": "^3.2.1",
+		"@metaplex-foundation/umi": "^0.9.2",
+		"@metaplex-foundation/umi-bundle-defaults": "^0.9.2",
 		"@prisma/client": "^5.18.0",
 		"@radix-ui/react-dialog": "^1.1.1",
 		"@radix-ui/react-slot": "^1.1.0",
+		"@solana/web3.js": "^1.95.2",
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.1.1",
 		"lucide-react": "^0.427.0",
