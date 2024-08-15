@@ -1,5 +1,5 @@
 'use server';
-import { prisma } from "@/lib/db";
+import prisma from "@/db";
 
 export async function createEvent({
   name,
@@ -27,7 +27,7 @@ export async function createEvent({
     // });
     // return { type: 'success', resultCode: 'EVENT_CREATED', eventId: newEvent.id };
 
-    return { type: 'success', resultCode: 'EVENT_CREATED', eventId:  1};
+    return { type: 'success', resultCode: 'EVENT_CREATED', eventId: 1 };
   } catch (error) {
     console.error('Create event error:', error);
     return { type: 'error', resultCode: 'SERVER_ERROR' };
