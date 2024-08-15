@@ -20,6 +20,8 @@ interface Event {
     location: string;
     image: string;
     description: string;
+    startTime: string;
+    endTime: string;
     // organisationId: string;
 }
 
@@ -59,6 +61,8 @@ export default function EventsPage() {
                 id: 1,
                 name: 'Music Festival 2024',
                 date: 'August 25, 2024',
+                startTime: '10:00',
+                endTime: '18:00', 
                 location: 'New York City, NY',
                 image: '/music-festival.jpg',
                 description: 'Join us for an unforgettable music experience with top artists from around the world.',
@@ -67,6 +71,8 @@ export default function EventsPage() {
                 id: 2,
                 name: 'Tech Conference 2024',
                 date: 'September 10, 2024',
+                startTime: '10:00',
+                endTime: '18:00', 
                 location: 'San Francisco, CA',
                 image: '/tech-conference.jpg',
                 description: 'Explore the latest advancements in technology and innovation at the Tech Conference 2024.',
@@ -75,6 +81,8 @@ export default function EventsPage() {
                 id: 3,
                 name: 'Art Expo 2024',
                 date: 'October 15, 2024',
+                startTime: '10:00',
+                endTime: '18:00', 
                 location: 'Paris, France',
                 image: '/art-expo.jpg',
                 description: 'Discover stunning artworks from renowned artists at the Art Expo 2024.',
@@ -125,16 +133,20 @@ export default function EventsPage() {
                         <tr>
                             <th className="border-b-2 py-2 text-left">Name</th>
                             <th className="border-b-2 py-2 text-left">Date</th>
-                            <th className="border-b-2 py-2 text-left">Description</th>
+                            <th className="border-b-2 py-2 text-left">Time</th>
+                            {/* <th className="border-b-2 py-2 text-left">Description</th> */}
+                            <th className="border-b-2 py-2 text-left">Location</th>
                             <th className="border-b-2 py-2 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {events.map((event) => (
+                        {events.map((event: Event) => (
                             <tr key={event.id}>
                                 <td className="border-b py-2">{event.name}</td>
                                 <td className="border-b py-2">{new Date(event.date).toLocaleDateString()}</td>
-                                <td className="border-b py-2">{event.description}</td>
+                                <td className="border-b py-2">{event.startTime} - {event.endTime}</td>
+                                {/* <td className="border-b py-2">{event.description}</td> */}
+                                <td className="border-b py-2">{event.location}</td>
                                 <td className="border-b py-2 text-right space-x-4">
                                     <EditEvent event={event} onEdit={handleEditEvent} />
                                     <DeleteEvent event={event} onDelete={handleDeleteEvent} />
