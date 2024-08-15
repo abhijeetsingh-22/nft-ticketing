@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import Image from 'next/image'
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
@@ -28,8 +28,18 @@ export default function Home() {
             className: 'mt-5',
           })}
           href='/events'>
-          Get started{' '}
+          Buy your ticket 🎟️{' '}
           <ArrowRight className='ml-2 w-5 h-5' />
+        </Link>
+
+        <Link
+          className={buttonVariants({
+            size: 'lg',
+            className: 'mt-5',
+          })}
+          href='/organizer/evnets'>
+          <ArrowLeft className='ml-2 w-5 h-5 mr-2' />
+          Become an organizer{' '}
         </Link>
       </MaxWidthWrapper>
 
