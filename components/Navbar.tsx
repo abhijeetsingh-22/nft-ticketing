@@ -1,10 +1,17 @@
+
 import Link from 'next/link'
 import MaxWidthWrapper from './MaxWidthWrapper'
 import { buttonVariants } from './ui/button'
 import { ArrowRight, Github } from 'lucide-react'
 import MobileNav from './MobileNav'
+import SignOutButton from './auth/SignOutButton'
+import { auth } from '@/auth'
 
-const Navbar = () => {
+const Navbar = async () => {
+  const session = await auth()
+  console.log('session', session)
+
+  const isAuth = session?.user ? true : false
 
   return (
     <nav className='top-0 z-30 sticky inset-x-0 border-gray-200 bg-white/75 backdrop-blur-lg border-b w-full h-14 transition-all'>
@@ -16,10 +23,10 @@ const Navbar = () => {
             <span>BolTix</span>
           </Link>
 
-          <MobileNav isAuth={false} />
+          <MobileNav isAuth={isAuth} />
 
           <div className='sm:flex items-center space-x-4 hidden'>
-            {!false ? (
+            {!isAuth ? (
               <>
                 <Link
                   target='_blank'
@@ -32,26 +39,29 @@ const Navbar = () => {
                 </Link>
                 <Link
                   href='/events'
+
                   className={buttonVariants({
                     variant: 'ghost',
                     size: 'sm',
                   })}>
                   Events
                 </Link>
-                {/* <LoginLink
+                <Link
+                  href='/login'
                   className={buttonVariants({
                     variant: 'ghost',
                     size: 'sm',
                   })}>
                   Sign in
-                </LoginLink>
-                <RegisterLink
+                </Link>
+                <Link
+                  href='/signup'
                   className={buttonVariants({
                     size: 'sm',
                   })}>
                   Get started{' '}
                   <ArrowRight className='ml-1.5 w-5 h-5' />
-                </RegisterLink> */}
+                </Link>
               </>
             ) : (
               <>
@@ -72,16 +82,7 @@ const Navbar = () => {
                   })}>
                   Dashboard
                 </Link>
-
-                {/* <UserAccountNav
-                  name={
-                    !user.given_name || !user.family_name
-                      ? 'Your Account'
-                      : `${user.given_name} ${user.family_name}`
-                  }
-                  email={user.email ?? ''}
-                  imageUrl={user.picture ?? ''}
-                /> */}
+                <SignOutButton />
               </>
             )}
           </div>

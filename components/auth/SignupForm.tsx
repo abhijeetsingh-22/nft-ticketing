@@ -1,19 +1,29 @@
 'use client'
 
-import { useFormStatus } from 'react-dom'
-import { signup } from './server'
+import { useFormState, useFormStatus } from 'react-dom'
 import Link from 'next/link'
+import { useEffect } from 'react'
+import { IconSpinner } from '@/components/ui/icons'
+import { useRouter } from 'next/navigation'
+import { signup } from '@/app/(auth)/signup/actions'
 
-export default function Login() {
+export default function SignupForm() {
+  const router = useRouter()
+  const [result, dispatch] = useFormState(signup, undefined)
 
-  async function handleSubmit(formData: FormData) {
-    const result = await signup(formData)
-    console.log(result)
-  }
+  useEffect(() => {
+    if (result) {
+      console.log('result', result)
+      if (result) {
+        router.push('/')
+      }
+
+    }
+  }, [result, router])
 
   return (
     <form
-      action={handleSubmit}
+      action={dispatch}
       className="flex flex-col items-center gap-4 space-y-3 mt-4"
     >
       <div className="flex-1 bg-white dark:bg-zinc-950 shadow-md px-6 pt-8 pb-4 border rounded-lg w-full md:w-96">
@@ -37,43 +47,25 @@ export default function Login() {
               />
             </div>
           </div>
-          <div>
+          <div className="mt-4">
             <label
               className="block mt-5 mb-3 font-medium text-xs text-zinc-400"
-              htmlFor="name"
+              htmlFor="password"
             >
-              Name
+              Password
             </label>
             <div className="relative">
               <input
                 className="block dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-2 py-[9px] border rounded-md w-full text-sm placeholder:text-zinc-500 outline-none peer"
-                id="name"
-                type="text"
-                name="name"
-                placeholder="Enter your name"
+                id="password"
+                type="password"
+                name="password"
+                placeholder="Enter password"
                 required
+                minLength={6}
               />
             </div>
-            <div>
-              <label
-                className="block mt-5 mb-3 font-medium text-xs text-zinc-400"
-                htmlFor="walletAddress"
-              >
-                Wallet Address
-              </label>
-              <div className="relative">
-                <input
-                  className="block dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-2 py-[9px] border rounded-md w-full text-sm placeholder:text-zinc-500 outline-none peer"
-                  id="walletAddress"
-                  type="text"
-                  name="walletAddress"
-                  placeholder="Enter your wallet address"
-                  required
-                />
-              </div>
-            </div>
           </div>
-
         </div>
         <LoginButton />
       </div>
@@ -94,7 +86,7 @@ function LoginButton() {
       className="flex flex-row justify-center items-center bg-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 dark:bg-zinc-100 my-4 p-2 rounded-md w-full h-10 font-semibold text-sm text-zinc-100 dark:text-zinc-900"
       aria-disabled={pending}
     >
-      {pending ? 'Loading...' : 'Create account'}
+      {pending ? <IconSpinner /> : 'Create account'}
     </button>
   )
 }
