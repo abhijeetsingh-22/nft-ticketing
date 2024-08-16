@@ -1,5 +1,3 @@
-
-
 import { auth } from '@/auth'
 import SignupForm from '@/components/auth/SignupForm'
 import { Session } from 'next-auth'

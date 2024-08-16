@@ -10,15 +10,16 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user
       const isOnLoginPage = nextUrl.pathname.startsWith('/login')
       const isOnSignupPage = nextUrl.pathname.startsWith('/signup')
-
+      const isOnHomePage = nextUrl.pathname.startsWith('/')
       console.log("isLoggedIn", isLoggedIn);
-      // console.log("isOnLoginPage", isOnLoginPage);
-      // console.log("isOnSignupPage", isOnSignupPage);
-
 
       if (isLoggedIn) {
         if (isOnLoginPage || isOnSignupPage) {
           return Response.redirect(new URL('/', nextUrl))
+        }
+      } else {
+        if (!isOnLoginPage && !isOnSignupPage && !isOnHomePage) {
+          return Response.redirect(new URL('/login', nextUrl))
         }
       }
 
@@ -34,8 +35,7 @@ export const authConfig = {
       return token
     },
     async session({ session, token }) {
-      // console.log("session in auth config", session);
-      // console.log("token in auth.config session", token);
+
 
       if (token) {
         const { id } = token as { id: string }
