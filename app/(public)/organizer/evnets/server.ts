@@ -45,7 +45,7 @@ export async function getAllEventsHandler() {
 }
 
 
-export async function getEventByIdHandler(eventId: number) {
+export async function getEventByIdHandler(eventId: string) {
   if (!eventId) {
     return 'Event ID is required';
   }
@@ -60,7 +60,7 @@ export async function getEventByIdHandler(eventId: number) {
 }
 
 
-export async function getEventsByOrganisationIdHandler(organizerId: number) {
+export async function getEventsByOrganisationIdHandler(organizerId: string) {
   if (!organizerId) {
     return 'Organisation ID is required';
   }

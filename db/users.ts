@@ -2,7 +2,7 @@
 import { prisma } from "@/lib/db";
 
 export async function createUser({ email, name, walletAddress }: { email: string, name: string, walletAddress: string }) {
-  const existingUser = await prisma.users.findUnique({
+  const existingUser = await prisma.user.findUnique({
     where: { email },
   })
 
@@ -12,7 +12,7 @@ export async function createUser({ email, name, walletAddress }: { email: string
   }
 
 
-  const newUser = await prisma.users.create({
+  const newUser = await prisma.user.create({
     data: {
       email,
       name,

@@ -12,7 +12,7 @@ export async function createEvent({
   date: Date;
   location: string;
   description: string;
-  organizerId: number;
+  organizerId: string;
 }) {
   try {
     // const newEvent = await prisma.event.create({
@@ -44,7 +44,7 @@ export async function getEvents() {
   }
 }
 
-export async function getEventById(eventId: number) {
+export async function getEventById(eventId: string) {
   try {
     const event = await prisma.event.findUnique({
       where: { id: eventId },
@@ -61,7 +61,7 @@ export async function getEventById(eventId: number) {
   }
 }
 
-export async function getEventsByOrganisationId(organizerId: number) {
+export async function getEventsByOrganisationId(organizerId: string) {
   try {
     const events = await prisma.event.findMany({
       where: { organizerId },
