@@ -16,7 +16,7 @@ export const authConfig = {
       const isOnLoginPage = nextUrl.pathname.startsWith('/login')
       const isOnSignupPage = nextUrl.pathname.startsWith('/signup')
       const isOnHomePage = nextUrl.pathname.startsWith('/')
-      console.log("isLoggedIn", isLoggedIn);
+      console.log("isLoggedIn", isLoggedIn, auth?.user?.email);
 
       if (isLoggedIn) {
         if (isOnLoginPage || isOnSignupPage) {
@@ -31,8 +31,6 @@ export const authConfig = {
       return true
     },
     async jwt({ token, user }) {
-      // console.log("token in auth config jwt", token);
-      // console.log("user in auth config jwt", user);
       if (user) {
         token = { ...token, id: user.id }
       }
@@ -75,10 +73,10 @@ export const authConfig = {
 
 
           if (hashedPassword === user.password) {
-            console.log('AUTHORIZED user', user);
+            // console.log('AUTHORIZED user', user);
             return user
           } else {
-            console.log('UNAUTHORIZED user', user);
+            // console.log('UNAUTHORIZED user', user);
             return null
           }
         }
