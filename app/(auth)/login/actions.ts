@@ -4,6 +4,7 @@ import { signIn } from '@/auth'
 import { AuthError } from 'next-auth'
 import { z } from 'zod'
 import { ResultCode } from '@/lib/utils'
+import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 
 interface Result {
   type: string
@@ -17,7 +18,7 @@ export async function authenticate(
   try {
     const email = formData.get('email')
     const password = formData.get('password')
-
+    console.log("in authenticate action", email, password);
     const parsedCredentials = z
       .object({
         email: z.string().email(),
@@ -32,8 +33,10 @@ export async function authenticate(
       const result = await signIn('credentials', {
         email,
         password,
-        redirectTo: '/'
-      })
+        redirectTo: DEFAULT_LOGIN_REDIRECT
+      },
+
+      )
 
       console.log('result in action', result);
 
@@ -62,5 +65,6 @@ export async function authenticate(
           }
       }
     }
+    throw error;
   }
 }

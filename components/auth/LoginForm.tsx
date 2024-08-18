@@ -9,16 +9,7 @@ import { authenticate } from '@/app/(auth)/login/actions'
 import { toast } from 'sonner'
 
 export default function LoginForm() {
-  const router = useRouter()
   const [result, dispatch] = useFormState(authenticate, undefined)
-
-  useEffect(() => {
-    console.log('result after login', result)
-    if (result?.type === 'success') {
-      toast.success('You are logged in')
-      router.push('/')
-    }
-  }, [result, router])
 
   return (
     <form
@@ -64,6 +55,11 @@ export default function LoginForm() {
                 minLength={6}
               />
             </div>
+            {result?.type === 'error' && (
+              <div className="text-red-500 text-xs mt-2">
+                Invalid email or password
+              </div>
+            )}
           </div>
         </div>
         <LoginButton />
