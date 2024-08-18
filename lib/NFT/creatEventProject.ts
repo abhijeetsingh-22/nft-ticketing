@@ -136,7 +136,7 @@ export const createNftForEvent = async (event: NFTEvent) => {
 
         // Transfer the NFT to the buyer's wallet
         const transferResponse = await transferNftToBuyer(
-            event.mintAddress,
+            event.projectId,
             event.buyerWalletAddress,
             createNftResponse.data.nftId
         );
@@ -153,27 +153,25 @@ export const createNftForEvent = async (event: NFTEvent) => {
     }
 }
 
-export const transferNftToBuyer = async (mintAddress: string, buyerWalletAddress: string, nftId: string) => {
+export const transferNftToBuyer = async (projectId: string, buyerWalletAddress: string, nftId: string) => {
     try {
-        const transaction = new solanaweb3.Transaction();
-
-        // Create an instruction to transfer the NFT to the buyer's wallet
-        const transferInstruction = solanaweb3.SystemProgram.transfer({
-            fromPubkey: new solanaweb3.PublicKey(mintAddress),
-            toPubkey: new solanaweb3.PublicKey(buyerWalletAddress),
-            lamports: 0, // No SOL transfer, only NFT
-        });
-
-        transaction.add(transferInstruction);
-
-        // Sign and send the transaction
-        const signature = await solanaweb3.sendAndConfirmTransaction(
-            connection,
-            transaction,
-            [/* Include payer's wallet keypair here */]
+        const postBody = {
+            receiverAddress: buyerWalletAddress
+        }
+        const config = {
+            headers: { Authorization: `Bearer ${process.env.UNDERDOG_API_KEY}` }
+        }
+        const createProjectResponse = await axios.post(
+            `${underdogApiEndpoint}/v2/projects/${projectId}/nfts/${nftId}/transfer`,
+            postBody,
+            config
         );
 
-        return { message: 'NFT transferred successfully', data: signature, code: 200 };
+        if (!createProjectResponse.data) {
+            throw new Error("NFT transfer failed");
+        }
+
+        return { message: 'NFT transferred successfully', data: createProjectResponse.data, code: 200 };
     } catch (error) {
         console.error('Error transferring NFT to buyer:', error);
         return { message: 'Internal Server error: Function transferNftToBuyer.', data: null, code: 400 };
