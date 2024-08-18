@@ -8,13 +8,25 @@ datasource db {
 }
 
 model Event {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  organizerId String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
-  tickets     Ticket[]
+  id               String   @id @default(cuid())
+  name             String
+  slug             String
+  description      String
+  startDate        DateTime
+  entryDate        DateTime
+  endDate          DateTime
+  venueName        String
+  state            String?
+  liveStatus       Boolean?
+  publicVisibility Boolean?
+  endedStatus      Boolean?
+  attendees        User[]
+  coverPhoto       String
+  thumbnail        String
+  organizerId      String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  tickets          Ticket[]
 
   @@map("events")
 }
@@ -58,6 +70,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   tickets   Ticket[]
+  Event     Event?   @relation(fields: [eventId], references: [id])
+  eventId   String?
 
   @@map("users")
 }

@@ -1,33 +1,32 @@
 'use server';
 import prisma from "@/db";
+import { Event } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
-export async function createEvent({
-  name,
-  date,
-  location,
-  description,
-  organizerId,
-}: {
-  name: string;
-  date: Date;
-  location: string;
-  description: string;
-  organizerId: string;
-}) {
+export async function createEvent(event: Event) {
   try {
-    // const newEvent = await prisma.event.create({
-    //   data: {
-    //     name,
-    //     date,
-    //     location,
-    //     description,
-    //     organizerId,
-    //     updatedAt: new Date(),
-    //   },
-    // });
-    // return { type: 'success', resultCode: 'EVENT_CREATED', eventId: newEvent.id };
+    const newEvent = await prisma.event.create({
+      data: {
+        name: event.name,
+        slug: event.slug,
+        startDate: event.startDate,
+        entryDate: event.entryDate,
+        endDate: event.endDate,
+        venueName: event.venueName,
+        state: event.state,
+        liveStatus: event.liveStatus,
+        publicVisibility: event.publicVisibility,
+        endedStatus: event.endedStatus,
+        coverPhoto: event.coverPhoto,
+        thumbnail: event.thumbnail,
+        description: event.description,
+        organizerId: event.organizerId,
+      },
+    });
 
-    return { type: 'success', resultCode: 'EVENT_CREATED', eventId: 1 };
+    revalidatePath('/')
+    return { type: 'success', resultCode: 'EVENT_CREATED', eventId: newEvent.id };
+
   } catch (error) {
     console.error('Create event error:', error);
     return { type: 'error', resultCode: 'SERVER_ERROR' };

@@ -3,7 +3,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup } from "@/components/ui/select"
@@ -12,9 +11,11 @@ import MaxWidthWrapper from "@/components/MaxWidthWrapper"
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { useEffect, useState } from "react"
 import { DatePicker } from "@/components/DatePicker"
 import { Checkbox } from "@/components/ui/checkbox"
+import { createEvent } from "@/db/events"
+import { toast } from "sonner"
+import { Event } from "@prisma/client"
 
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -32,8 +33,9 @@ const schema = z.object({
   coverPhoto: z.string().url("Invalid URL"),
   thumbnail: z.string().url("Invalid URL"),
 })
+export type EventFormType = z.infer<typeof schema>
 
-export default function AddEvent() {
+export default function AddEvent({ params }: { params: { organiserId: string } }) {
   const { register, handleSubmit, formState: { errors }, setValue, watch, control } = useForm({
     resolver: zodResolver(schema)
   })
@@ -44,8 +46,11 @@ export default function AddEvent() {
 
   console.log(errors)
 
-  const onSubmit = (data: any) => {
-    console.log(data)
+  const onSubmit = async (data: any) => {
+    console.log("data", data)
+    const result = await createEvent({ organizerId: params.organiserId, ...data })
+    console.log("result", result)
+    toast.success("Event created successfully")
   }
 
   return (
@@ -213,33 +218,5 @@ export default function AddEvent() {
         </form>
       </CardContent>
     </MaxWidthWrapper>
-  )
-}
-
-function CalendarDaysIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M8 2v4" />
-      <path d="M16 2v4" />
-      <rect width="18" height="18" x="3" y="4" rx="2" />
-      <path d="M3 10h18" />
-      <path d="M8 14h.01" />
-      <path d="M12 14h.01" />
-      <path d="M16 14h.01" />
-      <path d="M8 18h.01" />
-      <path d="M12 18h.01" />
-      <path d="M16 18h.01" />
-    </svg>
   )
 }
