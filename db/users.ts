@@ -1,6 +1,5 @@
 'use server'
-import { prisma } from "@/lib/db";
-
+import prisma from "@/db";
 export async function createUser({ email, name, walletAddress }: { email: string, name: string, walletAddress: string }) {
   const existingUser = await prisma.user.findUnique({
     where: { email },
@@ -23,3 +22,13 @@ export async function createUser({ email, name, walletAddress }: { email: string
 
   return { type: 'success', resultCode: 'USER_CREATED', userId: newUser.id }
 }
+
+export async function getUser(email: string) {
+  const user = await prisma.user.findUnique({
+    where: { email },
+  })
+
+  return user
+}
+
+
