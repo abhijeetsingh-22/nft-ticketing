@@ -12,7 +12,7 @@ export async function createEvent({
   date: Date;
   location: string;
   description: string;
-  organizerId: number;
+  organizerId: string;
 }) {
   try {
     // const newEvent = await prisma.event.create({
