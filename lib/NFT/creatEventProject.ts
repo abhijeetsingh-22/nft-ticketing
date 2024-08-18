@@ -15,6 +15,14 @@ interface Event {
     organisationId: string;
 }
 
+interface NFTEvent {
+    event: Event;
+    symbol: string;
+    projectId: string;
+    mintAddress: string;
+    buyerWalletAddress: string; // New field to hold the buyer's wallet address
+}
+
 export const createEventProject = async (event: Event, symbol: string) => {
     try {
         let resBody = null;
@@ -75,13 +83,6 @@ export const createEventProject = async (event: Event, symbol: string) => {
     }
 };
 
-interface NFTEvent {
-    event: Event
-    symbol: string
-    projectId: string
-    mintAddress: string
-}
-
 export const createNftForEvent = async (event: NFTEvent) => {
     try {
         if (!process.env.UNDERDOG_API_KEY) {
@@ -119,6 +120,7 @@ export const createNftForEvent = async (event: NFTEvent) => {
             throw new Error("NFT could not be confirmed");
         }
 
+        /*
         const signatures = await connection.getSignaturesForAddress(
             new solanaweb3.PublicKey(event.mintAddress),
             { limit: 1 }
@@ -129,16 +131,52 @@ export const createNftForEvent = async (event: NFTEvent) => {
                 signatures[0].signature,
                 { maxSupportedTransactionVersion: 0 }
             );
+        }
+        */
 
-            return { message: 'NFT created successfully', data: transactionDetails?.transaction?.signatures[0], code: 200 };
+        // Transfer the NFT to the buyer's wallet
+        const transferResponse = await transferNftToBuyer(
+            event.mintAddress,
+            event.buyerWalletAddress,
+            createNftResponse.data.nftId
+        );
 
-        } else {
-            return { message: 'No signatures found', data: null, code: 404 };
+        if (transferResponse.code !== 200) {
+            throw new Error("NFT transfer failed");
         }
 
+        return { message: 'NFT created and transferred successfully', data: transferResponse.data, code: 200 };
+
     } catch (error) {
-        console.error('Error creating NFT in createNftForEvent:', error);
+        console.error('Error creating or transferring NFT in createNftForEvent:', error);
         return { message: 'Internal Server error: Function createNftForEvent.', data: null, code: 400 };
+    }
+}
+
+export const transferNftToBuyer = async (mintAddress: string, buyerWalletAddress: string, nftId: string) => {
+    try {
+        const transaction = new solanaweb3.Transaction();
+
+        // Create an instruction to transfer the NFT to the buyer's wallet
+        const transferInstruction = solanaweb3.SystemProgram.transfer({
+            fromPubkey: new solanaweb3.PublicKey(mintAddress),
+            toPubkey: new solanaweb3.PublicKey(buyerWalletAddress),
+            lamports: 0, // No SOL transfer, only NFT
+        });
+
+        transaction.add(transferInstruction);
+
+        // Sign and send the transaction
+        const signature = await solanaweb3.sendAndConfirmTransaction(
+            connection,
+            transaction,
+            [/* Include payer's wallet keypair here */]
+        );
+
+        return { message: 'NFT transferred successfully', data: signature, code: 200 };
+    } catch (error) {
+        console.error('Error transferring NFT to buyer:', error);
+        return { message: 'Internal Server error: Function transferNftToBuyer.', data: null, code: 400 };
     }
 }
 
@@ -236,9 +274,9 @@ let transactionDetails = {
  * Flow to create an NFT and sell
  * 
  * 1. Create a Event : From UI a event will be created with all info and image.
- *  1.1 A small amount to be deducted from Event Organiser wallet (0.000001 SOL) which will be proof of ownership.
- *  1.2 Save the wallet address for later withdrawl of funds by the Event orgainser.
- *  1.3 In backend project will be created with "createEventProject". 
+ *      1.1 A small amount to be deducted from Event Organiser wallet (0.000001 SOL) which will be proof of ownership.
+ *      1.2 Save the wallet address for later withdrawl of funds by the Event orgainser.
+ *      1.3 In backend project will be created with "createEventProject". 
  * 2. Now for that Event => Project It ready. 
  * 3. When a user will try to buy the ticket for this event => Cost of ticket will be deducted from user wallet. 
  * 4. NFT will be minted on this project, Then NFT will be tranfered to user wallet.
