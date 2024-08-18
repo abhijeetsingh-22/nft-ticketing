@@ -98,6 +98,12 @@ Not this exactly but something like this. Found this on the internet tbh.
 - Final testing
 - Improving the UI/UX
 
+# How NFT Minting Works
+
+- Used ChaneStack for [Solana node Connection](https://console.chainstack.com/)
+- Using [Underdog Protocol](https://www.underdogprotocol.com/) NFT Minting is done.
+- NFTs are minted on the blockchain.
+- Owner of the NFT is the wallet that paid for the transaction to mint the NFT.
 
 # How to set up locally 
 
