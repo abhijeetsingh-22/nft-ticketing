@@ -3,8 +3,11 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import Image from 'next/image'
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
+import { auth } from '@/auth'
 
-export default function Home() {
+export default async function Home() {
+  // const session = await auth()
+  // console.log('session in home', session)
   return (
     <>
       <MaxWidthWrapper className='flex flex-col justify-center items-center mt-28 sm:mt-40 mb-12 text-center'>
@@ -38,7 +41,7 @@ export default function Home() {
             className: 'mt-5',
           })}
           href='/organizer/evnets'>
-          <ArrowLeft className='ml-2 w-5 h-5 mr-2' />
+          <ArrowLeft className='mr-2 ml-2 w-5 h-5' />
           Become an organizer{' '}
         </Link>
       </MaxWidthWrapper>

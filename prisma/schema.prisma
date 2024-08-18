@@ -7,38 +7,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model event {
-  id          Int      @id @default(autoincrement())
+model Event {
+  id          String   @id @default(cuid())
   name        String
   description String?
-  organizerId Int
+  organizerId String
   createdAt   DateTime @default(now())
   updatedAt   DateTime
-  ticket      ticket[]
+  tickets     Ticket[]
+
+  @@map("events")
 }
 
-model ticket {
-  id        Int          @id @default(autoincrement())
+model Ticket {
+  id        String       @id @default(cuid())
   tokenId   String       @unique
-  ownerId   Int
-  eventId   Int
+  ownerId   String
+  eventId   String
   price     Float
   status    TicketStatus
   createdAt DateTime     @default(now())
   updatedAt DateTime
-  userId    Int?
-  event     event        @relation(fields: [eventId], references: [id])
-  users     users?       @relation(fields: [userId], references: [id])
-}
+  userId    String?
+  event     Event        @relation(fields: [eventId], references: [id])
+  user      User?        @relation(fields: [userId], references: [id])
 
-model users {
-  id            Int      @id @default(autoincrement())
-  email         String   @unique
-  name          String?
-  walletAddress String   @unique
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime
-  ticket        ticket[]
+  @@map("tickets")
 }
 
 enum TicketStatus {
@@ -46,4 +40,67 @@ enum TicketStatus {
   SOLD
   TRANSFERRED
   REDEEMED
+}
+
+model User {
+  id            String  @id @default(cuid())
+  name          String?
+  email         String  @unique
+  walletAddress String? @unique
+  salt          String?
+  password      String?
+
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tickets   Ticket[]
+
+  @@map("users")
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+  @@map("verification_tokens")
 }
