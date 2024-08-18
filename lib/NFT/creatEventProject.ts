@@ -1,13 +1,10 @@
-const axios = require('axios');
-const solanaweb3 = require('@solana/web3.js');
+import axios from 'axios';
+import solanaweb3 from '@solana/web3.js';
 
+// TODO: put these in env
 const underdogApiEndpoint = "https://dev.underdogprotocol.com";
 const chainStackAPI = "https://nd-875-212-309.p2pify.com/9288f69c33dcdf0f8aa0f639985a488d";
 const connection = new solanaweb3.Connection(chainStackAPI);
-
-
-
-
 
 interface Event {
     name: string;
@@ -18,11 +15,10 @@ interface Event {
     organisationId: string;
 }
 
-
-const createEventProject = async (event: Event, symbol: string) => {
+export const createEventProject = async (event: Event, symbol: string) => {
     try {
         let resBody = null;
-        if(!process.env.UNDERDOG_API_KEY){
+        if (!process.env.UNDERDOG_API_KEY) {
             throw new Error("UNDERDOG_API_KEY is not set");
         }
         const config = {
@@ -86,7 +82,7 @@ interface NFTEvent {
     mintAddress: string
 }
 
-const createNftForEvent = async (event: NFTEvent) => {
+export const createNftForEvent = async (event: NFTEvent) => {
     try {
         if (!process.env.UNDERDOG_API_KEY) {
             throw new Error("UNDERDOG_API_KEY is not set");
@@ -99,7 +95,6 @@ const createNftForEvent = async (event: NFTEvent) => {
             "symbol": event.symbol,
             "image": event.event.image,
         }
-
 
         const createNftResponse = await axios.post(
             `${underdogApiEndpoint}/v2/projects/${event.projectId}/nfts`,
@@ -124,38 +119,28 @@ const createNftForEvent = async (event: NFTEvent) => {
             throw new Error("NFT could not be confirmed");
         }
 
-        // console.log(`Mint address: ${retrieveNFT.data.mintAddress}`);
-        // console.log(`Name: ${retrieveNFT.data.name}`);
-        // console.log(`Image: ${retrieveNFT.data.image}`);
-
         const signatures = await connection.getSignaturesForAddress(
             new solanaweb3.PublicKey(event.mintAddress),
-            { commitment: 'confirmed' }
+            { limit: 1 }
         );
 
         if (signatures.length > 0) {
             const transactionDetails = await connection.getParsedTransaction(
                 signatures[0].signature,
-                {
-                    commitment: 'confirmed',
-                    encoding: "jsonParsed",
-                    maxSupportedTransactionVersion: 0,
-                }
+                { maxSupportedTransactionVersion: 0 }
             );
 
-            // console.log(transactionDetails);
-            // sample reposne is below the code 
+            return { message: 'NFT created successfully', data: transactionDetails?.transaction?.signatures[0], code: 200 };
 
-            return { message: 'NFT created successfully', data: transactionDetails?.transaction?.signature[0], code: 200 }; // { message: 'NFT created successfully', data: retrieveNFT.data, code: 200 };
-
+        } else {
+            return { message: 'No signatures found', data: null, code: 404 };
         }
-    }
-    catch (error) {
+
+    } catch (error) {
         console.error('Error creating NFT in createNftForEvent:', error);
         return { message: 'Internal Server error: Function createNftForEvent.', data: null, code: 400 };
     }
 }
-
 
 
 
