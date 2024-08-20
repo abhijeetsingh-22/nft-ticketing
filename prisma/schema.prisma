@@ -20,13 +20,13 @@ model Event {
   liveStatus       Boolean?
   publicVisibility Boolean?
   endedStatus      Boolean?
-  attendees        User[]
   coverPhoto       String?
   thumbnail        String?
   organizerId      String
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   tickets          Ticket[]
+  organizer        User     @relation(fields: [organizerId], references: [id])
 
   @@map("events")
 }
@@ -70,8 +70,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   tickets   Ticket[]
-  Event     Event?   @relation(fields: [eventId], references: [id])
-  eventId   String?
+  events    Event[]
 
   @@map("users")
 }

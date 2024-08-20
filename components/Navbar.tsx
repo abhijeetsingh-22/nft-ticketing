@@ -9,9 +9,9 @@ import { auth } from '@/auth'
 
 const Navbar = async () => {
   const session = await auth()
-  console.log('session', session)
 
   const isAuth = session?.user ? true : false
+
 
   return (
     <nav className='top-0 z-30 sticky inset-x-0 border-gray-200 bg-white/75 backdrop-blur-lg border-b w-full h-14 transition-all'>
@@ -26,6 +26,14 @@ const Navbar = async () => {
           <MobileNav isAuth={isAuth} />
 
           <div className='sm:flex items-center space-x-4 hidden'>
+            <Link
+              href='/events'
+              className={buttonVariants({
+                variant: 'ghost',
+                size: 'sm',
+              })}>
+              All Events
+            </Link>
             {!isAuth ? (
               <>
                 <Link
@@ -37,23 +45,14 @@ const Navbar = async () => {
                   })}>
                   <Github className='w-5 h-5' />
                 </Link>
-                <Link
-                  href='/events'
-
-                  className={buttonVariants({
-                    variant: 'ghost',
-                    size: 'sm',
-                  })}>
-                  Events
-                </Link>
-                <Link
+                {/* <Link
                   href='/login'
                   className={buttonVariants({
                     variant: 'ghost',
                     size: 'sm',
                   })}>
                   Sign in
-                </Link>
+                </Link> */}
                 <Link
                   href='/signup'
                   className={buttonVariants({
@@ -65,26 +64,20 @@ const Navbar = async () => {
               </>
             ) : (
               <>
-                <Link
-                  target='_blank'
-                  href='https://github.com/abhijeetsingh-22/nft-ticketing'
-                  className={buttonVariants({
-                    variant: 'ghost',
-                    size: 'sm',
-                  })}>
-                  <Github className='w-5 h-5' />
-                </Link>
-                <Link
-                  href='/'
-                  className={buttonVariants({
-                    variant: 'ghost',
-                    size: 'sm',
-                  })}>
-                  Dashboard
-                </Link>
+                {
+                  <Link
+                    href={`/organizer/${session?.user?.id}/events`}
+                    className={buttonVariants({
+                      variant: 'ghost',
+                      size: 'sm',
+                    })}>
+                    My Events
+                  </Link>}
+                <span>{session?.user?.email}</span>
                 <SignOutButton />
               </>
             )}
+
           </div>
         </div>
       </MaxWidthWrapper>

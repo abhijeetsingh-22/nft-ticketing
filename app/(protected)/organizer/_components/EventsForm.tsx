@@ -73,6 +73,7 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
 
   return (
     <MaxWidthWrapper className="bg-slate-200 mt-10 py-10 max-w-7xl">
+      <Button variant="outline" onClick={() => router.back()}>Back</Button>
       <CardHeader>
         <CardTitle>Create New Event</CardTitle>
         <CardDescription>Fill out the details for your new event.</CardDescription>
