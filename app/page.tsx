@@ -40,7 +40,7 @@ export default async function Home() {
             size: 'lg',
             className: 'mt-5',
           })}
-          href='/organizer/events'>
+          href='/organizer'>
           <ArrowLeft className='mr-2 ml-2 w-5 h-5' />
           Become an organizer{' '}
         </Link>

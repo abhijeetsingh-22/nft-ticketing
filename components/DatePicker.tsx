@@ -62,6 +62,7 @@ export function DatePicker({
       </PopoverTrigger>
       <PopoverContent className="p-0 w-auto">
         <Calendar
+
           className={cn('w-full', className)}
           mode="single"
           selected={selected}

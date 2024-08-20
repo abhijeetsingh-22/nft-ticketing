@@ -11,11 +11,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import type { ColumnDef } from '@tanstack/react-table';
-import { ChevronsUpDown, Trash2 } from 'lucide-react';
+import { ChevronsUpDown, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 // import { deleteInventory } from '../../action';
 import { Event } from '@prisma/client';
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 type Props = {
   events: Event[];
@@ -144,19 +145,64 @@ export function EventsTable({
         <div className="py-1">{`${info.getValue() ?? 'N/A'}`}</div>
       ),
     },
+    // {
+    //   id: 'actions',
+    //   cell: ({ row }) => {
+    //     const event = row.original;
+    //     return (
+    //       <Trash2
+    //         className="w-4 h-4 text-red-400 hover:text-red-500 cursor-pointer"
+    //         onClick={(e) => {
+    //           e.stopPropagation();
+    //           setSelectedItem(event);
+    //           setIsDialogOpen(true);
+    //         }}
+    //       />
+    //     );
+    //   },
+    // },
     {
       id: 'actions',
+      enableHiding: false,
       cell: ({ row }) => {
         const event = row.original;
         return (
-          <Trash2
-            className="w-4 h-4 text-red-400 hover:text-red-500 cursor-pointer"
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedItem(event);
-              setIsDialogOpen(true);
-            }}
-          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="p-0 w-8 h-8">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() =>
+                  navigator.clipboard.writeText(String(event.id))
+                }
+              >
+                Copy event ID
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  router.push(`/organizer/${organiserId}/events/${event.slug}`)
+                }
+              >
+                Edit Event
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedItem(event);
+                  setIsDialogOpen(true);
+                }}
+                className="cursor-pointer"
+              >
+                <span className="text-red-500">Delete Event</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         );
       },
     },
@@ -184,11 +230,6 @@ export function EventsTable({
         <ReusableTable
           data={events}
           columns={columns}
-          onRowDoubleClick={(row) => {
-            router.push(
-              `/organization/${organiserId}/events/${row.id}`,
-            );
-          }}
         />
       </div>
     </>

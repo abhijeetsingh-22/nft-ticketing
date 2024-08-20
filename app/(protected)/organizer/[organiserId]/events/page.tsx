@@ -9,7 +9,7 @@ import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 
 export default async function EventsPage({ params }: { params: { organiserId: string } }) {
     const { events } = await getEventsByOrganisationId(params.organiserId);
-    console.log(events)
+    // console.log(events)
 
     return (
         <MaxWidthWrapper className='mt-10'>

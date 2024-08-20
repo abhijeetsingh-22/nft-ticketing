@@ -72,3 +72,20 @@ export async function getEventsByOrganisationId(organizerId: string) {
     return { type: 'error', resultCode: 'SERVER_ERROR' };
   }
 }
+
+export async function getEventBySlug(slug: string) {
+  try {
+    const event = await prisma.event.findUnique({
+      where: { slug },
+    });
+
+    if (event) {
+      return { type: 'success', event };
+    } else {
+      return { type: 'error', resultCode: 'EVENT_NOT_FOUND' };
+    }
+  } catch (error) {
+    console.error('Get event by slug error:', error);
+    return { type: 'error', resultCode: 'SERVER_ERROR' };
+  }
+}

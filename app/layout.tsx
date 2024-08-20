@@ -4,6 +4,7 @@ import { cn, constructMetadata } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/sonner";
+
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",

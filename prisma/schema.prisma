@@ -10,7 +10,7 @@ datasource db {
 model Event {
   id               String   @id @default(cuid())
   name             String
-  slug             String
+  slug             String   @unique
   description      String
   startDate        DateTime
   entryDate        DateTime
@@ -21,8 +21,8 @@ model Event {
   publicVisibility Boolean?
   endedStatus      Boolean?
   attendees        User[]
-  coverPhoto       String
-  thumbnail        String
+  coverPhoto       String?
+  thumbnail        String?
   organizerId      String
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -42,7 +42,7 @@ model Ticket {
   updatedAt DateTime
   userId    String?
   event     Event        @relation(fields: [eventId], references: [id])
-  user      User?        @relation(fields: [userId], references: [id])
+  user      User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("tickets")
 }

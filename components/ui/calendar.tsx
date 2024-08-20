@@ -7,17 +7,24 @@ import { DayPicker } from "react-day-picker"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "@/components/ui/button"
 
-export type CalendarProps = React.ComponentProps<typeof DayPicker>
+export type CalendarProps = React.ComponentProps<typeof DayPicker> & {
+  allowOnlyFutureDates?: boolean;
+}
 
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  allowOnlyFutureDates = false,
   ...props
 }: CalendarProps) {
+  const today = new Date();
+  const fromDate = allowOnlyFutureDates ? today : undefined;
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+
       className={cn("p-3", className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
@@ -54,9 +61,11 @@ function Calendar({
         ...classNames,
       }}
       components={{
-        IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
-        IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
+        IconLeft: ({ ...props }) => <ChevronLeft className="w-4 h-4" />,
+        IconRight: ({ ...props }) => <ChevronRight className="w-4 h-4" />,
       }}
+      fromDate={fromDate}
+      disabled={allowOnlyFutureDates ? [{ before: today }] : undefined}
       {...props}
     />
   )
