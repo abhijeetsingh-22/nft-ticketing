@@ -30,7 +30,6 @@ const schema = z.object({
   endedStatus: z.boolean().optional(),
   coverPhoto: z.string().optional(),
   thumbnail: z.string().optional(),
-  organizerId: z.string().min(1, "Organizer ID is required"),
 }).refine(data => data.endDate > data.startDate && data.endDate > data.entryDate, {
   message: "End Date should be greater than Start Date and Entry Date",
   path: ["endDate"],
@@ -45,7 +44,7 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
   const router = useRouter()
   const { register, handleSubmit, formState: { errors }, setValue, watch, control } = useForm<EventFormType>({
     resolver: zodResolver(schema),
-    defaultValues: event ? { ...event, organizerId: organiserId } as any : undefined
+    defaultValues: event ? { ...event } as any : undefined
   })
 
   // console.log("event", event);
@@ -58,6 +57,7 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
   console.log(errors)
 
   const onSubmit = async (data: any) => {
+    data.organizerId = organiserId
     toast.promise(
       createEvent({ organizerId: organiserId, ...data }).then(() => {
         router.push(`/organizer/${organiserId}/events`)
