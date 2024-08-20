@@ -7,74 +7,77 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-const events = [
-  {
-    id: 1,
-    name: "Tech Conference 2024",
-    image: "/placeholder.svg",
-    location: "San Francisco, CA",
-    date: "2024-06-15",
-    price: 99.99,
-    organizer: {
-      name: "John Doe",
-      avatar: "/placeholder-user.jpg",
-    },
-    ticketsLeft: 150,
-  },
-  {
-    id: 2,
-    name: "Art Showcase",
-    image: "/placeholder.svg",
-    location: "New York City, NY",
-    date: "2024-07-20",
-    price: 25.0,
-    organizer: {
-      name: "Jane Smith",
-      avatar: "/placeholder-user.jpg",
-    },
-    ticketsLeft: 80,
-  },
-  {
-    id: 3,
-    name: "Music Festival",
-    image: "/placeholder.svg",
-    location: "Los Angeles, CA",
-    date: "2024-08-10",
-    price: 75.0,
-    organizer: {
-      name: "Michael Johnson",
-      avatar: "/placeholder-user.jpg",
-    },
-    ticketsLeft: 300,
-  },
-  {
-    id: 4,
-    name: "Culinary Workshop",
-    image: "/placeholder.svg",
-    location: "Chicago, IL",
-    date: "2024-09-05",
-    price: 50.0,
-    organizer: {
-      name: "Sarah Lee",
-      avatar: "/placeholder-user.jpg",
-    },
-    ticketsLeft: 40,
-  },
-  {
-    id: 5,
-    name: "Wellness Retreat",
-    image: "/placeholder.svg",
-    location: "Seattle, WA",
-    date: "2024-10-01",
-    price: 150.0,
-    organizer: {
-      name: "David Kim",
-      avatar: "/placeholder-user.jpg",
-    },
-    ticketsLeft: 20,
-  },
-]
-export default function Component() {
+import { CalendarIcon, FilterIcon, ListOrderedIcon, SearchIcon, TicketIcon } from "lucide-react"
+import Image from "next/image"
+import { Event } from "@prisma/client"
+// const events = [
+//   {
+//     id: 1,
+//     name: "Tech Conference 2024",
+//     image: "/placeholder.svg",
+//     location: "San Francisco, CA",
+//     date: "2024-06-15",
+//     price: 99.99,
+//     organizer: {
+//       name: "John Doe",
+//       avatar: "/placeholder-user.jpg",
+//     },
+//     ticketsLeft: 150,
+//   },
+//   {
+//     id: 2,
+//     name: "Art Showcase",
+//     image: "/placeholder.svg",
+//     location: "New York City, NY",
+//     date: "2024-07-20",
+//     price: 25.0,
+//     organizer: {
+//       name: "Jane Smith",
+//       avatar: "/placeholder-user.jpg",
+//     },
+//     ticketsLeft: 80,
+//   },
+//   {
+//     id: 3,
+//     name: "Music Festival",
+//     image: "/placeholder.svg",
+//     location: "Los Angeles, CA",
+//     date: "2024-08-10",
+//     price: 75.0,
+//     organizer: {
+//       name: "Michael Johnson",
+//       avatar: "/placeholder-user.jpg",
+//     },
+//     ticketsLeft: 300,
+//   },
+//   {
+//     id: 4,
+//     name: "Culinary Workshop",
+//     image: "/placeholder.svg",
+//     location: "Chicago, IL",
+//     date: "2024-09-05",
+//     price: 50.0,
+//     organizer: {
+//       name: "Sarah Lee",
+//       avatar: "/placeholder-user.jpg",
+//     },
+//     ticketsLeft: 40,
+//   },
+//   {
+//     id: 5,
+//     name: "Wellness Retreat",
+//     image: "/placeholder.svg",
+//     location: "Seattle, WA",
+//     date: "2024-10-01",
+//     price: 150.0,
+//     organizer: {
+//       name: "David Kim",
+//       avatar: "/placeholder-user.jpg",
+//     },
+//     ticketsLeft: 20,
+//   },
+// ]
+export default function EventsList({ events }: { events: Event[] }) {
 
   const [searchTerm, setSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState("date")
@@ -85,24 +88,24 @@ export default function Component() {
       .filter((event) => {
         const nameMatch = event.name.toLowerCase().includes(searchTerm.toLowerCase())
         const locationMatch = filterLocation
-          ? event.location.toLowerCase().includes(filterLocation.toLowerCase())
+          ? event.venueName.toLowerCase().includes(filterLocation.toLowerCase())
           : true
-        const priceMatch = event.price >= filterPrice[0] && event.price <= filterPrice[1]
-        return nameMatch && locationMatch && priceMatch
+        // const priceMatch = event.price >= filterPrice[0] && event.price <= filterPrice[1]
+        return nameMatch && locationMatch
       })
       .sort((a, b) => {
         switch (sortBy) {
           case "date":
-            return new Date(a.date) - new Date(b.date)
-          case "price":
-            return a.price - b.price
+            return new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
+          // case "price":
+          //   return a.price - b.price
           case "organizer":
-            return a.organizer.name.localeCompare(b.organizer.name)
+            return a.organizerId.localeCompare(b.organizerId)
           default:
             return 0
         }
       })
-  }, [searchTerm, sortBy, filterLocation, filterPrice])
+  }, [events, searchTerm, filterLocation, sortBy])
   return (
     <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 container">
       <div className="flex justify-between items-center mb-8">
@@ -168,7 +171,7 @@ export default function Component() {
         {filteredEvents.map((event) => (
           <Card key={event.id}>
             <Link href="#" className="block relative rounded-lg overflow-hidden group" prefetch={false}>
-              <img
+              <Image
                 src="/placeholder.svg"
                 alt={event.name}
                 width={400}
@@ -186,26 +189,26 @@ export default function Component() {
               <div className="flex justify-between items-center">
                 <div>
                   <h3 className="font-medium text-lg">{event.name}</h3>
-                  <p className="text-muted-foreground text-sm">{event.location}</p>
+                  <p className="text-muted-foreground text-sm">{event.venueName}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground text-sm">{new Date(event.date).toLocaleDateString()}</span>
+                  <span className="text-muted-foreground text-sm">{new Date(event.startDate).toLocaleDateString()}</span>
                 </div>
               </div>
               <div className="flex justify-between items-center mt-4">
                 <div className="flex items-center gap-2">
                   <Avatar className="border w-8 h-8">
-                    <AvatarImage src="/placeholder-user.jpg" alt={event.organizer.name} />
-                    <AvatarFallback>{event.organizer.name.charAt(0).toUpperCase()}</AvatarFallback>
+                    <AvatarImage src="/placeholder-user.jpg" alt={event.organizerId} />
+                    <AvatarFallback>{event.organizerId.charAt(0).toUpperCase()}</AvatarFallback>
                   </Avatar>
-                  <span className="font-medium text-sm">{event.organizer.name}</span>
+                  <span className="font-medium text-sm">{event.organizerId}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <TicketIcon className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground text-sm">${event.price.toFixed(2)}</span>
+                  <span className="text-muted-foreground text-sm">$5</span>
                   <TicketIcon className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground text-sm">{event.ticketsLeft} left</span>
+                  <span className="text-muted-foreground text-sm">10 left</span>
                 </div>
               </div>
             </CardContent>
@@ -213,116 +216,5 @@ export default function Component() {
         ))}
       </div>
     </div>
-  )
-}
-
-function CalendarIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M8 2v4" />
-      <path d="M16 2v4" />
-      <rect width="18" height="18" x="3" y="4" rx="2" />
-      <path d="M3 10h18" />
-    </svg>
-  )
-}
-
-
-function FilterIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-    </svg>
-  )
-}
-
-
-function ListOrderedIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="10" x2="21" y1="6" y2="6" />
-      <line x1="10" x2="21" y1="12" y2="12" />
-      <line x1="10" x2="21" y1="18" y2="18" />
-      <path d="M4 6h1v4" />
-      <path d="M4 10h2" />
-      <path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1" />
-    </svg>
-  )
-}
-
-
-function SearchIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-    </svg>
-  )
-}
-
-
-function TicketIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-      <path d="M13 5v2" />
-      <path d="M13 17v2" />
-      <path d="M13 11v2" />
-    </svg>
   )
 }

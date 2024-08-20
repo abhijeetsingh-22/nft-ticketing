@@ -45,7 +45,7 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
   const router = useRouter()
   const { register, handleSubmit, formState: { errors }, setValue, watch, control } = useForm<EventFormType>({
     resolver: zodResolver(schema),
-    defaultValues: event ? { ...event } as any : undefined
+    defaultValues: event ? { ...event, organizerId: organiserId } as any : undefined
   })
 
   // console.log("event", event);

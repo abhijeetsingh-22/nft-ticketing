@@ -89,3 +89,16 @@ export async function getEventBySlug(slug: string) {
     return { type: 'error', resultCode: 'SERVER_ERROR' };
   }
 }
+
+export async function getAllPublicEvents() {
+  try {
+    const events = await prisma.event.findMany({
+      // where: { publicVisibility: true },
+    });
+
+    return { type: 'success', events };
+  } catch (error) {
+    console.error('Get all public events error:', error);
+    return { type: 'error', resultCode: 'SERVER_ERROR' };
+  }
+}
