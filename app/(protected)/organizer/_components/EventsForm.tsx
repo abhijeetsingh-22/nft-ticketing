@@ -15,6 +15,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { createEvent } from "@/db/events"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { UploadButton } from "@/lib/uploadthing"
 
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -239,6 +240,20 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
               <Input id="thumbnail" placeholder="https://example.com/thumbnail.jpg" {...register("thumbnail")} />
               {errors.thumbnail && <p className="text-red-500">{errors.thumbnail.message?.toString()}</p>}
             </div>
+            <UploadButton
+              endpoint="imageUploader"
+              onClientUploadComplete={(res: any) => {
+                // Do something with the response
+                console.log("Files: ", res);
+                alert("Upload Completed");
+              }}
+              onUploadError={(error: Error) => {
+                // Do something with the error.
+                console.log("error", error);
+
+                alert(`ERROR! ${error.message}`);
+              }}
+            />
           </div>
           <CardFooter className="flex justify-end gap-4">
             <Button variant="outline">Cancel</Button>
