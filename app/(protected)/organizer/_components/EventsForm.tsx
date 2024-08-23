@@ -12,31 +12,25 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { DatePicker } from "@/components/DatePicker"
 import { Checkbox } from "@/components/ui/checkbox"
-import { createEvent } from "@/db/events"
+import { createOrUpdateEvent } from "@/db/events"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { UploadButton } from "@/lib/uploadthing"
+import { useEffect } from "react"
 
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
   slug: z.string().min(1, "Slug is required"),
   description: z.string().min(1, "Description is required"),
   startDate: z.date({ required_error: "Start Date is required" }),
-  entryDate: z.date({ required_error: "Entry Date is required" }),
   endDate: z.date({ required_error: "End Date is required" }),
   venueName: z.string().min(1, "Venue Name is required"),
   state: z.string().optional(),
-  liveStatus: z.boolean().optional(),
-  publicVisibility: z.boolean().optional(),
-  endedStatus: z.boolean().optional(),
-  coverPhoto: z.string().optional(),
-  thumbnail: z.string().optional(),
-}).refine(data => data.endDate > data.startDate && data.endDate > data.entryDate, {
-  message: "End Date should be greater than Start Date and Entry Date",
+  coverPhoto: z.string().url(),
+  thumbnail: z.string().url(),
+}).refine(data => data.endDate > data.startDate, {
+  message: "End Date should be greater than Start Date",
   path: ["endDate"],
-}).refine(data => data.entryDate > data.startDate && data.entryDate < data.endDate, {
-  message: "Entry Date should be between Start Date and End Date",
-  path: ["entryDate"],
 })
 
 export type EventFormType = z.infer<typeof schema>
@@ -48,11 +42,14 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
     defaultValues: event ? { ...event } as any : undefined
   })
 
-  // console.log("event", event);
+  const watchName = watch('name')
+  const watchSlug = watch('slug')
 
+  useEffect(() => {
+    setValue("slug", watchName?.toLowerCase().replace(/[^a-z0-9]+/g, '-'))
+  }, [watchName, watchSlug])
 
   const watchStartDate = watch('startDate')
-  const watchEntryDate = watch('entryDate')
   const watchEndDate = watch('endDate')
 
   console.log(errors)
@@ -60,13 +57,13 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
   const onSubmit = async (data: any) => {
     data.organizerId = organiserId
     toast.promise(
-      createEvent({ organizerId: organiserId, ...data }).then(() => {
+      createOrUpdateEvent({ organizerId: organiserId, ...data }).then(() => {
         router.push(`/organizer/${organiserId}/events`)
       }),
       {
-        loading: 'Creating event...',
-        success: 'Event created successfully',
-        error: 'Failed to create event',
+        loading: 'Updating event...',
+        success: 'Event updated successfully',
+        error: 'Failed to update event',
       }
     )
 
@@ -87,10 +84,11 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
               <Input id="name" placeholder="Event Name" {...register("name")} />
               {errors.name && <p className="text-red-500">{errors.name.message?.toString()}</p>}
             </div>
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="slug">Slug</Label>
               <Input
                 id="slug"
+                disabled
                 defaultValue={watch('name')?.toLowerCase().replace(/[^a-z0-9]+/g, '-')}
                 placeholder="event-slug"
                 {...register("slug", {
@@ -98,7 +96,7 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
                 })}
               />
               {errors.slug && <p className="text-red-500">{errors.slug.message?.toString()}</p>}
-            </div>
+            </div> */}
           </div>
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
@@ -115,16 +113,6 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
                 onSelect={(date) => setValue('startDate', date)}
               />
               {errors.startDate && <p className="text-red-500">{errors.startDate.message?.toString()}</p>}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="entry-date">Entry Date</Label>
-              <DatePicker
-
-                allowOnlyFutureDates={true}
-                selected={watchEntryDate}
-                onSelect={(date) => setValue('entryDate', date)}
-              />
-              {errors.entryDate && <p className="text-red-500">{errors.entryDate.message?.toString()}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="endDate">End Date</Label>
@@ -170,95 +158,41 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
             </div>
           </div>
           <div className="gap-6 grid grid-cols-1 sm:grid-cols-2">
-            <div className="space-y-1">
-              <div className="flex items-center space-x-2">
-                <Controller
-                  name="liveStatus"
-                  control={control}
-                  defaultValue={false}
-                  render={({ field }) => (
-                    <Checkbox
-                      checked={field.value ?? undefined}
-                      onCheckedChange={field.onChange}
-                    />
-                  )}
-                />
-                <Label htmlFor="liveStatus">Live Status</Label>
-              </div>
-              {errors.liveStatus && <p className="text-red-500">{errors.liveStatus.message?.toString()}</p>}
-            </div>
-            <div className="space-y-1">
-              <div className="flex items-center space-x-2">
-                <Controller
-                  name="publicVisibility"
-                  control={control}
-                  defaultValue={false}
-                  render={({ field }) => (
-                    <Checkbox
-                      checked={field.value ?? undefined}
-                      onCheckedChange={field.onChange}
-                    />
-                  )}
-                />
-                <Label htmlFor="publicVisibility">Public Visibility</Label>
-              </div>
-              {errors.publicVisibility && <p className="text-red-500">{errors.publicVisibility.message?.toString()}</p>}
-            </div>
-          </div>
-          <div className="gap-6 grid grid-cols-1 sm:grid-cols-2">
-            <div className="space-y-1">
-              <div className="flex items-center space-x-2">
-                <Controller
-                  name="endedStatus"
-                  control={control}
-                  defaultValue={false}
-                  render={({ field }) => (
-                    <Checkbox
-                      checked={field.value ?? undefined}
-                      onCheckedChange={field.onChange}
-                    />
-                  )}
-                />
-                <Label htmlFor="endedStatus">Ended Status</Label>
-              </div>
-              {errors.endedStatus && <p className="text-red-500">{errors.endedStatus.message?.toString()}</p>}
-            </div>
-            {/* <div className="space-y-2">
-              <Label htmlFor="attendees">Attendees</Label>
-              <Input id="attendees" placeholder="Attendee Names" {...register("attendees")} />
-              {errors.attendees && <p className="text-red-500">{errors.attendees.message?.toString()}</p>}
-            </div> */}
-          </div>
-          <div className="gap-6 grid grid-cols-1 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="cover-photo">Cover Photo URL</Label>
-              <Input id="cover-photo" placeholder="https://example.com/cover.jpg" {...register("coverPhoto")} />
+              <Label htmlFor="cover-photo">Cover Photo</Label>
+              <UploadButton
+                endpoint="imageUploader"
+                onClientUploadComplete={(res: any) => {
+                  setValue("coverPhoto", res[0].url)
+                  toast.success("Upload Completed");
+                }}
+                onUploadError={(error: Error) => {
+                  console.log("error", error);
+                  toast.error(`ERROR! ${error.message}`);
+                }}
+              />
               {errors.coverPhoto && <p className="text-red-500">{errors.coverPhoto.message?.toString()}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="thumbnail">Thumbnail URL</Label>
-              <Input id="thumbnail" placeholder="https://example.com/thumbnail.jpg" {...register("thumbnail")} />
+              <Label htmlFor="thumbnail">Thumbnail</Label>
+              <UploadButton
+                endpoint="imageUploader"
+                onClientUploadComplete={(res: any) => {
+                  setValue("thumbnail", res[0].url)
+                  toast.success("Upload Completed");
+                }}
+                onUploadError={(error: Error) => {
+                  console.log("error", error);
+                  toast.error(`ERROR! ${error.message}`);
+                }}
+              />
               {errors.thumbnail && <p className="text-red-500">{errors.thumbnail.message?.toString()}</p>}
             </div>
-            <UploadButton
-              endpoint="imageUploader"
-              onClientUploadComplete={(res: any) => {
-                // Do something with the response
-                console.log("Files: ", res);
-                alert("Upload Completed");
-              }}
-              onUploadError={(error: Error) => {
-                // Do something with the error.
-                console.log("error", error);
 
-                alert(`ERROR! ${error.message}`);
-              }}
-            />
           </div>
           <CardFooter className="flex justify-end gap-4">
             <Button variant="outline">Cancel</Button>
             <Button type="submit">Create Event</Button>
-
           </CardFooter>
         </form>
       </CardContent>

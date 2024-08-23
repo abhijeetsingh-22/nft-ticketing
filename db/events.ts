@@ -3,10 +3,29 @@ import prisma from "@/db";
 import { Event } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
-export async function createEvent(event: Event) {
+export async function createOrUpdateEvent(event: Event) {
   try {
-    const newEvent = await prisma.event.create({
-      data: {
+    console.log("event", event);
+
+    const newEvent = await prisma.event.upsert({
+      where: { slug: event.slug },
+      update: {
+        name: event.name,
+        slug: event.slug,
+        startDate: event.startDate,
+        entryDate: event.entryDate,
+        endDate: event.endDate,
+        venueName: event.venueName,
+        state: event.state,
+        liveStatus: event.liveStatus,
+        publicVisibility: event.publicVisibility,
+        endedStatus: event.endedStatus,
+        coverPhoto: event.coverPhoto,
+        thumbnail: event.thumbnail,
+        description: event.description,
+        organizerId: event.organizerId,
+      },
+      create: {
         name: event.name,
         slug: event.slug,
         startDate: event.startDate,
@@ -29,7 +48,8 @@ export async function createEvent(event: Event) {
 
   } catch (error) {
     console.error('Create event error:', error);
-    return { type: 'error', resultCode: 'SERVER_ERROR' };
+    throw error
+    // return { type: 'error', resultCode: 'SERVER_ERROR' };
   }
 }
 

@@ -8,12 +8,12 @@ datasource db {
 }
 
 model Event {
-  id               String   @id @default(cuid())
+  id               String    @id @default(cuid())
   name             String
-  slug             String   @unique
+  slug             String    @unique
   description      String
   startDate        DateTime
-  entryDate        DateTime
+  entryDate        DateTime?
   endDate          DateTime
   venueName        String
   state            String?
@@ -23,10 +23,10 @@ model Event {
   coverPhoto       String?
   thumbnail        String?
   organizerId      String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
   tickets          Ticket[]
-  organizer        User     @relation(fields: [organizerId], references: [id])
+  organizer        User      @relation(fields: [organizerId], references: [id])
 
   @@map("events")
 }
@@ -64,8 +64,6 @@ model User {
 
   emailVerified DateTime?
   image         String?
-  accounts      Account[]
-  sessions      Session[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -73,47 +71,4 @@ model User {
   events    Event[]
 
   @@map("users")
-}
-
-model Account {
-  userId            String
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@id([provider, providerAccountId])
-  @@map("accounts")
-}
-
-model Session {
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("sessions")
-}
-
-model VerificationToken {
-  identifier String
-  token      String
-  expires    DateTime
-
-  @@id([identifier, token])
-  @@map("verification_tokens")
 }
