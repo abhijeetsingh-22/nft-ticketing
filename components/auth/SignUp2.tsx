@@ -58,10 +58,11 @@ export default function SignupForm2() {
         error: 'Failed to create account',
       }
     )
+    form.reset()
   }
 
   return (
-    <form className="shadow-lg border-gray-200 bg-white/75 backdrop-blur-lg border-b  mx-auto p-10  rounded-3xl max-w-xl" onSubmit={form.handleSubmit(handleSubmit)}>
+    <form className="shadow-lg border-gray-200 bg-white/75 backdrop-blur-lg border-b mx-auto p-10 rounded-3xl max-w-xl" onSubmit={form.handleSubmit(handleSubmit)}>
       <div className="">
         <h1 className='text-lg font-bold'>Sign up</h1>
         <span className='mt-2'>Create an account to get started</span>
@@ -104,7 +105,7 @@ export default function SignupForm2() {
             )}
           </div>
         </div>
-      </div >
+      </div>
       <Button className="mt-8 w-full" type="submit">
         Create account
       </Button>
