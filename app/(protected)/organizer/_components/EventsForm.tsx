@@ -15,8 +15,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { createOrUpdateEvent } from "@/db/events"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { UploadButton } from "@/lib/uploadthing"
+import { UploadButton, UploadDropzone } from "@/lib/uploadthing"
 import { useEffect } from "react"
+import Image from "next/image"
 
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -28,6 +29,8 @@ const schema = z.object({
   state: z.string().optional(),
   coverPhoto: z.string().url(),
   thumbnail: z.string().url(),
+  numberOfTickets: z.number().min(10, "Number of tickets is required"),
+  ticketPrice: z.number().min(0, "Ticket price is required"),
 }).refine(data => data.endDate > data.startDate, {
   message: "End Date should be greater than Start Date",
   path: ["endDate"],
@@ -84,19 +87,6 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
               <Input id="name" placeholder="Event Name" {...register("name")} />
               {errors.name && <p className="text-red-500">{errors.name.message?.toString()}</p>}
             </div>
-            {/* <div className="space-y-2">
-              <Label htmlFor="slug">Slug</Label>
-              <Input
-                id="slug"
-                disabled
-                defaultValue={watch('name')?.toLowerCase().replace(/[^a-z0-9]+/g, '-')}
-                placeholder="event-slug"
-                {...register("slug", {
-                  setValueAs: value => value.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-                })}
-              />
-              {errors.slug && <p className="text-red-500">{errors.slug.message?.toString()}</p>}
-            </div> */}
           </div>
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
@@ -159,37 +149,58 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
           </div>
           <div className="gap-6 grid grid-cols-1 sm:grid-cols-2">
             <div className="space-y-2">
+              <Label htmlFor="number-of-tickets">Number of Tickets</Label>
+              <Input id="number-of-tickets" placeholder="Number of Tickets" type="number" {...register("numberOfTickets", { valueAsNumber: true })} />
+              {errors.numberOfTickets && <p className="text-red-500">{errors.numberOfTickets.message?.toString()}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="ticket-price">Ticket Price</Label>
+              <Input id="ticket-price" placeholder="Ticket Price" type="number" step="0.01" {...register("ticketPrice", { valueAsNumber: true })} />
+              {errors.ticketPrice && <p className="text-red-500">{errors.ticketPrice.message?.toString()}</p>}
+            </div>
+          </div>
+          <div className="gap-6 grid grid-cols-1 sm:grid-cols-2">
+            <div className="space-y-2">
               <Label htmlFor="cover-photo">Cover Photo</Label>
-              <UploadButton
-                endpoint="imageUploader"
-                onClientUploadComplete={(res: any) => {
-                  setValue("coverPhoto", res[0].url)
-                  toast.success("Upload Completed");
-                }}
-                onUploadError={(error: Error) => {
-                  console.log("error", error);
-                  toast.error(`ERROR! ${error.message}`);
-                }}
-              />
+              {watch("coverPhoto") ? (
+                <Image src={watch("coverPhoto")} alt="Cover Photo" className="w-full h-auto" width={200} height={200} />
+              ) : (
+                <UploadDropzone
+
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res: any) => {
+                    setValue("coverPhoto", res[0].url)
+                    toast.success("Upload Completed");
+                  }}
+                  onUploadError={(error: Error) => {
+                    console.log("error", error);
+                    toast.error(`ERROR! ${error.message}`);
+                  }}
+                />
+              )}
               {errors.coverPhoto && <p className="text-red-500">{errors.coverPhoto.message?.toString()}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="thumbnail">Thumbnail</Label>
-              <UploadButton
-                endpoint="imageUploader"
-                onClientUploadComplete={(res: any) => {
-                  setValue("thumbnail", res[0].url)
-                  toast.success("Upload Completed");
-                }}
-                onUploadError={(error: Error) => {
-                  console.log("error", error);
-                  toast.error(`ERROR! ${error.message}`);
-                }}
-              />
+              {watch("thumbnail") ? (
+                <Image src={watch("thumbnail")} alt="Thumbnail" className="w-full h-auto" width={200} height={200} />
+              ) : (
+                <UploadDropzone
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res: any) => {
+                    setValue("thumbnail", res[0].url)
+                    toast.success("Upload Completed");
+                  }}
+                  onUploadError={(error: Error) => {
+                    console.log("error", error);
+                    toast.error(`ERROR! ${error.message}`);
+                  }}
+                />
+              )}
               {errors.thumbnail && <p className="text-red-500">{errors.thumbnail.message?.toString()}</p>}
             </div>
-
           </div>
+
           <CardFooter className="flex justify-end gap-4">
             <Button variant="outline">Cancel</Button>
             <Button type="submit">Create Event</Button>

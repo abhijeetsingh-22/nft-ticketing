@@ -23,6 +23,8 @@ model Event {
   coverPhoto       String?
   thumbnail        String?
   organizerId      String
+  ticketPrice      Float?
+  numberOfTickets  Int?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   tickets          Ticket[]
