@@ -55,13 +55,13 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
   const watchStartDate = watch('startDate')
   const watchEndDate = watch('endDate')
 
-  console.log(errors)
+  // console.log(errors)
 
   const onSubmit = async (data: any) => {
     data.organizerId = organiserId
     toast.promise(
       createOrUpdateEvent({ organizerId: organiserId, ...data }).then(() => {
-        router.push(`/organizer/${organiserId}/events`)
+        router.push(`/${organiserId}/events`)
       }),
       {
         loading: 'Updating event...',
@@ -69,7 +69,6 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
         error: 'Failed to update event',
       }
     )
-
   }
 
   return (

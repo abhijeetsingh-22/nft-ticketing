@@ -1,5 +1,5 @@
 import React from 'react'
-import EventsForm from '../../../_components/EventsForm'
+import EventsForm from '../../_components/EventsForm'
 
 const NewEventPage = ({ params }: { params: { organiserId: string } }) => {
   return (

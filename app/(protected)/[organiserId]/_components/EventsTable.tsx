@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import type { ColumnDef } from '@tanstack/react-table';
-import { ChevronsUpDown, MoreHorizontal, Trash2 } from 'lucide-react';
+import { ChevronsUpDown, MoreHorizontal } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 // import { deleteInventory } from '../../action';
 import { Event } from '@prisma/client';
@@ -186,7 +186,7 @@ export function EventsTable({
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
-                  router.push(`/organizer/${organiserId}/events/${event.slug}`)
+                  router.push(`/${organiserId}/events/${event.slug}`)
                 }
               >
                 Edit Event

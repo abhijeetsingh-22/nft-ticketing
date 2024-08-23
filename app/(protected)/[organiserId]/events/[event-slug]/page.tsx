@@ -1,4 +1,4 @@
-import EventsForm from '../../../_components/EventsForm'
+import EventsForm from '../../_components/EventsForm'
 import { getEventBySlug } from '@/db/events'
 
 const UpdateEventPage = async ({ params }: { params: { organiserId: string, "event-slug": string } }) => {
