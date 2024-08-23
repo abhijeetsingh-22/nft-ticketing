@@ -20,8 +20,8 @@ model Event {
   liveStatus       Boolean?
   publicVisibility Boolean?
   endedStatus      Boolean?
-  coverPhoto       String?
-  thumbnail        String?
+  coverPhoto       String
+  thumbnail        String
   organizerId      String
   ticketPrice      Float?
   numberOfTickets  Int?

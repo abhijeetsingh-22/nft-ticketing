@@ -172,7 +172,7 @@ export default function EventsList({ events }: { events: Event[] }) {
           <Card key={event.id}>
             <Link href="#" className="block relative rounded-lg overflow-hidden group" prefetch={false}>
               <Image
-                src="/placeholder.svg"
+                src={event.thumbnail}
                 alt={event.name}
                 width={400}
                 height={300}
