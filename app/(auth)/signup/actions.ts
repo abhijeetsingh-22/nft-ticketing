@@ -10,7 +10,8 @@ import { getUser } from '@/db/users'
 export async function createUser(
   email: string,
   hashedPassword: string,
-  salt: string
+  salt: string,
+  name: string
 ) {
   const existingUser = await getUser(email)
 
@@ -24,7 +25,8 @@ export async function createUser(
       id: crypto.randomUUID(),
       email,
       password: hashedPassword,
-      salt
+      salt,
+      name
     }
 
     await prisma.user.create({
@@ -33,6 +35,7 @@ export async function createUser(
         email: user.email,
         password: user.password,
         salt: user.salt,
+        name: user.name
       }
     })
 
@@ -48,12 +51,7 @@ interface Result {
   resultCode: ResultCode
 }
 
-export async function signup(
-  _prevState: Result | undefined,
-  formData: FormData
-): Promise<Result | undefined> {
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
+export async function signup({ email, password, name }: { email: string, password: string, name: string }): Promise<Result | undefined> {
 
   const parsedCredentials = z
     .object({
@@ -77,7 +75,7 @@ export async function signup(
     const hashedPassword = getStringFromBuffer(hashedPasswordBuffer)
 
     try {
-      const result = await createUser(email, hashedPassword, salt)
+      const result = await createUser(email, hashedPassword, salt, name)
 
       return result
     } catch (error) {

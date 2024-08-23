@@ -56,7 +56,7 @@ export default function LoginForm() {
               />
             </div>
             {result?.type === 'error' && (
-              <div className="text-red-500 text-xs mt-2">
+              <div className="mt-2 text-red-500 text-xs">
                 Invalid email or password
               </div>
             )}
