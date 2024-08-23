@@ -3,7 +3,7 @@ import "./globals.css";
 import { cn, constructMetadata } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import { SessionProvider } from "next-auth/react";
-import { Toaster } from "@/components/ui/sonner";
+import Providers from "@/components/Providers";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -17,16 +17,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' className='light'>
+    <html lang='en' className={fontSans.className}>
       <SessionProvider >
         <body
-          className={cn(
-            'min-h-screen font-sans antialiased grainy',
-            fontSans.className
-          )}>
+          className=
+          'min-h-screen font-sans antialiased grainy'>
           <Navbar />
-          {children}
-          <Toaster />
+          <Providers>
+            {children}
+          </Providers>
         </body>
       </SessionProvider>
     </html>
