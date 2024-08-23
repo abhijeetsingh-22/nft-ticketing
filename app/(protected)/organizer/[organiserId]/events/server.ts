@@ -1,6 +1,6 @@
 'use server'
 
-import { createEvent, getEventById, getEvents, getEventsByOrganisationId } from "@/db/events"
+import { getEventById, getEvents, getEventsByOrganisationId } from "@/db/events"
 
 export async function createEventHandler(formData: FormData) {
   const name = formData.get('name') as string;
