@@ -12,13 +12,11 @@ interface Result {
 }
 
 export async function authenticate(
-  _prevState: Result | undefined,
-  formData: FormData
+  email: string,
+  password: string
 ): Promise<Result | undefined> {
   try {
-    const email = formData.get('email')
-    const password = formData.get('password')
-    console.log("in authenticate action", email, password);
+
     const parsedCredentials = z
       .object({
         email: z.string().email(),

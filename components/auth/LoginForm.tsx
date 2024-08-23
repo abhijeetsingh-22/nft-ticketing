@@ -29,17 +29,17 @@ export default function LoginForm() {
   })
 
   const handleSubmit = async (values: loginInput) => {
-    // toast.promise(
-    //   authenticate(values).then(() => {
-    //     router.push(`/dashboard`)
-    //   }),
-    //   {
-    //     loading: 'Logging in...',
-    //     success: 'Logged in successfully',
-    //     error: 'Failed to log in',
-    //   }
-    // )
-    // form.reset()
+    toast.promise(
+      authenticate(values.email, values.password).then(() => {
+        router.push(`/dashboard`)
+      }),
+      {
+        loading: 'Logging in...',
+        success: 'Logged in successfully',
+        error: 'Failed to log in',
+      }
+    )
+    form.reset()
   }
 
   return (
