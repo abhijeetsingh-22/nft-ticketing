@@ -17,7 +17,7 @@ export const TicketTools = ({
       <h3 className="mt-0 border-none font-semibold text-3xl capitalize"> My Events</h3>
 
       <div className="flex *:flex justify-between gap-4 *:gap-2 w-full md:w-fit">
-        <Button onClick={() => router.push(`/organizer/${organiserId}/events/new`)}>
+        <Button onClick={() => router.push(`/${organiserId}/events/new`)}>
           <PlusCircle className="size-4" />
           New Event
         </Button>
