@@ -10,6 +10,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { CalendarIcon, FilterIcon, ListOrderedIcon, SearchIcon, TicketIcon } from "lucide-react"
 import Image from "next/image"
 import { Event } from "@prisma/client"
+import { buyEventTicket } from "@/db/ticket"
 export default function EventsList({ events }: { events: Event[] }) {
 
   const [searchTerm, setSearchTerm] = useState("")
@@ -42,10 +43,11 @@ export default function EventsList({ events }: { events: Event[] }) {
       })
   }, [events, searchTerm, filterLocation, sortBy])
 
-  const handleBuyEventTicket = (eventId: string) => {
+  const handleBuyEventTicket = async (eventId: string) => {
     let selectedEvent = events.filter((event) => event.id === eventId)[0]
     console.log("Buy event ticket", events.filter((event) => event.id === eventId)[0])
-    // createNftForEvent({...selectedEvent, symbol: "SSM", projectId: "ssm-project"})
+    let ticket = await buyEventTicket(selectedEvent)
+    console.log("Ticket", ticket)
   }
 
   return (
