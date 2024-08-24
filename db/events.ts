@@ -51,6 +51,8 @@ export async function createOrUpdateEvent(event: Event) {
         endDate: event.endDate,
         venueName: event.venueName,
         state: event.state,
+        numberOfTickets: event.numberOfTickets,
+        ticketPrice: event.ticketPrice,
         liveStatus: event.liveStatus,
         publicVisibility: event.publicVisibility,
         endedStatus: event.endedStatus,
