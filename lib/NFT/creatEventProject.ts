@@ -1,12 +1,12 @@
 import axios from 'axios';
-import solanaweb3 from '@solana/web3.js';
+import { Connection, PublicKey } from '@solana/web3.js';
 import { Event } from "@prisma/client";
 
 // TODO: put these in env
 const underdogApiEndpoint = "https://dev.underdogprotocol.com";
 const chainStackAPI = "https://nd-875-212-309.p2pify.com/9288f69c33dcdf0f8aa0f639985a488d";
-const connection = new solanaweb3.Connection(chainStackAPI);
 
+const connection = new Connection(chainStackAPI);
 
 
 interface NFTEvent {
@@ -75,7 +75,7 @@ export const createEventProject = async (event: Event) => {
         // Polling loop to wait for project account information
         while (!projectAccountInfo && retries < 50) {
             projectAccountInfo = await connection.getAccountInfo(
-                new solanaweb3.PublicKey(createProjectResponse.data.mintAddress)
+                new PublicKey(createProjectResponse.data.mintAddress)
             );
             await new Promise(resolve => setTimeout(resolve, 100));
             retries++;
