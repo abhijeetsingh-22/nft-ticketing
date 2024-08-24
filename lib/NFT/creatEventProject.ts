@@ -97,7 +97,7 @@ export const createEventProject = async (event: Event) => {
     }
 };
 
-export const createNftForEvent = async (event: NFTEvent) => {
+export const createNftForEvent = async (event: Event, buyerWalletAddress: string) => {
     try {
         // console.log("process.env.UNDERDOG_API_KEY", env);
         if (!process.env.UNDERDOG_API_KEY) {
@@ -108,9 +108,9 @@ export const createNftForEvent = async (event: NFTEvent) => {
             headers: { Authorization: `Bearer ${process.env.UNDERDOG_API_KEY}` }
         }
         const nftData = {
-            "name": event.event.name,
-            "symbol": event.symbol,
-            "image": event.event.thumbnail ? event.event.thumbnail : event.event.thumbnail,
+            "name": event.name,
+            "symbol": event.nftSymbol,
+            "image": event.thumbnail ? event.thumbnail : event.thumbnail,
         }
 
         const createNftResponse = await axios.post(
@@ -155,8 +155,8 @@ export const createNftForEvent = async (event: NFTEvent) => {
 
         // Transfer the NFT to the buyer's wallet
         const transferResponse = await transferNftToBuyer(
-            event.projectId,
-            event.buyerWalletAddress,
+            event.projectId || '',
+            buyerWalletAddress,
             createNftResponse.data.nftId
         );
 

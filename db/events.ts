@@ -69,6 +69,9 @@ export async function createOrUpdateEvent(event: Event) {
         thumbnail: event.thumbnail,
         description: event.description,
         organizerId: event.organizerId,
+        projectId: event.projectId,
+        mintAddress: event.mintAddress,
+        nftSymbol: event.nftSymbol
       },
     });
 
