@@ -8,24 +8,32 @@ export async function createOrUpdateEvent(event: Event) {
   try {
     console.log("event", event);
 
+    const existingEvent: Event | null = await prisma.event.findUnique({
+      where: { slug: event.slug },
+    });
+
+    // Check if the event exists and if tickets have been sold
+    if (existingEvent && existingEvent.numberOfTicketsSold > 0) {
+      throw new Error("Cannot update event with tickets already sold");
+    }
+
     const isNewEvent: Event | null = await prisma.event.findUnique({
       where: { slug: event.slug },
     })
 
+
     // Creating a new event on chain
     if (!(isNewEvent && Object.keys(isNewEvent).length)) {
       let response = await createEventProject(event);
-      if(response.code === 200) {
-        // TODO : add these in db in create query
-        // event.projectId = response.data.projectId;
-        // event.mintAddress = response.data.mintAddress;
-        // event.nftSymbol = response.data.nftSymbol;
+      if (response.code === 200) {
+        event.projectId = response?.data?.projectId ?? null;
+        event.mintAddress = response?.data?.mintAddress ?? null;
+        event.nftSymbol = response?.data?.nftSymbol ?? null;
       }
       else {
         throw new Error(response.message);
       }
     }
-
 
     const newEvent = await prisma.event.upsert({
       where: { slug: event.slug },
@@ -70,7 +78,6 @@ export async function createOrUpdateEvent(event: Event) {
   } catch (error) {
     console.error('Create event error:', error);
     throw error
-    // return { type: 'error', resultCode: 'SERVER_ERROR' };
   }
 }
 

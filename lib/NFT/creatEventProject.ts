@@ -18,7 +18,7 @@ interface NFTEvent {
     buyerWalletAddress: string; // New field to hold the buyer's wallet address
 }
 
-const createNftSymbol = (eventName: string): string =>  {
+const createNftSymbol = (eventName: string): string => {
     let sanitizedEventName = eventName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
 
     // Limit the symbol to a maximum length of 4
@@ -44,7 +44,7 @@ export const createEventProject = async (event: Event) => {
         const config = {
             headers: { Authorization: `Bearer ${process.env.UNDERDOG_API_KEY}` }
         }
-        
+
         const symbol: string = createNftSymbol(event.name);
 
         const projectData = {
@@ -63,7 +63,7 @@ export const createEventProject = async (event: Event) => {
 
         if (createProjectResponse.data.mintAddress) {
             resBody = {
-                mintAdress: createProjectResponse.data.mintAddress,
+                mintAddress: createProjectResponse.data.mintAddress,
                 projectId: createProjectResponse.data.projectId,
                 nftSymbol: symbol
             }
