@@ -1,3 +1,4 @@
+'use server'
 import axios from 'axios';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { Event } from "@prisma/client";
@@ -35,9 +36,11 @@ const createNftSymbol = (eventName: string): string =>  {
 export const createEventProject = async (event: Event) => {
     try {
         let resBody = null;
+
         if (!process.env.UNDERDOG_API_KEY) {
             throw new Error("UNDERDOG_API_KEY is not set");
         }
+
         const config = {
             headers: { Authorization: `Bearer ${process.env.UNDERDOG_API_KEY}` }
         }
@@ -82,7 +85,8 @@ export const createEventProject = async (event: Event) => {
         }
 
         if (!projectAccountInfo) {
-            throw new Error("Project account information could not be retrieved");
+            console.error("Project account information could not be retrieved");
+            // throw new Error("Project account information could not be retrieved");
         }
 
         return { message: 'Event created successfully', data: resBody, code: 200 };
@@ -95,9 +99,11 @@ export const createEventProject = async (event: Event) => {
 
 export const createNftForEvent = async (event: NFTEvent) => {
     try {
+        // console.log("process.env.UNDERDOG_API_KEY", env);
         if (!process.env.UNDERDOG_API_KEY) {
             throw new Error("UNDERDOG_API_KEY is not set");
         }
+        console.log("here")
         const config = {
             headers: { Authorization: `Bearer ${process.env.UNDERDOG_API_KEY}` }
         }
@@ -113,6 +119,8 @@ export const createNftForEvent = async (event: NFTEvent) => {
             config
         );
 
+        console.log("createNftResponse", createNftResponse.data);
+
         let retrieveNFT = null;
         let retries = 0;
 
@@ -127,7 +135,8 @@ export const createNftForEvent = async (event: NFTEvent) => {
         } while ((!retrieveNFT.data || retrieveNFT.data.status !== 'confirmed') && retries < 50);
 
         if (!retrieveNFT.data || retrieveNFT.data.status !== 'confirmed') {
-            throw new Error("NFT could not be confirmed");
+            console.log('NFT could not be confirmed:', retrieveNFT.data);
+            // throw new Error("NFT could not be confirmed");
         }
 
         /*
@@ -167,6 +176,10 @@ export const transferNftToBuyer = async (projectId: string, buyerWalletAddress: 
     try {
         const postBody = {
             receiverAddress: buyerWalletAddress
+        }
+        console.log("here")
+        if (!process.env.UNDERDOG_API_KEY) {
+            throw new Error("UNDERDOG_API_KEY is not set");
         }
         const config = {
             headers: { Authorization: `Bearer ${process.env.UNDERDOG_API_KEY}` }

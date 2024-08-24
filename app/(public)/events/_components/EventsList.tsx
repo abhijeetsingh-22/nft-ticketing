@@ -45,7 +45,7 @@ export default function EventsList({ events }: { events: Event[] }) {
 
   const handleBuyEventTicket = async (eventId: string) => {
     let selectedEvent = events.filter((event) => event.id === eventId)[0]
-    console.log("Buy event ticket", events.filter((event) => event.id === eventId)[0])
+    // console.log("Buy event ticket", events.filter((event) => event.id === eventId)[0])
     let ticket = await buyEventTicket(selectedEvent)
     console.log("Ticket", ticket)
   }
