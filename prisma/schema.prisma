@@ -8,27 +8,31 @@ datasource db {
 }
 
 model Event {
-  id               String    @id @default(cuid())
-  name             String
-  slug             String    @unique
-  description      String
-  startDate        DateTime
-  entryDate        DateTime?
-  endDate          DateTime
-  venueName        String
-  state            String?
-  liveStatus       Boolean?
-  publicVisibility Boolean?
-  endedStatus      Boolean?
-  coverPhoto       String
-  thumbnail        String
-  organizerId      String
-  ticketPrice      Float?
-  numberOfTickets  Int?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  tickets          Ticket[]
-  organizer        User      @relation(fields: [organizerId], references: [id])
+  id                  String    @id @default(cuid())
+  name                String
+  slug                String    @unique
+  description         String
+  startDate           DateTime
+  entryDate           DateTime?
+  endDate             DateTime
+  venueName           String
+  state               String?
+  liveStatus          Boolean?
+  publicVisibility    Boolean?
+  endedStatus         Boolean?
+  coverPhoto          String
+  thumbnail           String
+  organizerId         String
+  ticketPrice         Float?
+  numberOfTickets     Int?
+  numberOfTicketsSold Int       @default(0)
+  projectId           String?
+  mintAddress         String?
+  nftSymbol           String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  tickets             Ticket[]
+  organizer           User      @relation(fields: [organizerId], references: [id])
 
   @@map("events")
 }
