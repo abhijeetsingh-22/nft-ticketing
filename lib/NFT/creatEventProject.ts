@@ -1,19 +1,13 @@
 import axios from 'axios';
 import solanaweb3 from '@solana/web3.js';
+import { Event } from "@prisma/client";
 
 // TODO: put these in env
 const underdogApiEndpoint = "https://dev.underdogprotocol.com";
 const chainStackAPI = "https://nd-875-212-309.p2pify.com/9288f69c33dcdf0f8aa0f639985a488d";
 const connection = new solanaweb3.Connection(chainStackAPI);
 
-interface Event {
-    name: string;
-    date: string;
-    location: string;
-    image: string;
-    description: string;
-    organisationId: string;
-}
+
 
 interface NFTEvent {
     event: Event;
@@ -23,7 +17,22 @@ interface NFTEvent {
     buyerWalletAddress: string; // New field to hold the buyer's wallet address
 }
 
-export const createEventProject = async (event: Event, symbol: string) => {
+const createNftSymbol = (eventName: string): string =>  {
+    let sanitizedEventName = eventName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+
+    // Limit the symbol to a maximum length of 4
+    const maxLength = 4;
+    let symbol = sanitizedEventName.slice(0, maxLength);
+
+    // If the event name is too short, add padding (optional)
+    if (symbol.length < maxLength) {
+        symbol = symbol.padEnd(maxLength, 'X'); // Pads with 'X'
+    }
+
+    return symbol;
+}
+
+export const createEventProject = async (event: Event) => {
     try {
         let resBody = null;
         if (!process.env.UNDERDOG_API_KEY) {
@@ -32,15 +41,15 @@ export const createEventProject = async (event: Event, symbol: string) => {
         const config = {
             headers: { Authorization: `Bearer ${process.env.UNDERDOG_API_KEY}` }
         }
-        if (!event.name || !event.date || !event.location || !event.organisationId || !symbol) {
-            console.log("Error in createEventProject:  Missing fields");
-            return { message: 'Missing Fields', code: 400 };
-        }
+        
+        const symbol: string = createNftSymbol(event.name);
 
         const projectData = {
             "name": event.name,
             "symbol": symbol,
-            "image": event.image,
+            "image": event.coverPhoto ? event.coverPhoto : event.thumbnail,
+            "transferable": true,
+            "description": `Event "${event.name}" is going to be held on ${event.startDate} at ${event.venueName}. This NFT is your pass to the event.`
         }
 
         const createProjectResponse = await axios.post(
@@ -52,7 +61,8 @@ export const createEventProject = async (event: Event, symbol: string) => {
         if (createProjectResponse.data.mintAddress) {
             resBody = {
                 mintAdress: createProjectResponse.data.mintAddress,
-                projectId: createProjectResponse.data.projectId
+                projectId: createProjectResponse.data.projectId,
+                nftSymbol: symbol
             }
             console.log('Project created successfully:', createProjectResponse.data);
         } else {
@@ -94,7 +104,7 @@ export const createNftForEvent = async (event: NFTEvent) => {
         const nftData = {
             "name": event.event.name,
             "symbol": event.symbol,
-            "image": event.event.image,
+            "image": event.event.thumbnail ? event.event.thumbnail : event.event.thumbnail,
         }
 
         const createNftResponse = await axios.post(
