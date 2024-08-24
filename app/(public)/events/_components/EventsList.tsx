@@ -105,7 +105,7 @@ export default function EventsList({ events }: { events: Event[] }) {
           <Card key={event.id}>
             <Link href="#" className="block relative rounded-lg overflow-hidden group" prefetch={false}>
               <Image
-                src={event.thumbnail}
+                src={event.thumbnail || event.coverPhoto || "/no-image.png"}
                 alt={event.name}
                 width={400}
                 height={300}
