@@ -13,7 +13,7 @@ export default async function Home() {
       <MaxWidthWrapper className='flex flex-col justify-center items-center mt-28 sm:mt-40 mb-12 text-center'>
         <div className='flex justify-center items-center space-x-2 border-gray-200 hover:border-gray-300 bg-white hover:bg-white/50 shadow-md backdrop-blur mx-auto mb-4 px-7 py-2 border rounded-full max-w-fit transition-all overflow-hidden'>
           <p className='font-semibold text-gray-700 text-sm'>
-            BolTix is in Beta!
+            MintTix is in Beta!
           </p>
         </div>
         <h1 className='max-w-4xl font-bold text-5xl md:text-6xl lg:text-7xl'>
@@ -100,7 +100,7 @@ export default async function Home() {
               Get, Set, Book!
             </h2>
             <p className='mt-4 text-gray-600 text-lg'>
-              BolTix is a new, fairer ticketing system that allows you to buy and sell tickets for events in a more transparent and fair way.
+              MintTix is a new, fairer ticketing system that allows you to buy and sell tickets for events in a more transparent and fair way.
             </p>
           </div>
         </div>

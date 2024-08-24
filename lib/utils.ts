@@ -17,8 +17,8 @@ export function absoluteUrl(path: string) {
 }
 
 export function constructMetadata({
-  title = "BolTix",
-  description = "BolTix is an NFT Ticketing Platform based on solana blockchain",
+  title = "MintTix",
+  description = "MintTix is an NFT Ticketing Platform based on solana blockchain",
   // image = "/thumbnail.png",
   icons = "/favicon.ico",
   noIndex = false

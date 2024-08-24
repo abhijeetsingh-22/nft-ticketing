@@ -20,7 +20,7 @@ const Navbar = async () => {
           <Link
             href='/'
             className='z-40 flex font-semibold'>
-            <span>BolTix</span>
+            <span>MintTix</span>
           </Link>
 
           <MobileNav isAuth={isAuth} />
