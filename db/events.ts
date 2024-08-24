@@ -1,11 +1,30 @@
 'use server';
 import prisma from "@/db";
+import { createEventProject } from "@/lib/NFT/creatEventProject";
 import { Event } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 export async function createOrUpdateEvent(event: Event) {
   try {
     console.log("event", event);
+
+    const isNewEvent: Event | null = await prisma.event.findUnique({
+      where: { slug: event.slug },
+    })
+
+    // Creating a new event on chain
+    if (!(isNewEvent && Object.keys(isNewEvent).length)) {
+      let response = await createEventProject(event);
+      if(response.code === 200) {
+        // event.projectId = response.data.projectId;
+        // event.mintAddress = response.data.mintAddress;
+        // event.nftSymbol = response.data.nftSymbol;
+      }
+      else {
+        throw new Error(response.message);
+      }
+    }
+
 
     const newEvent = await prisma.event.upsert({
       where: { slug: event.slug },
