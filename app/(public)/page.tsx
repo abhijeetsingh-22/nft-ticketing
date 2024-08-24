@@ -3,11 +3,9 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import Image from 'next/image'
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
-import { auth } from '@/auth'
+
 
 export default async function Home() {
-  // const session = await auth()
-  // console.log('session in home', session)
   return (
     <>
       <MaxWidthWrapper className='flex flex-col justify-center items-center mt-28 sm:mt-40 mb-12 text-center'>

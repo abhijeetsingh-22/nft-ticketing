@@ -66,7 +66,7 @@ const Navbar = async () => {
               <>
                 {
                   <Link
-                    href={`/organizer/${session?.user?.id}/events`}
+                    href={`/${session?.user?.id}/events`}
                     className={buttonVariants({
                       variant: 'ghost',
                       size: 'sm',

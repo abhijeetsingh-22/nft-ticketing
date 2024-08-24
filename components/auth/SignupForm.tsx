@@ -5,25 +5,25 @@ import Link from 'next/link'
 import { useEffect } from 'react'
 import { IconSpinner } from '@/components/ui/icons'
 import { useRouter } from 'next/navigation'
-import { signup } from '@/app/(auth)/signup/actions'
+import { signup } from '@/app/(public)/(auth)/signup/actions'
 
 export default function SignupForm() {
   const router = useRouter()
-  const [result, dispatch] = useFormState(signup, undefined)
+  // const [result, dispatch] = useFormState(signup, undefined)
 
-  useEffect(() => {
-    if (result) {
-      console.log('result', result)
-      if (result) {
-        router.push('/')
-      }
+  // useEffect(() => {
+  //   if (result) {
+  //     console.log('result', result)
+  //     if (result) {
+  //       router.push('/')
+  //     }
 
-    }
-  }, [result, router])
+  //   }
+  // }, [result, router])
 
   return (
     <form
-      action={dispatch}
+      // action={dispatch}
       className="flex flex-col items-center gap-4 space-y-3 mt-4"
     >
       <div className="flex-1 bg-white dark:bg-zinc-950 shadow-md px-6 pt-8 pb-4 border rounded-lg w-full md:w-96">

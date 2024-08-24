@@ -50,7 +50,7 @@ export function constructMetadata({
     },
     icons,
     metadataBase: new URL('https://boltix.vercel.app/'),
-    themeColor: '#FFF',
+    // themeColor: '#FFF',
     ...(noIndex && {
       robots: {
         index: false,

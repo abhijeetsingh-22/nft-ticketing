@@ -1,89 +1,78 @@
 'use client'
 
-import { useFormState, useFormStatus } from 'react-dom'
-import Link from 'next/link'
-import { useEffect } from 'react'
-import { IconSpinner } from '@/components/ui/icons'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { useRouter } from 'next/navigation'
-import { authenticate } from '@/app/(auth)/login/actions'
 import { toast } from 'sonner'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { authenticate } from '@/app/(public)/(auth)/login/actions'
+import { Label } from '../ui/label'
+
+const loginSchema = z.object({
+  email: z.string().email('Invalid email address').min(5, 'Email must be at least 5 characters long').max(255, 'Email must be at most 255 characters long'),
+  password: z.string().min(6, 'Password must be at least 6 characters long')
+})
+
+type loginInput = z.infer<typeof loginSchema>
 
 export default function LoginForm() {
-  const [result, dispatch] = useFormState(authenticate, undefined)
+  const router = useRouter()
+
+  const form = useForm<loginInput>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  })
+
+  const handleSubmit = async (values: loginInput) => {
+    toast.promise(
+      authenticate(values.email, values.password).then(() => {
+        router.push(`/dashboard`)
+      }),
+      {
+        loading: 'Logging in...',
+        success: 'Logged in successfully',
+        error: 'Failed to log in',
+      }
+    )
+    form.reset()
+  }
 
   return (
-    <form
-      action={dispatch}
-      className="flex flex-col items-center gap-4 space-y-3 mt-4"
-    >
-      <div className="flex-1 bg-white dark:bg-zinc-950 shadow-md px-6 pt-8 pb-4 border rounded-lg w-full md:w-96">
-        <h1 className="mb-3 font-bold text-2xl">Please log in to continue</h1>
-        <div className="w-full">
-          <div>
-            <label
-              className="block mt-5 mb-3 font-medium text-xs text-zinc-400"
-              htmlFor="email"
-            >
-              Email
-            </label>
-            <div className="relative">
-              <input
-                className="block dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-2 py-[9px] border rounded-md w-full text-sm placeholder:text-zinc-500 outline-none peer"
-                id="email"
-                type="email"
-                name="email"
-                placeholder="Enter your email address"
-                required
-              />
+    <form className="border-gray-200 bg-white/75 shadow-lg backdrop-blur-lg mx-auto p-10 border-b rounded-3xl w-full max-w-lg" onSubmit={form.handleSubmit(handleSubmit)}>
+      <div className="max-w-lg">
+        <h1 className='font-bold text-lg'>Log In</h1>
+        <span className='mt-2'>Please log in to continue</span>
+        <div className='space-y-8 mt-8'>
+          <div className="gap-8 sm:gap-4 grid grid-cols-1">
+            <div>
+              <Label>Email</Label>
+              <Input {...form.register('email')} type="email" />
+              {form.formState.errors.email && (
+                <p className="text-red-500/70 text-xs">{form.formState.errors.email.message}</p>
+              )}
             </div>
-          </div>
-          <div className="mt-4">
-            <label
-              className="block mt-5 mb-3 font-medium text-xs text-zinc-400"
-              htmlFor="password"
-            >
-              Password
-            </label>
-            <div className="relative">
-              <input
-                className="block dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 px-2 py-[9px] border rounded-md w-full text-sm placeholder:text-zinc-500 outline-none peer"
-                id="password"
-                type="password"
-                name="password"
-                placeholder="Enter password"
-                required
-                minLength={6}
-              />
+            <div>
+              <Label>Password</Label>
+              <Input {...form.register('password')} type="password" />
+              {form.formState.errors.password && (
+                <p className="text-red-500/70 text-xs">{form.formState.errors.password.message}</p>
+              )}
             </div>
-            {result?.type === 'error' && (
-              <div className="text-red-500 text-xs mt-2">
-                Invalid email or password
-              </div>
-            )}
           </div>
         </div>
-        <LoginButton />
+
       </div>
-
-      <Link
-        href="/signup"
-        className="flex flex-row gap-1 text-sm text-zinc-400"
-      >
-        No account yet? <div className="font-semibold underline">Sign up</div>
-      </Link>
+      <Button className="mt-8 w-full" type="submit">
+        Log in
+      </Button>
+      <Button className="mt-4 w-full" onClick={() => router.push('/signup')}>
+        No account yet? Sign up
+      </Button>
     </form>
-  )
-}
-
-function LoginButton() {
-  const { pending } = useFormStatus()
-
-  return (
-    <button
-      className="flex flex-row justify-center items-center bg-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-200 dark:bg-zinc-100 my-4 p-2 rounded-md w-full h-10 font-semibold text-sm text-zinc-100 dark:text-zinc-900"
-      aria-disabled={pending}
-    >
-      {pending ? <IconSpinner /> : 'Log in'}
-    </button>
   )
 }
