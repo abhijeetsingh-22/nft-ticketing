@@ -10,6 +10,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { CalendarIcon, FilterIcon, ListOrderedIcon, SearchIcon, TicketIcon } from "lucide-react"
 import Image from "next/image"
 import { Event } from "@prisma/client"
+// import { createNftForEvent } from "@/lib/NFT/creatEventProject"
 // const events = [
 //   {
 //     id: 1,
@@ -83,6 +84,8 @@ export default function EventsList({ events }: { events: Event[] }) {
   const [sortBy, setSortBy] = useState("date")
   const [filterLocation, setFilterLocation] = useState("")
   const [filterPrice, setFilterPrice] = useState([0, 200])
+
+
   const filteredEvents = useMemo(() => {
     return events
       .filter((event) => {
@@ -106,6 +109,13 @@ export default function EventsList({ events }: { events: Event[] }) {
         }
       })
   }, [events, searchTerm, filterLocation, sortBy])
+
+  const handleBuyEventTicket = (eventId: string) => {
+    let selectedEvent = events.filter((event) => event.id === eventId)[0]
+    console.log("Buy event ticket", events.filter((event) => event.id === eventId)[0])
+    // createNftForEvent({...selectedEvent, symbol: "SSM", projectId: "ssm-project"})
+  }
+
   return (
     <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 container">
       <div className="flex justify-between items-center mb-8">
@@ -202,14 +212,15 @@ export default function EventsList({ events }: { events: Event[] }) {
                     <AvatarImage src="/placeholder-user.jpg" alt={event.organizerId} />
                     <AvatarFallback>{event.organizerId.charAt(0).toUpperCase()}</AvatarFallback>
                   </Avatar>
-                  <span className="font-medium text-sm">{event.organizerId}</span>
+                  {/* <span className="font-medium text-sm">{event.organizerId}</span> */}
                 </div>
                 <div className="flex items-center gap-2">
                   <TicketIcon className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground text-sm">$5</span>
+                  <span className="text-muted-foreground text-sm">${event.ticketPrice}</span>
                   <TicketIcon className="w-4 h-4 text-muted-foreground" />
                   <span className="text-muted-foreground text-sm">10 left</span>
                 </div>
+                <Button onClick={() => handleBuyEventTicket(event.id)}>Buy</Button>
               </div>
             </CardContent>
           </Card>
