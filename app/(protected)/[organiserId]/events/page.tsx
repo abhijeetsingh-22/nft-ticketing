@@ -4,6 +4,7 @@ import { getEventsByOrganisationId } from '@/db/events';
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 import { TicketTools } from '../_components/TicketTools';
 import { EventsTable } from '../_components/EventsTable';
+import { ContentLayout } from '@/components/admin-panel/content-layout';
 
 
 
@@ -11,9 +12,11 @@ export default async function EventsPage({ params }: { params: { organiserId: st
     const { events } = await getEventsByOrganisationId(params.organiserId);
 
     return (
-        <MaxWidthWrapper className='mt-10'>
-            <TicketTools organiserId={params.organiserId} />
-            <EventsTable events={events as Event[]} organiserId={params.organiserId} />
-        </MaxWidthWrapper>
+        <ContentLayout title='Events'>
+            <MaxWidthWrapper className='mt-10'>
+                <TicketTools organiserId={params.organiserId} />
+                <EventsTable events={events as Event[]} organiserId={params.organiserId} />
+            </MaxWidthWrapper>
+        </ContentLayout>
     )
 }

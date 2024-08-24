@@ -1,14 +1,15 @@
-import { Inter as FontSans } from "next/font/google"
+// import { Inter as FontSans } from "next/font/google"
 import "./globals.css";
-import { cn, constructMetadata } from "@/lib/utils";
-import Navbar from "@/components/Navbar";
+import { constructMetadata } from "@/lib/utils";
 import { SessionProvider } from "next-auth/react";
 import Providers from "@/components/Providers";
+import { GeistSans } from "geist/font/sans";
+import Navbar from "@/components/Navbar";
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
+// const fontSans = FontSans({
+//   subsets: ["latin"],
+//   variable: "--font-sans",
+// })
 
 export const metadata = constructMetadata()
 export default function RootLayout({
@@ -17,12 +18,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' className={fontSans.className}>
+    <html lang='en' className={GeistSans.className}>
       <SessionProvider >
         <body
           className=
-          'min-h-screen font-sans antialiased grainy'>
-          <Navbar />
+          'min-h-screen antialiased grainy'>
+          {/* <Navbar /> */}
           <Providers>
             {children}
           </Providers>

@@ -2,10 +2,13 @@
 
 import { AppProgressBar as ProgressBar } from 'next-nprogress-bar';
 import { Toaster } from './ui/sonner';
+import { ThemeProvider } from '@/providers/theme-provider';
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
+      {/* <ThemeProvider attribute="class" defaultTheme="system" enableSystem> */}
+
       {children}
       <Toaster />
       <ProgressBar
@@ -14,6 +17,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
         options={{ showSpinner: false }}
         shallowRouting
       />
+      {/* </ThemeProvider> */}
     </>
   );
 };
