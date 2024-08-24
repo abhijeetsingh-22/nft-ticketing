@@ -21,8 +21,7 @@ export default function RootLayout({
     <html lang='en' className={GeistSans.className}>
       <SessionProvider >
         <body
-          className=
-          'min-h-screen antialiased grainy'>
+          className='antialiased'>
           {/* <Navbar /> */}
           <Providers>
             {children}

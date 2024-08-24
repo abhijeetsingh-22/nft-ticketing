@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MenuIcon, PanelsTopLeft } from "lucide-react";
+import { LucideTicket, MenuIcon, PanelsTopLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Menu } from "@/components/admin-panel/menu";
@@ -10,6 +10,7 @@ import {
   SheetTrigger,
   SheetTitle
 } from "@/components/ui/sheet";
+import Image from "next/image";
 
 export function SheetMenu() {
   return (
@@ -19,16 +20,22 @@ export function SheetMenu() {
           <MenuIcon size={20} />
         </Button>
       </SheetTrigger>
-      <SheetContent className="sm:w-72 px-3 h-full flex flex-col" side="left">
+      <SheetContent className="flex flex-col px-3 sm:w-72 h-full" side="left">
         <SheetHeader>
           <Button
-            className="flex justify-center items-center pb-2 pt-1"
+            className="flex justify-center items-center pt-1 pb-2"
             variant="link"
             asChild
           >
             <Link href="/dashboard" className="flex items-center gap-2">
-              <PanelsTopLeft className="w-6 h-6 mr-1" />
-              <SheetTitle className="font-bold text-lg">Brand</SheetTitle>
+              {/* <Image
+                src="/public/logos/icon.svg"
+                alt="Minttix Logo"
+                width="300"
+                height="300" /> */}
+              <LucideTicket className="mr-1 w-6 h-6" />
+
+              <SheetTitle className="font-bold text-lg">MintTix</SheetTitle>
             </Link>
           </Button>
         </SheetHeader>

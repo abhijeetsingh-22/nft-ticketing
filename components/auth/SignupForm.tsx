@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useEffect } from 'react'
 import { IconSpinner } from '@/components/ui/icons'
 import { useRouter } from 'next/navigation'
-import { signup } from '@/app/(auth)/signup/actions'
+import { signup } from '@/app/(public)/(auth)/signup/actions'
 
 export default function SignupForm() {
   const router = useRouter()

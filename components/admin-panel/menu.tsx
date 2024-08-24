@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Ellipsis, LogOut } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { Ellipsis, LogOut, Plus } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { getMenuList } from "@/lib/menu-list";
@@ -15,18 +15,50 @@ import {
   TooltipContent,
   TooltipProvider
 } from "@/components/ui/tooltip";
+import { useSession } from "next-auth/react";
 
 interface MenuProps {
   isOpen: boolean | undefined;
 }
 
 export function Menu({ isOpen }: MenuProps) {
+  const router = useRouter();
   const pathname = usePathname();
+  const session = useSession();
   const menuList = getMenuList(pathname);
 
   return (
     <ScrollArea className="[&>div>div[style]]:!block">
       <nav className="mt-8 w-full h-full">
+
+        <TooltipProvider disableHoverableContent>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
+              <Button
+                onClick={() => {
+                  router.push(`/${session?.data?.user?.id}/events/new`);
+                }}
+                className="justify-center mx-2 w-[80%] h-10"
+              >
+                <span className={cn(isOpen === false ? "" : "mr-4")}>
+                  <Plus size={18} />
+                </span>
+                <p
+                  className={cn(
+                    "whitespace-nowrap",
+                    isOpen === false ? "opacity-0 hidden" : "opacity-100"
+                  )}
+                >
+                  Create New Event
+                </p>
+              </Button>
+            </TooltipTrigger>
+            {isOpen === false && (
+              <TooltipContent side="right">Create New Event</TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
+
         <ul className="flex flex-col items-start space-y-1 px-2 min-h-[calc(100vh-48px-36px-16px-32px)] lg:min-h-[calc(100vh-32px-40px-32px)]">
           {menuList.map(({ groupLabel, menus }, index) => (
             <li className={cn("w-full", groupLabel ? "pt-5" : "")} key={index}>
@@ -62,7 +94,7 @@ export function Menu({ isOpen }: MenuProps) {
                               className="justify-start mb-1 w-full h-10"
                               asChild
                             >
-                              <Link href={href}>
+                              <Link href={`/${session?.data?.user?.id}${href}`}>
                                 <span
                                   className={cn(isOpen === false ? "" : "mr-4")}
                                 >
@@ -103,7 +135,7 @@ export function Menu({ isOpen }: MenuProps) {
               )}
             </li>
           ))}
-          <li className="flex items-end w-full grow">
+          <li className="flex w-full grow">
             <TooltipProvider disableHoverableContent>
               <Tooltip delayDuration={100}>
                 <TooltipTrigger asChild>

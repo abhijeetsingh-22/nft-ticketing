@@ -3,13 +3,11 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import Image from 'next/image'
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
-import { auth } from '@/auth'
-import Navbar from '@/components/Navbar'
+
 
 export default async function Home() {
   return (
     <>
-      <Navbar />
       <MaxWidthWrapper className='flex flex-col justify-center items-center mt-28 sm:mt-40 mb-12 text-center'>
         <div className='flex justify-center items-center space-x-2 border-gray-200 hover:border-gray-300 bg-white hover:bg-white/50 shadow-md backdrop-blur mx-auto mb-4 px-7 py-2 border rounded-full max-w-fit transition-all overflow-hidden'>
           <p className='font-semibold text-gray-700 text-sm'>

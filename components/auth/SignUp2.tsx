@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { createUser, signup } from '@/app/(auth)/signup/actions'
+import { createUser, signup } from '@/app/(public)/(auth)/signup/actions'
 import { ResultCode, getMessageFromCode } from '@/lib/utils'
 import { Label } from '../ui/label'
 

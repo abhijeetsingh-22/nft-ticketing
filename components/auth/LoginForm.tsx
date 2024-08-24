@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { authenticate } from '@/app/(auth)/login/actions'
+import { authenticate } from '@/app/(public)/(auth)/login/actions'
 import { Label } from '../ui/label'
 
 const loginSchema = z.object({
