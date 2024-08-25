@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutGrid, LogOut, User } from "lucide-react";
+import { ArrowUp, ArrowUpDown, ChevronUp, LayoutGrid, LogOut, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,59 +20,87 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-
-export function UserNav() {
+import { User as PrismaUser } from "@prisma/client";
+// import { signOut } from "@/auth";
+import { signOut } from "next-auth/react";
+export function UserNav({ isOpen, user }: { isOpen: boolean, user: PrismaUser }) {
   return (
-    <DropdownMenu>
-      <TooltipProvider disableHoverableContent>
-        <Tooltip delayDuration={100}>
-          <TooltipTrigger asChild>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                className="relative h-8 w-8 rounded-full"
-              >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="#" alt="Avatar" />
-                  <AvatarFallback className="bg-transparent">JD</AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">Profile</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+    <>
+      <div className="flex items-end w-full grow">
+        <TooltipProvider disableHoverableContent>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger asChild>
 
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">John Doe</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              johndoe@example.com
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuItem className="hover:cursor-pointer" asChild>
-            <Link href="/dashboard" className="flex items-center">
-              <LayoutGrid className="w-4 h-4 mr-3 text-muted-foreground" />
-              Dashboard
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="hover:cursor-pointer" asChild>
-            <Link href="/account" className="flex items-center">
-              <User className="w-4 h-4 mr-3 text-muted-foreground" />
-              Account
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className="hover:cursor-pointer" onClick={() => {}}>
-          <LogOut className="w-4 h-4 mr-3 text-muted-foreground" />
-          Sign out
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  {!isOpen ? <Button
+                    variant="outline"
+                    className="relative rounded-full w-8 h-8"
+                  >
+                    <Avatar className="w-8 h-8">
+                      <AvatarImage src="#" alt="Avatar" />
+                      <AvatarFallback className="bg-transparent">JD</AvatarFallback>
+                    </Avatar>
+                  </Button> :
+                    <Button
+                      variant="outline"
+                      className="relative w-full h-14"
+                    >
+                      <div className="flex items-center gap-2 w-full">
+                        <Avatar className="w-10 h-10">
+                          <AvatarImage src="#" alt="Avatar" />
+                          <AvatarFallback className="bg-transparent">{user?.name?.charAt(0).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col justify-center items-start">
+                          <p className="font-bold">{user?.name}</p>
+                          <span className="text-xs">{user?.email}</span>
+                        </div>
+                      </div>
+                      <ChevronUp className="w-6 h-6" />
+                    </Button>}
+                </DropdownMenuTrigger>
+
+
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  {/* <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="font-medium text-sm leading-none">John Doe</p>
+                      <p className="text-muted-foreground text-xs leading-none">
+                        johndoe@example.com
+                      </p>
+                    </div>
+                  </DropdownMenuLabel> */}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    {/* <DropdownMenuItem className="hover:cursor-pointer" asChild>
+                      <Link href="/dashboard" className="flex items-center">
+                        <LayoutGrid className="mr-3 w-4 h-4 text-muted-foreground" />
+                        Dashboard
+                      </Link>
+                    </DropdownMenuItem> */}
+                    <DropdownMenuItem className="hover:cursor-pointer" asChild>
+                      <Link href="/account" className="flex items-center">
+                        <User className="mr-3 w-4 h-4 text-muted-foreground" />
+                        Account
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="hover:cursor-pointer" onClick={() => signOut()}>
+                    <LogOut className="mr-3 w-4 h-4 text-muted-foreground" />
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TooltipTrigger>
+            {isOpen === false && (
+              <TooltipContent side="right">Profile</TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+
+    </>
+
   );
 }

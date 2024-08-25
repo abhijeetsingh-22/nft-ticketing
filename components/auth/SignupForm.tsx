@@ -1,26 +1,10 @@
 'use client'
 
-import { useFormState, useFormStatus } from 'react-dom'
+import { useFormStatus } from 'react-dom'
 import Link from 'next/link'
-import { useEffect } from 'react'
 import { IconSpinner } from '@/components/ui/icons'
-import { useRouter } from 'next/navigation'
-import { signup } from '@/app/(public)/(auth)/signup/actions'
 
 export default function SignupForm() {
-  const router = useRouter()
-  // const [result, dispatch] = useFormState(signup, undefined)
-
-  // useEffect(() => {
-  //   if (result) {
-  //     console.log('result', result)
-  //     if (result) {
-  //       router.push('/')
-  //     }
-
-  //   }
-  // }, [result, router])
-
   return (
     <form
       // action={dispatch}
