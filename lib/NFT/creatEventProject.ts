@@ -99,18 +99,17 @@ export const createEventProject = async (event: Event) => {
 
 export const createNftForEvent = async (event: Event, buyerWalletAddress: string) => {
     try {
-        // console.log("process.env.UNDERDOG_API_KEY", env);
         if (!process.env.UNDERDOG_API_KEY) {
             throw new Error("UNDERDOG_API_KEY is not set");
         }
-        console.log("here")
+
         const config = {
             headers: { Authorization: `Bearer ${process.env.UNDERDOG_API_KEY}` }
         }
         const nftData = {
             "name": event.name,
             "symbol": event.nftSymbol,
-            "image": event.thumbnail ? event.thumbnail : event.thumbnail,
+            "image": event.thumbnail ? event.thumbnail : event.coverPhoto,
         }
 
         const createNftResponse = await axios.post(
@@ -139,6 +138,11 @@ export const createNftForEvent = async (event: Event, buyerWalletAddress: string
             // throw new Error("NFT could not be confirmed");
         }
 
+        console.log("====================================retrieveNFT===================================")
+        console.log()
+        console.log(retrieveNFT.data)
+        console.log("=======================================================================")
+        console.log()
         /*
         const signatures = await connection.getSignaturesForAddress(
             new solanaweb3.PublicKey(event.mintAddress),
@@ -154,17 +158,17 @@ export const createNftForEvent = async (event: Event, buyerWalletAddress: string
         */
 
         // Transfer the NFT to the buyer's wallet
-        const transferResponse = await transferNftToBuyer(
-            event.projectId || '',
-            buyerWalletAddress,
-            createNftResponse.data.nftId
-        );
+        // const transferResponse = await transferNftToBuyer(
+        //     event.projectId || '',
+        //     buyerWalletAddress,
+        //     createNftResponse.data.nftId
+        // );
 
-        if (transferResponse.code !== 200) {
-            throw new Error("NFT transfer failed");
-        }
+        // if (transferResponse.code !== 200) {
+        //     throw new Error("NFT transfer failed");
+        // }
 
-        return { message: 'NFT created and transferred successfully', data: transferResponse.data, code: 200 };
+        return { message: 'NFT created and transferred successfully', data: retrieveNFT.data, code: 200 };
 
     } catch (error) {
         console.error('Error creating or transferring NFT in createNftForEvent:', error);
@@ -174,6 +178,7 @@ export const createNftForEvent = async (event: Event, buyerWalletAddress: string
 
 export const transferNftToBuyer = async (projectId: string, buyerWalletAddress: string, nftId: string) => {
     try {
+        console.log("projectId", projectId," buyerWalletAddress", buyerWalletAddress, " nftId", nftId )
         const postBody = {
             receiverAddress: buyerWalletAddress
         }
@@ -190,7 +195,15 @@ export const transferNftToBuyer = async (projectId: string, buyerWalletAddress: 
             config
         );
 
+        console.log("==============================createProjectResponse=========================================")
+        console.log()
+        console.log("createProjectResponse", createProjectResponse);
+        console.log()
+        console.log("=======================================================================")
+
+
         if (!createProjectResponse.data) {
+            console.error('NFT transfer failed:', createProjectResponse.data);
             throw new Error("NFT transfer failed");
         }
 
