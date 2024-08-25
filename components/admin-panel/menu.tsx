@@ -59,7 +59,7 @@ export function Menu({ isOpen }: MenuProps) {
           </Tooltip>
         </TooltipProvider>
 
-        <ul className="flex flex-col items-start space-y-1 px-2 min-h-[calc(100vh-48px-36px-16px-32px)] lg:min-h-[calc(100vh-32px-40px-32px)]">
+        <ul className="flex flex-col items-start space-y-1 px-2 min-h-[calc(90vh-48px-36px-16px-32px)] lg:min-h-[calc(90vh-32px-40px-32px)]">
           {menuList.map(({ groupLabel, menus }, index) => (
             <li className={cn("w-full", groupLabel ? "pt-5" : "")} key={index}>
               {(isOpen && groupLabel) || isOpen === undefined ? (
@@ -135,7 +135,7 @@ export function Menu({ isOpen }: MenuProps) {
               )}
             </li>
           ))}
-          <li className="flex w-full grow">
+          <li className="flex items-end w-full grow">
             <TooltipProvider disableHoverableContent>
               <Tooltip delayDuration={100}>
                 <TooltipTrigger asChild>
