@@ -1,9 +1,16 @@
+import { auth } from "@/auth";
 import AdminPanelLayout from "@/components/admin-panel/admin-panel-layout";
+import { LoggedInUserProvider } from "@/contexts/LoggedInUserContext";
+import { getUserById } from "@/db/users";
+import { User } from "@prisma/client";
 
-export default function PrivateLayout({
+export default async function PrivateLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  return <AdminPanelLayout>{children}</AdminPanelLayout>;
+  const session = await auth();
+  const user = await getUserById(session?.user?.id || "");
+  return <LoggedInUserProvider user={user as User}><AdminPanelLayout>{children}</AdminPanelLayout></LoggedInUserProvider>;
+
 }

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LucideTicket, PanelsTopLeft } from "lucide-react";
+import { LucideTicket } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useStore } from "@/hooks/use-store";

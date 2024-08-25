@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { Ellipsis, LogOut, Plus } from "lucide-react";
+import { Ellipsis, Plus } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { getMenuList } from "@/lib/menu-list";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { CollapseMenuButton } from "@/components/admin-panel/collapse-menu-button";
 import {
   Tooltip,
@@ -17,9 +16,10 @@ import {
 } from "@/components/ui/tooltip";
 import { useSession } from "next-auth/react";
 import { UserNav } from "./user-nav";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getUserById } from "@/db/users";
 import { User } from "@prisma/client";
+import { LoggedInUserContext } from "@/contexts/LoggedInUserContext";
 
 interface MenuProps {
   isOpen: boolean | undefined;
@@ -28,19 +28,12 @@ interface MenuProps {
 export function Menu({ isOpen }: MenuProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const session = useSession();
-  const [user, setUser] = useState<User | null>(null);
-  const menuList = getMenuList(pathname, session?.data?.user?.id || "");
+  const { user } = useContext(LoggedInUserContext);
+  const menuList = getMenuList(pathname, user?.id || "");
 
-
-  useEffect(() => {
-    getUserById(session?.data?.user?.id || "").then((user) => {
-      console.log("user in menu", user);
-      setUser(user);
-    });
-  }, [session]);
 
   console.log("user in menu", user);
+
   return (
     <div className="flex flex-col justify-between items-end mt-8 w-full h-full">
       <div className="flex flex-col items-start space-y-1 px-2 w-full h-full">
@@ -49,7 +42,7 @@ export function Menu({ isOpen }: MenuProps) {
             <TooltipTrigger asChild>
               <Button
                 onClick={() => {
-                  router.push(`/${session?.data?.user?.id}/events/new`);
+                  router.push(`/${user?.id}/events/new`);
                 }}
                 className="justify-center w-full h-10"
               >
