@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
@@ -11,6 +11,10 @@ import { CalendarIcon, FilterIcon, ListOrderedIcon, SearchIcon, TicketIcon } fro
 import Image from "next/image"
 import { Event } from "@prisma/client"
 import { buyEventTicket } from "@/db/ticket"
+import {useConnection, useWallet} from "@solana/wallet-adapter-react"
+import { LAMPORTS_PER_SOL } from "@solana/web3.js"
+import { createNftForEvent, transferNftToBuyer } from "@/lib/NFT/creatEventProject"
+
 
 export default function EventsList({ events }: { events: Event[] }) {
 
@@ -18,7 +22,22 @@ export default function EventsList({ events }: { events: Event[] }) {
   const [sortBy, setSortBy] = useState("date")
   const [filterLocation, setFilterLocation] = useState("")
   const [filterPrice, setFilterPrice] = useState([0, 200])
+  const [balance, setBalance] = useState<number | null>(null)
+	const {publicKey, signTransaction} = useWallet()
+	const {connection} = useConnection()
 
+
+	useEffect(() => {
+		if (publicKey) {
+			(async function getBalanceEvery10Seconds() {
+				const newBalance = await connection.getBalance(publicKey)
+				setBalance(newBalance / LAMPORTS_PER_SOL)
+				setTimeout(getBalanceEvery10Seconds, 10000)
+			})()
+		} else {
+			setBalance(null)
+		}
+	}, [publicKey, connection, balance])
 
   const filteredEvents = useMemo(() => {
     return events
@@ -46,10 +65,34 @@ export default function EventsList({ events }: { events: Event[] }) {
 
   const handleBuyEventTicket = async (eventId: string) => {
     let selectedEvent = events.filter((event) => event.id === eventId)[0]
-    // console.log("Buy event ticket", events.filter((event) => event.id === eventId)[0])
+    // console.log("Buy event ticket", events.filter((event) => event.id === eventId)[0]) 
+    console.log("selectedEvent........", selectedEvent)   
+    if(!publicKey || !connection || !balance) return
+    let paymentStatus: any= await buyEventTicket(selectedEvent, publicKey, connection, balance, signTransaction)
+    
+    if(paymentStatus?.code !== 200){
+      alert(`buyEventTicket fail: ${paymentStatus?.message}`)
+      return
+    }
+  //   console.log("here reached 101")
+  //   let nftCreation = await createNftForEvent(selectedEvent, signTransaction)
+  //   if(nftCreation?.code !== 200){
+  //     alert(`createNftForEvent fail: ${nftCreation?.message}`)
+  //     return
+  //   }
+  //   console.log("here reached 202",nftCreation)
 
-    let ticket = await buyEventTicket(selectedEvent)
-    console.log("Ticket", ticket)
+  //   const transferResponse = await transferNftToBuyer(
+  //     selectedEvent.projectId || '',
+  //     publicKey.toBase58(),
+  //     nftCreation.data.mintAddress,
+  //     signTransaction
+  // );
+
+  // console.log("here reached 303", transferResponse)
+
+
+    // console.log("Ticket", transferResponse)
   }
 
   return (
