@@ -6,7 +6,8 @@ import {
   SquarePen,
   LayoutGrid,
   LucideIcon,
-  Plus
+  Plus,
+  CalendarSearch
 } from "lucide-react";
 
 type Submenu = {
@@ -28,7 +29,7 @@ type Group = {
   menus: Menu[];
 };
 
-export function getMenuList(pathname: string): Group[] {
+export function getMenuList(pathname: string, userId: string): Group[] {
   return [
     // {
     //   groupLabel: "",
@@ -58,7 +59,7 @@ export function getMenuList(pathname: string): Group[] {
       groupLabel: "Events",
       menus: [
         {
-          href: "/events",
+          href: `/${userId}/events`,
           label: "My Events",
           active: pathname.includes("/events"),
           icon: SquarePen,
@@ -76,7 +77,7 @@ export function getMenuList(pathname: string): Group[] {
           ]
         },
         {
-          href: "/tickets",
+          href: `/${userId}/tickets`,
           label: "My Tickets",
           active: pathname.includes("/tickets"),
           icon: Bookmark,
@@ -92,7 +93,7 @@ export function getMenuList(pathname: string): Group[] {
       ]
     },
     {
-      groupLabel: "Settings",
+      groupLabel: "Upcoming Events",
       menus: [
         // {
         //   href: "/users",
@@ -102,9 +103,28 @@ export function getMenuList(pathname: string): Group[] {
         //   submenus: []
         // },
         {
-          href: "/account",
-          label: "Account",
-          active: pathname.includes("/account"),
+          href: "/events",
+          label: "All Events",
+          active: pathname.includes("/events"),
+          icon: CalendarSearch,
+          submenus: []
+        }
+      ]
+    },
+    {
+      groupLabel: "",
+      menus: [
+        // {
+        //   href: "/users",
+        //   label: "Users",
+        //   active: pathname.includes("/users"),
+        //   icon: Users,
+        //   submenus: []
+        // },
+        {
+          href: "/settings",
+          label: "Settings",
+          active: pathname.includes("/settings"),
           icon: Settings,
           submenus: []
         }

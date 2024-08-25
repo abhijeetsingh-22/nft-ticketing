@@ -1,5 +1,3 @@
-
-import { UserNav } from "@/components/admin-panel/user-nav";
 import { SheetMenu } from "@/components/admin-panel/sheet-menu";
 import { ModeToggle } from "../mode-toggle";
 import Link from "next/link";
@@ -20,7 +18,7 @@ export function Navbar({ title }: NavbarProps) {
         <div className="flex flex-1 justify-end items-center space-x-2">
           <Link className={buttonVariants({ variant: "link" })} href="/">Home</Link>
           <ModeToggle />
-          <UserNav />
+          {/* <UserNav /> */}
         </div>
       </div>
     </header>

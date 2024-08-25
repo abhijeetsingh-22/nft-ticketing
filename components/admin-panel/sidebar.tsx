@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "@/components/admin-panel/menu";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { SidebarToggle } from "@/components/admin-panel/sidebar-toggle";
-import Image from "next/image";
+import { auth } from "@/auth";
+
 
 export function Sidebar() {
   const sidebar = useStore(useSidebarToggle, (state) => state);
@@ -17,7 +18,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "fixed top-0 left-0 z-20 h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300",
+        "fixed top-0 left-0 z-20 h-screen -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300 ",
         sidebar?.isOpen === false ? "w-[90px]" : "w-72"
       )}
     >
@@ -25,7 +26,7 @@ export function Sidebar() {
       <div className="relative flex flex-col shadow-md dark:shadow-zinc-800 px-3 py-4 h-full overflow-y-auto">
         <Button
           className={cn(
-            "transition-transform ease-in-out duration-300 mb-1",
+            "transition-transform ease-in-out duration-300 mb-1 ",
             sidebar?.isOpen === false ? "translate-x-1" : "translate-x-0"
           )}
           variant="link"
