@@ -6,6 +6,7 @@ import { ArrowRight, Github } from 'lucide-react'
 import MobileNav from './MobileNav'
 import SignOutButton from './auth/SignOutButton'
 import { auth } from '@/auth'
+import ConnectWalletButton from '@/components/ConnectWalletButton'
 
 const Navbar = async () => {
   const session = await auth()
@@ -53,6 +54,7 @@ const Navbar = async () => {
                   })}>
                   Sign in
                 </Link> */}
+                <ConnectWalletButton />
                 <Link
                   href='/signup'
                   className={buttonVariants({
