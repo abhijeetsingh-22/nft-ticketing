@@ -75,7 +75,7 @@ const Navbar = async () => {
                     })}>
                     My Events
                   </Link>}
-                <span>{session?.user?.email}</span>
+                <Link className='cursor-pointer' href="/profile">{session?.user?.email}</Link>
                 <SignOutButton />
               </>
             )}

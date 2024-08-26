@@ -14,6 +14,9 @@ import { FaDiscord } from 'react-icons/fa'
 import { useForm, Controller } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { User } from '@prisma/client'
+import { toast } from 'sonner'
+import { updateUser } from '@/db/users'
 
 const schema = z.object({
   name: z.string().nonempty("Name is required"),
@@ -32,16 +35,16 @@ const schema = z.object({
   currency: z.string().optional()
 })
 
-export default function SecondProfile() {
+export default function SecondProfile({ profile }: { profile: User }) {
   const [copiedWallet, setCopiedWallet] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: '',
+      name: profile.name,
       bio: '',
-      email: '',
+      email: profile.email,
       showEmail: false,
       instagram: '',
       discord: '',
@@ -57,8 +60,8 @@ export default function SecondProfile() {
   })
 
   const connectedWallets = [
-    { name: 'Metamask', address: '0x1234...5678' },
-    { name: 'WalletConnect', address: '0xabcd...efgh' },
+    { name: 'Solana', address: profile?.walletAddress },
+    // { name: 'WalletConnect', address: '0xabcd...efgh' },
   ]
 
   const handleCopyWallet = (address: string) => {
@@ -71,8 +74,15 @@ export default function SecondProfile() {
     setIsLoading(true)
     console.log("data", data);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    toast.promise(
+      updateUser(profile.id, data),
+      {
+        loading: 'Updating profile...',
+        success: 'Profile updated successfully',
+        error: 'Failed to update profile',
+      }
+    );
+
     setIsLoading(false)
   }
 
@@ -125,7 +135,7 @@ export default function SecondProfile() {
               <p className="mt-1 text-gray-500 text-sm">This is how people can contact you.</p>
             </div>
             <div className="space-y-4 md:col-span-2">
-              <Input id="email" type="email" placeholder="Enter your email" className="w-full" {...register("email")} />
+              <Input id="email" disabled type="email" placeholder="Enter your email" className="w-full" {...register("email")} />
               {errors.email && <p className="text-red-500">{errors.email.message?.toString()}</p>}
               <div className="flex items-center space-x-2">
                 <Controller
@@ -149,33 +159,36 @@ export default function SecondProfile() {
             </div>
             <div className="space-y-4 md:col-span-2">
               <AnimatePresence>
-                {connectedWallets.map((wallet, index) => (
-                  <motion.div
-                    key={wallet.address}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="flex justify-between items-center bg-gray-100 p-3 rounded-lg"
-                  >
-                    <div>
-                      <p className="font-medium">{wallet.name}</p>
-                      <p className="text-gray-500 text-sm">{wallet.address}</p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleCopyWallet(wallet.address)}
-                      className="text-blue-600 hover:text-blue-800"
+                {connectedWallets.map((wallet, index) => {
+                  if (!wallet?.address || wallet?.address === null) return null;
+                  return (
+                    <motion.div
+                      key={wallet.address}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="flex justify-between items-center bg-gray-100 p-3 rounded-lg"
                     >
-                      {copiedWallet === wallet.address ? (
-                        <Check className="w-4 h-4" />
-                      ) : (
-                        <Copy className="w-4 h-4" />
-                      )}
-                    </Button>
-                  </motion.div>
-                ))}
+                      <div>
+                        <p className="font-medium">{wallet.name}</p>
+                        <p className="text-gray-500 text-sm">{wallet.address}</p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleCopyWallet(wallet.address || "")}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        {copiedWallet === wallet.address ? (
+                          <Check className="w-4 h-4" />
+                        ) : (
+                          <Copy className="w-4 h-4" />
+                        )}
+                      </Button>
+                    </motion.div>
+                  )
+                })}
               </AnimatePresence>
               <Button variant="outline" className="w-full">Connect New Wallet</Button>
             </div>

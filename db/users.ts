@@ -41,6 +41,22 @@ export async function getUserById(id: string) {
 }
 
 
+export async function updateUser(id: string, data: { name?: string, bio?: string, email?: string, showEmail?: boolean, instagram?: string, discord?: string, twitter?: string, github?: string, streetAddress?: string, city?: string, state?: string, postalCode?: string, country?: string, currency?: string }) {
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: {
+        ...data,
+        updatedAt: new Date(),
+      },
+    })
+
+    return { type: 'success', resultCode: 'USER_UPDATED', user: updatedUser }
+  } catch (error) {
+    throw error;
+  }
+}
+
 
 
 
