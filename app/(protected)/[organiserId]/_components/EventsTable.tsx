@@ -230,7 +230,7 @@ export function EventsTable({ events, organiserId }: Readonly<Props>) {
           </div>
         </DialogContent>
       </Dialog>
-      <div className='mt-10'>
+      <div className='w-full'>
         <ReusableTable data={events} columns={columns} />
       </div>
     </>

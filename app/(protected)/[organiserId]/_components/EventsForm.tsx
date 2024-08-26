@@ -18,6 +18,9 @@ import { useRouter } from "next/navigation"
 import { UploadButton, UploadDropzone } from "@/lib/uploadthing"
 import { useEffect } from "react"
 import Image from "next/image"
+import { ArrowLeft, CalendarIcon, Upload } from "lucide-react"
+
+
 
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -38,6 +41,7 @@ const schema = z.object({
 
 export type EventFormType = z.infer<typeof schema>
 
+
 export default function EventsForm({ organiserId, event }: { organiserId: string, event?: Event }) {
   const router = useRouter()
   const { register, handleSubmit, formState: { errors }, setValue, watch, control } = useForm<EventFormType>({
@@ -55,8 +59,6 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
   const watchStartDate = watch('startDate')
   const watchEndDate = watch('endDate')
 
-  // console.log(errors)
-
   const onSubmit = async (data: any) => {
     data.organizerId = organiserId
     toast.promise(
@@ -72,54 +74,55 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
   }
 
   return (
-    <MaxWidthWrapper className="bg-slate-200 mt-10 py-10 max-w-7xl">
-      <Button variant="outline" onClick={() => router.back()}>Back</Button>
-      <CardHeader>
-        <CardTitle>Create New Event</CardTitle>
-        <CardDescription>Fill out the details for your new event.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form className="gap-6 grid" onSubmit={handleSubmit(onSubmit)}>
-          <div className="gap-6 grid grid-cols-1 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" placeholder="Event Name" {...register("name")} />
-              {errors.name && <p className="text-red-500">{errors.name.message?.toString()}</p>}
-            </div>
+    <div className="bg-background min-h-screen">
+      <main className="mx-auto px-4 py-8 container">
+        <form className="space-y-8 mx-auto max-w-3xl" onSubmit={handleSubmit(onSubmit)}>
+          <div className="space-y-2">
+            <Label htmlFor="name">Event Name</Label>
+            <Input id="name" placeholder="Enter event name" {...register("name")} />
+            {errors.name && <p className="text-red-500">{errors.name.message?.toString()}</p>}
           </div>
+
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
-            <Textarea id="description" placeholder="Describe your event" rows={4} {...register("description")} />
+            <Textarea id="description" placeholder="Describe your event" className="min-h-[100px]" {...register("description")} />
             {errors.description && <p className="text-red-500">{errors.description.message?.toString()}</p>}
           </div>
 
-          <div className="gap-6 grid grid-cols-1 sm:grid-cols-3">
+          <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="startDate">Start Date</Label>
-              <DatePicker
-                allowOnlyFutureDates={true}
-                selected={watchStartDate}
-                onSelect={(date) => setValue('startDate', date)}
-              />
+              <div className="relative">
+                <DatePicker
+                  allowOnlyFutureDates={true}
+                  selected={watchStartDate}
+                  onSelect={(date) => setValue('startDate', date)}
+                  className="pl-10"
+                />
+              </div>
               {errors.startDate && <p className="text-red-500">{errors.startDate.message?.toString()}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="endDate">End Date</Label>
-              <DatePicker
-                allowOnlyFutureDates={true}
-                selected={watchEndDate}
-                onSelect={(date) => setValue('endDate', date)}
-              />
+              <div className="relative">
+                <DatePicker
+                  allowOnlyFutureDates={true}
+                  selected={watchEndDate}
+                  onSelect={(date) => setValue('endDate', date)}
+                  className="pl-10"
+                />
+              </div>
               {errors.endDate && <p className="text-red-500">{errors.endDate.message?.toString()}</p>}
             </div>
           </div>
-          <div className="gap-6 grid grid-cols-1 sm:grid-cols-2">
+
+          <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="venue-name">Venue Name</Label>
-              <Input id="venue-name" placeholder="Venue Name" {...register("venueName")} />
+              <Label htmlFor="venueName">Venue Name</Label>
+              <Input id="venueName" placeholder="Enter venue name" {...register("venueName")} />
               {errors.venueName && <p className="text-red-500">{errors.venueName.message?.toString()}</p>}
             </div>
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Label htmlFor="state">State</Label>
               <Controller
                 name="state"
@@ -129,7 +132,7 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
                     value={field.value ?? undefined}
                     onValueChange={field.onChange}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger id="state">
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
                     <SelectContent>
@@ -146,26 +149,27 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
               {errors.state && <p className="text-red-500">{errors.state.message?.toString()}</p>}
             </div>
           </div>
-          <div className="gap-6 grid grid-cols-1 sm:grid-cols-2">
+
+          <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="number-of-tickets">Number of Tickets</Label>
-              <Input id="number-of-tickets" placeholder="Number of Tickets" type="number" {...register("numberOfTickets", { valueAsNumber: true })} />
+              <Input id="number-of-tickets" placeholder="Enter number of tickets" type="number" {...register("numberOfTickets", { valueAsNumber: true })} />
               {errors.numberOfTickets && <p className="text-red-500">{errors.numberOfTickets.message?.toString()}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="ticket-price">Ticket Price</Label>
-              <Input id="ticket-price" placeholder="Ticket Price" type="number" step="0.01" {...register("ticketPrice", { valueAsNumber: true })} />
+              <Input id="ticket-price" placeholder="Enter ticket price" type="number" step="0.01" {...register("ticketPrice", { valueAsNumber: true })} />
               {errors.ticketPrice && <p className="text-red-500">{errors.ticketPrice.message?.toString()}</p>}
             </div>
           </div>
-          <div className="gap-6 grid grid-cols-1 sm:grid-cols-2">
+
+          <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="cover-photo">Cover Photo</Label>
+              <Label>Cover Photo</Label>
               {watch("coverPhoto") ? (
                 <Image src={watch("coverPhoto")} alt="Cover Photo" className="w-full h-auto" width={200} height={200} />
               ) : (
                 <UploadDropzone
-
                   endpoint="imageUploader"
                   onClientUploadComplete={(res: any) => {
                     setValue("coverPhoto", res[0].url)
@@ -180,7 +184,7 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
               {errors.coverPhoto && <p className="text-red-500">{errors.coverPhoto.message?.toString()}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="thumbnail">Thumbnail</Label>
+              <Label>Thumbnail</Label>
               {watch("thumbnail") ? (
                 <Image src={watch("thumbnail")} alt="Thumbnail" className="w-full h-auto" width={200} height={200} />
               ) : (
@@ -200,12 +204,12 @@ export default function EventsForm({ organiserId, event }: { organiserId: string
             </div>
           </div>
 
-          <CardFooter className="flex justify-end gap-4">
-            <Button variant="outline">Cancel</Button>
+          <div className="flex justify-end space-x-4 pt-6">
+            <Button variant="outline" onClick={(e) => { e.preventDefault(); router.back() }}>Cancel</Button>
             <Button type="submit">Create Event</Button>
-          </CardFooter>
+          </div>
         </form>
-      </CardContent>
-    </MaxWidthWrapper>
+      </main>
+    </div>
   )
 }
