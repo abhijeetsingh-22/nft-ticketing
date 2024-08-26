@@ -14,6 +14,7 @@ import { buyEventTicket } from "@/db/ticket"
 import {useConnection, useWallet} from "@solana/wallet-adapter-react"
 import { LAMPORTS_PER_SOL } from "@solana/web3.js"
 import { createNftForEvent, transferNftToBuyer } from "@/lib/NFT/creatEventProject"
+import { mintNFT } from "@/db/NFT"
 
 
 export default function EventsList({ events }: { events: Event[] }) {
@@ -68,12 +69,13 @@ export default function EventsList({ events }: { events: Event[] }) {
     // console.log("Buy event ticket", events.filter((event) => event.id === eventId)[0]) 
     console.log("selectedEvent........", selectedEvent)   
     if(!publicKey || !connection || !balance) return
-    let paymentStatus: any= await buyEventTicket(selectedEvent, publicKey, connection, balance, signTransaction)
+    let paymentStatus: any= await mintNFT()
+    // let paymentStatus: any= await buyEventTicket(selectedEvent, publicKey, connection, balance, signTransaction)
     
-    if(paymentStatus?.code !== 200){
-      alert(`buyEventTicket fail: ${paymentStatus?.message}`)
-      return
-    }
+    // if(paymentStatus?.code !== 200){
+    //   alert(`buyEventTicket fail: ${paymentStatus?.message}`)
+    //   return
+    // }
   //   console.log("here reached 101")
   //   let nftCreation = await createNftForEvent(selectedEvent, signTransaction)
   //   if(nftCreation?.code !== 200){
