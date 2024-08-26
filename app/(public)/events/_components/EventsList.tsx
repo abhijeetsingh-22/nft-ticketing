@@ -69,14 +69,14 @@ export default function EventsList({ events }: { events: Event[] }) {
     // console.log("Buy event ticket", events.filter((event) => event.id === eventId)[0]) 
     console.log("selectedEvent........", selectedEvent)   
     if(!publicKey || !connection || !balance) return
-    let paymentStatus: any= await mintNFT()
-    // let paymentStatus: any= await buyEventTicket(selectedEvent, publicKey, connection, balance, signTransaction)
+    // let paymentStatus: any= await mintNFT()
+    let paymentStatus: any= await buyEventTicket(selectedEvent, publicKey, connection, balance, signTransaction)
     
-    // if(paymentStatus?.code !== 200){
-    //   alert(`buyEventTicket fail: ${paymentStatus?.message}`)
-    //   return
-    // }
-  //   console.log("here reached 101")
+    if(paymentStatus?.code !== 200){
+      alert(`buyEventTicket fail: ${paymentStatus?.message}`)
+      return
+    }
+    console.log("here reached 101")
   //   let nftCreation = await createNftForEvent(selectedEvent, signTransaction)
   //   if(nftCreation?.code !== 200){
   //     alert(`createNftForEvent fail: ${nftCreation?.message}`)
