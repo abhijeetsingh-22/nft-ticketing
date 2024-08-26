@@ -12,5 +12,4 @@ export default async function PrivateLayout({
   const session = await auth();
   const user = await getUserById(session?.user?.id || "");
   return <LoggedInUserProvider user={user as User}><AdminPanelLayout>{children}</AdminPanelLayout></LoggedInUserProvider>;
-
 }
