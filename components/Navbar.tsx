@@ -7,6 +7,7 @@ import MobileNav from './MobileNav'
 import SignOutButton from './auth/SignOutButton'
 import { auth } from '@/auth'
 import ConnectWalletButton from '@/components/ConnectWalletButton'
+import Image from 'next/image'
 
 const Navbar = async () => {
   const session = await auth()
@@ -20,7 +21,8 @@ const Navbar = async () => {
         <div className='flex justify-between items-center border-zinc-200 border-b h-14'>
           <Link
             href='/'
-            className='z-40 flex font-semibold'>
+            className='z-40 flex font-semibold items-center gap-2'>
+              <Image src="/logos/icon.png" alt="MintTix" width={30} height={30} />
             <span>MintTix</span>
           </Link>
 

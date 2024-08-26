@@ -13,6 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' className={GeistSans.className}>
+      <link rel="icon" href="/logos/icon.png" />
       <SessionProvider >
         <body
           className='antialiased'>
