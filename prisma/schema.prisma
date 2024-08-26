@@ -23,16 +23,16 @@ model Event {
   coverPhoto          String
   thumbnail           String
   organizerId         String
-  ticketPrice         Float?
-  numberOfTickets     Int?
-  numberOfTicketsSold Int       @default(0)
-  projectId           String?
-  mintAddress         String?
-  nftSymbol           String?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
-  tickets             Ticket[]
+  numberOfTickets     Int?
+  ticketPrice         Float?
+  mintAddress         String?
+  nftSymbol           String?
+  numberOfTicketsSold Int       @default(0)
+  projectId           String?
   organizer           User      @relation(fields: [organizerId], references: [id])
+  tickets             Ticket[]
 
   @@map("events")
 }
@@ -53,28 +53,26 @@ model Ticket {
   @@map("tickets")
 }
 
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  walletAddress String?   @unique
+  salt          String?
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  events        Event[]
+  tickets       Ticket[]
+
+  @@map("users")
+}
+
 enum TicketStatus {
   AVAILABLE
   SOLD
   TRANSFERRED
   REDEEMED
-}
-
-model User {
-  id            String  @id @default(cuid())
-  name          String?
-  email         String  @unique
-  walletAddress String? @unique
-  salt          String?
-  password      String?
-
-  emailVerified DateTime?
-  image         String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  tickets   Ticket[]
-  events    Event[]
-
-  @@map("users")
 }

@@ -1,6 +1,8 @@
+'use server'
 import axios from 'axios';
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, Keypair, PublicKey, Transaction } from '@solana/web3.js';
 import { Event } from "@prisma/client";
+import { TOKEN_PROGRAM_ID, getOrCreateAssociatedTokenAccount, createTransferInstruction } from "@solana/spl-token";
 
 // TODO: put these in env
 const underdogApiEndpoint = "https://dev.underdogprotocol.com";
@@ -35,9 +37,11 @@ const createNftSymbol = (eventName: string): string => {
 export const createEventProject = async (event: Event) => {
     try {
         let resBody = null;
+
         if (!process.env.UNDERDOG_API_KEY) {
             throw new Error("UNDERDOG_API_KEY is not set");
         }
+
         const config = {
             headers: { Authorization: `Bearer ${process.env.UNDERDOG_API_KEY}` }
         }
@@ -82,7 +86,8 @@ export const createEventProject = async (event: Event) => {
         }
 
         if (!projectAccountInfo) {
-            throw new Error("Project account information could not be retrieved");
+            console.error("Project account information could not be retrieved");
+            // throw new Error("Project account information could not be retrieved");
         }
 
         return { message: 'Event created successfully', data: resBody, code: 200 };
@@ -93,18 +98,20 @@ export const createEventProject = async (event: Event) => {
     }
 };
 
-export const createNftForEvent = async (event: NFTEvent) => {
+export const createNftForEvent = async (event: Event) => {
     try {
+        console.log("here reached 101")
         if (!process.env.UNDERDOG_API_KEY) {
             throw new Error("UNDERDOG_API_KEY is not set");
         }
+
         const config = {
             headers: { Authorization: `Bearer ${process.env.UNDERDOG_API_KEY}` }
         }
         const nftData = {
-            "name": event.event.name,
-            "symbol": event.symbol,
-            "image": event.event.thumbnail ? event.event.thumbnail : event.event.thumbnail,
+            "name": event.name,
+            "symbol": event.nftSymbol,
+            "image": event.thumbnail ? event.thumbnail : event.coverPhoto,
         }
 
         const createNftResponse = await axios.post(
@@ -112,6 +119,8 @@ export const createNftForEvent = async (event: NFTEvent) => {
             nftData,
             config
         );
+
+        console.log("createNftResponse", createNftResponse.data);
 
         let retrieveNFT = null;
         let retries = 0;
@@ -127,9 +136,15 @@ export const createNftForEvent = async (event: NFTEvent) => {
         } while ((!retrieveNFT.data || retrieveNFT.data.status !== 'confirmed') && retries < 50);
 
         if (!retrieveNFT.data || retrieveNFT.data.status !== 'confirmed') {
-            throw new Error("NFT could not be confirmed");
+            console.log('NFT could not be confirmed:', retrieveNFT.data);
+            // throw new Error("NFT could not be confirmed");
         }
 
+        console.log("====================================retrieveNFT===================================")
+        console.log()
+        console.log(retrieveNFT.data)
+        console.log("=======================================================================")
+        console.log()
         /*
         const signatures = await connection.getSignaturesForAddress(
             new solanaweb3.PublicKey(event.mintAddress),
@@ -145,17 +160,12 @@ export const createNftForEvent = async (event: NFTEvent) => {
         */
 
         // Transfer the NFT to the buyer's wallet
-        const transferResponse = await transferNftToBuyer(
-            event.projectId,
-            event.buyerWalletAddress,
-            createNftResponse.data.nftId
-        );
+        
+        // if (transferResponse.code !== 200) {
+        //     throw new Error("NFT transfer failed");
+        // }
 
-        if (transferResponse.code !== 200) {
-            throw new Error("NFT transfer failed");
-        }
-
-        return { message: 'NFT created and transferred successfully', data: transferResponse.data, code: 200 };
+        return { message: 'NFT created and transferred successfully', data: retrieveNFT.data, code: 200 };
 
     } catch (error) {
         console.error('Error creating or transferring NFT in createNftForEvent:', error);
@@ -163,25 +173,61 @@ export const createNftForEvent = async (event: NFTEvent) => {
     }
 }
 
-export const transferNftToBuyer = async (projectId: string, buyerWalletAddress: string, nftId: string) => {
+export const transferNftToBuyer = async (projectId: string, buyerWalletAddress: string, nftMintAddress: string) => {
     try {
-        const postBody = {
-            receiverAddress: buyerWalletAddress
+        console.log("projectId", projectId," buyerWalletAddress", buyerWalletAddress, " nftMintAddress", nftMintAddress )
+        
+        const buyerWallet = new PublicKey(buyerWalletAddress);
+        const mintAddress = new PublicKey(nftMintAddress);
+
+        
+        let PRIVATE_KEY = process.env.PRIVATE_KEY
+        if(!PRIVATE_KEY) {
+            throw new Error("PRIVATE_KEY is not set");
         }
-        const config = {
-            headers: { Authorization: `Bearer ${process.env.UNDERDOG_API_KEY}` }
+
+        console.log("here")
+        const senderWallet = Keypair.fromSecretKey(Uint8Array.from(JSON.parse(PRIVATE_KEY)));
+
+        console.log("here...", senderWallet)
+        if(!senderWallet) {
+            throw new Error("senderWallet is not set");
         }
-        const createProjectResponse = await axios.post(
-            `${underdogApiEndpoint}/v2/projects/${projectId}/nfts/${nftId}/transfer`,
-            postBody,
-            config
+        const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+            connection,
+            senderWallet,
+            mintAddress,
+            senderWallet.publicKey
+        );
+        console.log("senderTokenAccount", senderTokenAccount)
+        // Get or create the token account of the buyer
+        const buyerTokenAccount = await getOrCreateAssociatedTokenAccount(
+            connection,
+            senderWallet,
+            mintAddress,
+            buyerWallet
+        );
+        console.log("buyerTokenAccount", buyerTokenAccount)
+          // Create the transaction to transfer the NFT
+          const transaction = new Transaction().add(
+            createTransferInstruction(
+                senderTokenAccount.address,
+                buyerTokenAccount.address,
+                senderWallet.publicKey,
+                1, // Assuming transferring 1 NFT
+                [],
+                TOKEN_PROGRAM_ID
+            )
         );
 
-        if (!createProjectResponse.data) {
-            throw new Error("NFT transfer failed");
-        }
+        // Fetch a recent blockhash and set it on the transaction
+        const { blockhash } = await connection.getLatestBlockhash();
+        transaction.recentBlockhash = blockhash;
+        transaction.feePayer = senderWallet.publicKey;
 
-        return { message: 'NFT transferred successfully', data: createProjectResponse.data, code: 200 };
+        // Sign and send the transactio
+
+        return { message: 'NFT transferred successfully', data: {transaction, senderWallet}, code: 200 };
     } catch (error) {
         console.error('Error transferring NFT to buyer:', error);
         return { message: 'Internal Server error: Function transferNftToBuyer.', data: null, code: 400 };
