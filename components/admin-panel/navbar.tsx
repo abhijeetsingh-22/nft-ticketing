@@ -17,7 +17,7 @@ export function Navbar({ title }: NavbarProps) {
         </div>
         <div className="flex flex-1 justify-end items-center space-x-2">
           <Link className={buttonVariants({ variant: "link" })} href="/">Home</Link>
-          <ModeToggle />
+          {/* <ModeToggle /> */}
           {/* <UserNav /> */}
         </div>
       </div>
