@@ -12,7 +12,7 @@ export default function ConnectWalletButton() {
 	const {connection} = useConnection()
 	useEffect(() => {
 		if (publicKey) {
-			;(async function getBalanceEvery10Seconds() {
+			(async function getBalanceEvery10Seconds() {
 				const newBalance = await connection.getBalance(publicKey)
 				setBalance(newBalance / LAMPORTS_PER_SOL)
 				setTimeout(getBalanceEvery10Seconds, 10000)

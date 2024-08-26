@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
@@ -10,12 +10,36 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { CalendarIcon, FilterIcon, ListOrderedIcon, SearchIcon, TicketIcon } from "lucide-react"
 import Image from "next/image"
 import { Event } from "@prisma/client"
+import { buyEventTicket } from "@/db/ticket"
+import {useConnection, useWallet} from "@solana/wallet-adapter-react"
+import { LAMPORTS_PER_SOL } from "@solana/web3.js"
+import { createNftForEvent, transferNftToBuyer } from "@/lib/NFT/creatEventProject"
+import { mintNFT } from "@/db/NFT"
+
+
 export default function EventsList({ events }: { events: Event[] }) {
 
   const [searchTerm, setSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState("date")
   const [filterLocation, setFilterLocation] = useState("")
   const [filterPrice, setFilterPrice] = useState([0, 200])
+  const [balance, setBalance] = useState<number | null>(null)
+	const {publicKey, signTransaction} = useWallet()
+	const {connection} = useConnection()
+
+
+	useEffect(() => {
+		if (publicKey) {
+			(async function getBalanceEvery10Seconds() {
+				const newBalance = await connection.getBalance(publicKey)
+				setBalance(newBalance / LAMPORTS_PER_SOL)
+				setTimeout(getBalanceEvery10Seconds, 10000)
+			})()
+		} else {
+			setBalance(null)
+		}
+	}, [publicKey, connection, balance])
+
   const filteredEvents = useMemo(() => {
     return events
       .filter((event) => {
@@ -39,6 +63,40 @@ export default function EventsList({ events }: { events: Event[] }) {
         }
       })
   }, [events, searchTerm, filterLocation, sortBy])
+
+  const handleBuyEventTicket = async (eventId: string) => {
+    let selectedEvent = events.filter((event) => event.id === eventId)[0]
+    // console.log("Buy event ticket", events.filter((event) => event.id === eventId)[0]) 
+    console.log("selectedEvent........", selectedEvent)   
+    if(!publicKey || !connection || !balance) return
+    // let paymentStatus: any= await mintNFT()
+    let paymentStatus: any= await buyEventTicket(selectedEvent, publicKey, connection, balance, signTransaction)
+    
+    if(paymentStatus?.code !== 200){
+      alert(`buyEventTicket fail: ${paymentStatus?.message}`)
+      return
+    }
+    console.log("here reached 101")
+  //   let nftCreation = await createNftForEvent(selectedEvent, signTransaction)
+  //   if(nftCreation?.code !== 200){
+  //     alert(`createNftForEvent fail: ${nftCreation?.message}`)
+  //     return
+  //   }
+  //   console.log("here reached 202",nftCreation)
+
+  //   const transferResponse = await transferNftToBuyer(
+  //     selectedEvent.projectId || '',
+  //     publicKey.toBase58(),
+  //     nftCreation.data.mintAddress,
+  //     signTransaction
+  // );
+
+  // console.log("here reached 303", transferResponse)
+
+
+    // console.log("Ticket", transferResponse)
+  }
+
   return (
     <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 container">
       <div className="flex justify-between items-center mb-8">
@@ -135,14 +193,15 @@ export default function EventsList({ events }: { events: Event[] }) {
                     <AvatarImage src="/placeholder-user.jpg" alt={event.organizerId} />
                     <AvatarFallback>{event.organizerId.charAt(0).toUpperCase()}</AvatarFallback>
                   </Avatar>
-                  <span className="font-medium text-sm">{event.organizerId}</span>
+                  {/* <span className="font-medium text-sm">{event.organizerId}</span> */}
                 </div>
                 <div className="flex items-center gap-2">
                   <TicketIcon className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-muted-foreground text-sm">$5</span>
+                  <span className="text-muted-foreground text-sm">${event.ticketPrice}</span>
                   <TicketIcon className="w-4 h-4 text-muted-foreground" />
                   <span className="text-muted-foreground text-sm">10 left</span>
                 </div>
+                <Button onClick={() => handleBuyEventTicket(event.id)}>Buy</Button>
               </div>
             </CardContent>
           </Card>
