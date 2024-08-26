@@ -8,7 +8,6 @@ import { User } from '@prisma/client';
 const ProfilePage = async () => {
   const session = await auth();
   const user = await getUserById(session?.user?.id || "");
-  console.log("user", user);
 
   return (
     <ContentLayout title='Profile'>

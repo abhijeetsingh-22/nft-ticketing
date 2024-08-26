@@ -37,7 +37,7 @@ const Navbar = async () => {
             </Link>
             {!isAuth ? (
               <>
-                <Link
+                {/* <Link
                   target='_blank'
                   href='https://github.com/abhijeetsingh-22/nft-ticketing'
                   className={buttonVariants({
@@ -45,7 +45,7 @@ const Navbar = async () => {
                     size: 'sm',
                   })}>
                   <Github className='w-5 h-5' />
-                </Link>
+                </Link> */}
                 {/* <Link
                   href='/login'
                   className={buttonVariants({

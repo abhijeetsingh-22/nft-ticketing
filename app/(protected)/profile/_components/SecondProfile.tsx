@@ -326,7 +326,7 @@ export default function SecondProfile({ profile }: { profile: User }) {
             <Button type="button" variant="outline" className="border-gray-300 bg-white hover:bg-gray-50 text-gray-600">
               Reset
             </Button>
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading}>
               {isLoading ? (
                 <Loader2 className="mr-2 w-4 h-4 animate-spin" />
               ) : null}
