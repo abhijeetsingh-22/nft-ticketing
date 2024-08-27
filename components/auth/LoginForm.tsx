@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -9,6 +9,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { authenticate } from '@/app/(public)/(auth)/login/actions'
 import { Label } from '../ui/label'
+import Link from 'next/link'
+import { cn } from '@/lib/utils'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address').min(5, 'Email must be at least 5 characters long').max(255, 'Email must be at most 255 characters long'),
@@ -70,9 +72,9 @@ export default function LoginForm() {
       <Button className="mt-8 w-full" type="submit">
         Log in
       </Button>
-      <Button className="mt-4 w-full" onClick={() => router.push('/signup')}>
+      <Link className={cn("mt-4 w-full", buttonVariants())} href="/signup">
         No account yet? Sign up
-      </Button>
+      </Link>
     </form>
   )
 }
