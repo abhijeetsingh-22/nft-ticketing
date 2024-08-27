@@ -72,14 +72,8 @@ export const authConfig = {
 
 
           if (hashedPassword === user.password) {
-            console.log("AUTHORIZED user", user);
-            // if (!user.isOnboarded) {
-            //   return Response.redirect(new URL('/onboarding').toString())
-            // }
-
             return user
           } else {
-            // console.log('UNAUTHORIZED user', user);
             return null
           }
         }
