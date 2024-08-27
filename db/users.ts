@@ -1,5 +1,6 @@
 'use server'
 import prisma from "@/db";
+import { User } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 export async function createUser({ email, name, walletAddress }: { email: string, name: string, walletAddress: string }) {
   const existingUser = await prisma.user.findUnique({
@@ -42,7 +43,7 @@ export async function getUserById(id: string) {
 }
 
 
-export async function updateUser(id: string, data: { name?: string, bio?: string, email?: string, showEmail?: boolean, instagram?: string, discord?: string, twitter?: string, github?: string, streetAddress?: string, city?: string, state?: string, postalCode?: string, country?: string, currency?: string, isOnboarded?: boolean }) {
+export async function updateUser(id: string, data: Partial<User>) {
   try {
     const updatedUser = await prisma.user.update({
       where: { id },

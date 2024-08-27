@@ -4,6 +4,7 @@ import { auth } from '@/auth'
 import { getUserById } from '@/db/users'
 import { redirect } from 'next/navigation'
 import { Routes } from '@/routes'
+import { User } from '@prisma/client'
 
 const OnboardingPage = async () => {
   const session = await auth()
@@ -19,7 +20,7 @@ const OnboardingPage = async () => {
   }
 
   return (
-    <Onboarding />
+    <Onboarding user={loggedInUser as User} />
   )
 }
 
