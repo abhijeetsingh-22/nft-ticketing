@@ -13,8 +13,7 @@ import { Event } from "@prisma/client"
 import { buyEventTicket } from "@/db/ticket"
 import {useConnection, useWallet} from "@solana/wallet-adapter-react"
 import { LAMPORTS_PER_SOL } from "@solana/web3.js"
-import { createNftForEvent, transferNftToBuyer } from "@/lib/NFT/creatEventProject"
-import { mintNFT } from "@/db/NFT"
+
 
 
 export default function EventsList({ events }: { events: Event[] }) {
@@ -66,36 +65,19 @@ export default function EventsList({ events }: { events: Event[] }) {
 
   const handleBuyEventTicket = async (eventId: string) => {
     let selectedEvent = events.filter((event) => event.id === eventId)[0]
-    // console.log("Buy event ticket", events.filter((event) => event.id === eventId)[0]) 
+
     console.log("selectedEvent........", selectedEvent)   
     if(!publicKey || !connection || !balance) return
-    // let paymentStatus: any= await mintNFT()
+
     let paymentStatus: any= await buyEventTicket(selectedEvent, publicKey, connection, balance, signTransaction)
     
     if(paymentStatus?.code !== 200){
       alert(`buyEventTicket fail: ${paymentStatus?.message}`)
       return
     }
-    console.log("here reached 101")
-  //   let nftCreation = await createNftForEvent(selectedEvent, signTransaction)
-  //   if(nftCreation?.code !== 200){
-  //     alert(`createNftForEvent fail: ${nftCreation?.message}`)
-  //     return
-  //   }
-  //   console.log("here reached 202",nftCreation)
-
-  //   const transferResponse = await transferNftToBuyer(
-  //     selectedEvent.projectId || '',
-  //     publicKey.toBase58(),
-  //     nftCreation.data.mintAddress,
-  //     signTransaction
-  // );
-
-  // console.log("here reached 303", transferResponse)
-
-
-    // console.log("Ticket", transferResponse)
-  }
+    console.log("Ticket purchased successfully! Please check you wallet for your NFT")
+    alert("Ticket purchased successfully! Please check you wallet for your NFT")
+   }
 
   return (
     <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 container">

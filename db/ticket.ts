@@ -1,55 +1,62 @@
-// import prisma from "@/db";
-import { createNftForEvent, transferNftToBuyer } from "@/lib/NFT/creatEventProject";
 import { handleBuyTicket } from "@/lib/NFT/transferSol";
-import { Event, Ticket } from "@prisma/client";
-import { createMint, createTransferInstruction, getOrCreateAssociatedTokenAccount, mintTo, TOKEN_PROGRAM_ID, transfer } from "@solana/spl-token";
+import { Event } from "@prisma/client";
+import { createTransferCheckedInstruction, getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
 import { Connection, Keypair, PublicKey, sendAndConfirmTransaction, Transaction } from "@solana/web3.js";
+import { Metaplex, keypairIdentity } from "@metaplex-foundation/js";
 
 
 export async function buyEventTicket(event: Event, publicKey: PublicKey, connection: Connection, balance: number, signTransaction: any) {
   try {
-    console.log("event", event);
-    // check if the user has bought a token already for this event
-    // then say only one token can be bought per event
-
-
-    let NFT = await handleBuyTicket(event, publicKey, connection, balance, signTransaction);
-    // console.log("NFT", NFT)
-    //NFT.data.mintAddress
-
-    console.log("here reached 101")
-
-
-    let nftCreation = await createNftForEvent(event)
-    if (nftCreation?.code !== 200) {
-      alert(`createNftForEvent fail: ${nftCreation?.message}`)
-      return
+    const PRIVATE_KEY = process.env.PRIVATE_KEY
+    if (!PRIVATE_KEY) {
+      console.error("Unable to fecth private key from env");
     }
-    console.log("here reached 202", nftCreation)
+
+    const payer = Keypair.fromSecretKey(
+      Uint8Array.from(
+        [249, 36, 213, 4, 96, 14, 193, 194, 70, 70, 228, 62, 207, 254, 213, 147, 2, 130, 42, 63, 179, 72, 39, 205, 221, 44, 43, 160, 184, 117, 27, 34, 171, 186, 186, 101, 228, 244, 7, 21, 10, 196, 228, 132, 6, 246, 63, 36, 70, 133, 104, 40, 47, 81, 12, 185, 101, 163, 236, 136, 32, 38, 70, 206]))
+
+    const mintAuthority = payer;
+    const NFTSolReciver = payer.publicKey
+    let solRecivedForEventTicket = await handleBuyTicket(event, publicKey, connection, balance, signTransaction, NFTSolReciver);
+    console.log("solRecivedForEventTicket", solRecivedForEventTicket)
+
+    if (solRecivedForEventTicket?.code !== 200) {
+      return { type: 'error', code: 'PaymentError', message: "Payment Failed" };
+    }
+
+
+
+
+    const metaplex = new Metaplex(connection);
+    metaplex.use(keypairIdentity(payer));
+
+    const { nft } = await metaplex.nfts().create({
+      uri: event.thumbnail,
+      name: event.name,
+      symbol: event.nftSymbol ?? "SYM",
+      sellerFeeBasisPoints: 500,
+      creators: [
+        {
+          address: mintAuthority.publicKey,
+          share: 100,
+        },
+      ],
+    });
+
+    //@ts-ignore
+    let nftMintAddress = nft.token.mintAddress
+
 
     const transferResponse = await transferNftToBuyerUI(
       publicKey.toBase58(),
-      nftCreation.data.mintAddress,
-      connection
+      nftMintAddress,
+      connection,
+      payer
     );
-    console.log("here reached 303", transferResponse)
-    // const transaction = transferResponse?.data?.transaction
-    // const senderWallet = transferResponse?.data?.senderWallet
 
-    // const signature = await signTransaction(transaction, [senderWallet]);
-    // await connection.confirmTransaction(signature, 'processed');
+    console.log("transferResponse", transferResponse)
 
-    console.log("here reached 404")
-
-
-    //save mintAddress in db as tokenID(tokenMintAddress)
-    // const events = await prisma.ticket.create({
-    //   data: {
-    //     name: "test",
-    //     email: "test",
-    //     eventId: "test",
-    //   },
-    // })
     return { type: 'success', code: 200, message: "Ticket bought successfully" };
   } catch (error) {
     console.error('Get events error:', error);
@@ -59,96 +66,57 @@ export async function buyEventTicket(event: Event, publicKey: PublicKey, connect
 
 
 
-export const transferNftToBuyerUI = async (buyerWalletAddress: string, nftMintAddress: string, connection: Connection) => {
+export const transferNftToBuyerUI = async (buyerWalletAddress: string, nftMintAddress: string, connection: Connection, payer: Keypair) => {
   try {
     console.log("buyerWalletAddress", buyerWalletAddress, "nftMintAddress", nftMintAddress);
 
-    const buyerWallet = new PublicKey("DTqgm1i8TKmpuiBx887ChkBe7FmcqC5UE6fUYhunsRrU");
-    let mintAddress = new PublicKey("D9nKpqa4aZ4AsvoMjFUsF7zavGM7FNyNxK4UqB25FmEg");
-    let collectionMintAddress = new PublicKey("DSXtyXvQGTeTSoukzY8zEMz8yB4GM3WHqS2ivtPeXTJV");
-    // Replace this with your actual private key
-    const PRIVATE_KEY = Uint8Array.from([74, 220, 17, 215, 12, 148, 14, 11, 101, 91, 59, 0, 239, 164, 125, 58, 150, 6, 182, 129, 183, 156, 75, 40, 59, 68, 243, 103, 145, 209, 56, 36, 128, 219, 32, 149, 169, 202, 250, 47, 216, 171, 223, 1, 11, 197, 216, 232, 93, 186, 45, 131, 61, 14, 71, 166, 156, 156, 228, 38, 95, 36, 20, 37]);
+    const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+    const receiverPublicKey = new PublicKey(buyerWalletAddress);
+    let mintPubkey = new PublicKey(nftMintAddress);
 
-    if (!PRIVATE_KEY) {
-      throw new Error("PRIVATE_KEY is not set");
-    }
+    // const payer = Keypair.fromSecretKey(Uint8Array.from([249, 36, 213, 4, 96, 14, 193, 194, 70, 70, 228, 62, 207, 254, 213, 147, 2, 130, 42, 63, 179, 72, 39, 205, 221, 44, 43, 160, 184, 117, 27, 34, 171, 186, 186, 101, 228, 244, 7, 21, 10, 196, 228, 132, 6, 246, 63, 36, 70, 133, 104, 40, 47, 81, 12, 185, 101, 163, 236, 136, 32, 38, 70, 206]
+    // ))
 
-    const senderWallet = Keypair.fromSecretKey(PRIVATE_KEY);
+    const metaplex = new Metaplex(connection);
+    metaplex.use(keypairIdentity(payer));
 
-    if (!senderWallet) {
-      throw new Error("senderWallet is not set");
-    }
-//     let mint = await createMint(connection, senderWallet, senderWallet.publicKey, null, 0);
-// console.log("mint", mint)
-// mintAddress = mint   // this is working correctly
-    // Ensure the sender has an associated token account for the NFT
-    const senderTokenAccount = await getOrCreateAssociatedTokenAccount(
+    const mintAuthority = payer;
+
+    const mintAuthorityTokenAccount = await getOrCreateAssociatedTokenAccount(
       connection,
-      senderWallet,
-      mintAddress,
-      senderWallet.publicKey
+      payer,
+      mintPubkey,
+      mintAuthority.publicKey
     );
-    console.log("senderTokenAccount", senderTokenAccount);
+    console.log("Mint Authority Token Account:", mintAuthorityTokenAccount.address.toString());
 
-    // Ensure the buyer has an associated token account for the NFT
-    const buyerTokenAccount = await getOrCreateAssociatedTokenAccount(
+    // Verify that the mint authority is correct
+    const mintInfo = await connection.getParsedAccountInfo(mintPubkey);
+    console.log("Mint Info:", mintInfo?.value?.data);
+
+    console.log("Minted 1 NFT to Mint Authority Token Account");
+
+    const receiverTokenAccount = await getOrCreateAssociatedTokenAccount(
       connection,
-      senderWallet,  // The payer of the transaction fees (usually the sender)
-      mintAddress,
-      buyerWallet
+      payer,
+      mintPubkey,
+      receiverPublicKey
     );
-    console.log("buyerTokenAccount", buyerTokenAccount);
+    console.log("Receiver Token Account:", receiverTokenAccount.address.toString());
 
-    // Create the transaction to transfer the NFT
-    // const transaction = new Transaction().add(
-    //   createTransferInstruction(
-    //     senderTokenAccount.address, // Sender's token account (associated token account)
-    //     buyerTokenAccount.address,  // Buyer's token account (associated token account)
-    //     senderWallet.publicKey,     // Sender's public key (authority)
-    //     1,                          // Amount (usually 1 for NFTs)
-    //     [],
-    //     TOKEN_PROGRAM_ID
-    //   )
-    // );
+    const transferTransaction = new Transaction().add(
+      createTransferCheckedInstruction(
+        mintAuthorityTokenAccount.address,
+        mintPubkey,
+        receiverTokenAccount.address,
+        mintAuthority.publicKey,
+        1,
+        0
+      )
+    );
 
-    // console.log("transaction created", transaction);
-
-    // // Fetch a recent blockhash and set it on the transaction
-    // const { blockhash } = await connection.getLatestBlockhash();
-    // transaction.recentBlockhash = blockhash;
-    // transaction.feePayer = senderWallet.publicKey;
-
-    // // Sign the transaction with the sender's wallet
-    // transaction.sign(senderWallet);
-
-    // // Send the transaction
-    // const signature = await sendAndConfirmTransaction(connection, transaction, [senderWallet]);
-
-    // console.log("signature", signature);
-
-
-     // Mint 1 new token to the "fromTokenAccount" account we just created
-     let signature = await mintTo(
-      connection,
-      senderWallet,
-      collectionMintAddress,
-      senderTokenAccount.address,
-      senderWallet.publicKey,
-      1000000000,
-      [],
-  );
-  console.log('mint tx:', signature);
-  // Transfer the new token to the "toTokenAccount" we just created
-  signature = await transfer(
-      connection,
-      senderWallet,
-      senderTokenAccount.address,
-      buyerTokenAccount.address,
-      senderWallet.publicKey,
-      1000000000,
-      [],
-  );
-  console.log('transfer tx:', signature);
+    const signature = await sendAndConfirmTransaction(connection, transferTransaction, [payer, mintAuthority]);
+    console.log("Transfer Transaction Signature:", signature);
     return { message: 'NFT transferred successfully', data: signature, code: 200 };
   } catch (error) {
     console.error('Error transferring NFT to buyer:', error);

@@ -17,7 +17,6 @@ export default function RootLayout({
       <SessionProvider >
         <body
           className='antialiased'>
-          {/* <Navbar /> */}
           <Providers>
             {children}
           </Providers>
