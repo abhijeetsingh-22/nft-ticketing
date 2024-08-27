@@ -26,7 +26,7 @@ export async function createOrUpdateEvent(event: Event) {
     if (!(isNewEvent && Object.keys(isNewEvent).length)) {
       let response = await createEventProject(event);
       if (response.code === 200) {
-        event.projectId = response?.data?.projectId ?? null;
+        event.projectId = response?.data?.projectId ? "" + response?.data?.projectId : null;
         event.mintAddress = response?.data?.mintAddress ?? null;
         event.nftSymbol = response?.data?.nftSymbol ?? null;
       }

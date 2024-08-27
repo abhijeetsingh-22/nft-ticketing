@@ -1,40 +1,56 @@
-// import prisma from "@/db";
-import { createNftForEvent, transferNftToBuyer } from "@/lib/NFT/creatEventProject";
 import { handleBuyTicket } from "@/lib/NFT/transferSol";
-import { Event, Ticket } from "@prisma/client";
-import { createMint, createTransferInstruction, getOrCreateAssociatedTokenAccount, mintTo, TOKEN_PROGRAM_ID, transfer } from "@solana/spl-token";
+import { Event } from "@prisma/client";
+import { createTransferCheckedInstruction, getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
 import { Connection, Keypair, PublicKey, sendAndConfirmTransaction, Transaction } from "@solana/web3.js";
+import { Metaplex, keypairIdentity } from "@metaplex-foundation/js";
 
 
 export async function buyEventTicket(event: Event, publicKey: PublicKey, connection: Connection, balance: number, signTransaction: any) {
   try {
-    console.log("event", event);
-    // check if the user has bought a token already for this event
-    // then say only one token can be bought per event
-    let nftCreation = await createNftForEvent(event)
-    if (nftCreation?.code !== 200) {
-      alert(`createNftForEvent fail: ${nftCreation?.message}`)
-      return
+    const PRIVATE_KEY = process.env.PRIVATE_KEY
+    if(!PRIVATE_KEY) {
+      console.error("Unable to fecth private key from env");
     }
-    console.log("here reached 202", nftCreation)
 
+    const payer = Keypair.fromSecretKey(
+      Uint8Array.from(
+        [249, 36, 213, 4, 96, 14, 193, 194, 70, 70, 228, 62, 207, 254, 213, 147, 2, 130, 42, 63, 179, 72, 39, 205, 221, 44, 43, 160, 184, 117, 27, 34, 171, 186, 186, 101, 228, 244, 7, 21, 10, 196, 228, 132, 6, 246, 63, 36, 70, 133, 104, 40, 47, 81, 12, 185, 101, 163, 236, 136, 32, 38, 70, 206]))
+    
+    const mintAuthority = payer;
+    const metaplex = new Metaplex(connection);
+    metaplex.use(keypairIdentity(payer));
+
+    const { nft } = await metaplex.nfts().create({
+      uri: event.thumbnail,
+      name: event.name,
+      symbol: event.nftSymbol ?? "SYM",
+      sellerFeeBasisPoints: 500,
+      creators: [
+        {
+          address: mintAuthority.publicKey,
+          share: 100,
+        },
+      ],
+    });
+
+    //@ts-ignore
+    let nftMintAddress = nft.token.mintAddress
+    
     let solRecivedForEventTicket = await handleBuyTicket(event, publicKey, connection, balance, signTransaction);
     console.log("solRecivedForEventTicket", solRecivedForEventTicket)
-    //NFT.data.mintAddress
-
-    console.log("here reached 101")
-
-
-    
+   
+    if(solRecivedForEventTicket?.code !== 200){
+      return { type: 'error', code: 'PaymentError', message: "Payment Failed" };
+    }
 
     const transferResponse = await transferNftToBuyerUI(
       publicKey.toBase58(),
-      nftCreation.data.mintAddress,
-      connection
+      nftMintAddress,
+      connection,
+      payer
     );
-    console.log("here reached 303", transferResponse)
 
-    console.log("here reached 404")
+    console.log("transferResponse", transferResponse)
 
     return { type: 'success', code: 200, message: "Ticket bought successfully" };
   } catch (error) {
@@ -45,7 +61,7 @@ export async function buyEventTicket(event: Event, publicKey: PublicKey, connect
 
 
 
-export const transferNftToBuyerUI = async (buyerWalletAddress: string, nftMintAddress: string, connection: Connection) => {
+export const transferNftToBuyerUI = async (buyerWalletAddress: string, nftMintAddress: string, connection: Connection, payer: Keypair) => {
   try {
     console.log("buyerWalletAddress", buyerWalletAddress, "nftMintAddress", nftMintAddress);
 
@@ -53,13 +69,13 @@ export const transferNftToBuyerUI = async (buyerWalletAddress: string, nftMintAd
     const receiverPublicKey = new PublicKey(buyerWalletAddress);
     let mintPubkey = new PublicKey(nftMintAddress);
 
-    const payer = Keypair.fromSecretKey(Uint8Array.from([74, 220, 17, 215, 12, 148, 14, 11, 101, 91, 59, 0, 239, 164, 125, 58, 150, 6, 182, 129, 183, 156, 75, 40, 59, 68, 243, 103, 145, 209, 56, 36, 128, 219, 32, 149, 169, 202, 250, 47, 216, 171, 223, 1, 11, 197, 216, 232, 93, 186, 45, 131, 61, 14, 71, 166, 156, 156, 228, 38, 95, 36, 20, 37]));
+    // const payer = Keypair.fromSecretKey(Uint8Array.from([249, 36, 213, 4, 96, 14, 193, 194, 70, 70, 228, 62, 207, 254, 213, 147, 2, 130, 42, 63, 179, 72, 39, 205, 221, 44, 43, 160, 184, 117, 27, 34, 171, 186, 186, 101, 228, 244, 7, 21, 10, 196, 228, 132, 6, 246, 63, 36, 70, 133, 104, 40, 47, 81, 12, 185, 101, 163, 236, 136, 32, 38, 70, 206]
+    // ))
 
     const metaplex = new Metaplex(connection);
     metaplex.use(keypairIdentity(payer));
 
     const mintAuthority = payer;
-    const freezeAuthority = payer;
 
     const mintAuthorityTokenAccount = await getOrCreateAssociatedTokenAccount(
       connection,
