@@ -1,5 +1,5 @@
 'use client'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -8,8 +8,9 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { createUser, signup } from '@/app/(public)/(auth)/signup/actions'
-import { ResultCode, getMessageFromCode } from '@/lib/utils'
+import { ResultCode, cn, getMessageFromCode } from '@/lib/utils'
 import { Label } from '../ui/label'
+import Link from 'next/link'
 
 export const signUpSchema = z
   .object({
@@ -109,9 +110,9 @@ export default function SignupForm2() {
       <Button className="mt-8 w-full" type="submit">
         Create account
       </Button>
-      <Button className="mt-4 w-full" onClick={() => router.push('/login')}>
+      <Link className={cn("mt-4 w-full", buttonVariants())} href="/login">
         Have an account? Login
-      </Button>
+      </Link>
     </form >
   )
 }
