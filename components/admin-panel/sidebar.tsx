@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Menu } from "@/components/admin-panel/menu";
 import { useSidebarToggle } from "@/hooks/use-sidebar-toggle";
 import { SidebarToggle } from "@/components/admin-panel/sidebar-toggle";
-import { auth } from "@/auth";
 
 
 export function Sidebar() {
@@ -34,11 +33,6 @@ export function Sidebar() {
         >
           <Link href="/" className="flex items-center gap-2">
             <LucideTicket className="mr-1 w-6 h-6 font-bold" />
-            {/* <Image
-              src="/logos/icon.svg"
-              alt="Minttix Logo"
-              width="24"
-              height="24" /> */}
             <h1
               className={cn(
                 "font-bold text-lg whitespace-nowrap transition-[transform,opacity,display] ease-in-out duration-300",

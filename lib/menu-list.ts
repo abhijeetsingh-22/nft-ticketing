@@ -111,24 +111,24 @@ export function getMenuList(pathname: string, userId: string): Group[] {
         }
       ]
     },
-    {
-      groupLabel: "",
-      menus: [
-        // {
-        //   href: "/users",
-        //   label: "Users",
-        //   active: pathname.includes("/users"),
-        //   icon: Users,
-        //   submenus: []
-        // },
-        {
-          href: "/settings",
-          label: "Settings",
-          active: pathname.includes("/settings"),
-          icon: Settings,
-          submenus: []
-        }
-      ]
-    }
+    // {
+    //   groupLabel: "",
+    //   menus: [
+    //     // {
+    //     //   href: "/users",
+    //     //   label: "Users",
+    //     //   active: pathname.includes("/users"),
+    //     //   icon: Users,
+    //     //   submenus: []
+    //     // },
+    //     {
+    //       href: "/profile",
+    //       label: "Profile",
+    //       active: pathname.includes("/profile"),
+    //       icon: Settings,
+    //       submenus: []
+    //     }
+    //   ]
+    // }
   ];
 }

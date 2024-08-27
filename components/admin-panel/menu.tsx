@@ -32,7 +32,7 @@ export function Menu({ isOpen }: MenuProps) {
   const menuList = getMenuList(pathname, user?.id || "");
 
 
-  console.log("user in menu", user);
+  // console.log("user in menu", user);
 
   return (
     <div className="flex flex-col justify-between items-end mt-8 w-full h-full">

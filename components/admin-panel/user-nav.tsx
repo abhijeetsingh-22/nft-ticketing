@@ -79,7 +79,7 @@ export function UserNav({ isOpen, user }: { isOpen: boolean, user: PrismaUser })
                       </Link>
                     </DropdownMenuItem> */}
                     <DropdownMenuItem className="hover:cursor-pointer" asChild>
-                      <Link href="/account" className="flex items-center">
+                      <Link href="/profile" className="flex items-center">
                         <User className="mr-3 w-4 h-4 text-muted-foreground" />
                         Account
                       </Link>
