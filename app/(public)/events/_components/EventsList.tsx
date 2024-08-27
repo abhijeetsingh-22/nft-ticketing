@@ -76,6 +76,7 @@ export default function EventsList({ events }: { events: Event[] }) {
       return
     }
     console.log("Ticket purchased successfully! Please check you wallet for your NFT")
+    alert("Ticket purchased successfully! Please check you wallet for your NFT")
    }
 
   return (

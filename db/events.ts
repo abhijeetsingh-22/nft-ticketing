@@ -1,8 +1,23 @@
 'use server';
 import prisma from "@/db";
-import { createEventProject } from "@/lib/NFT/creatEventProject";
 import { Event } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+
+const createNftSymbol = (eventName: string): string => {
+  let sanitizedEventName = eventName.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+
+  // Limit the symbol to a maximum length of 4
+  const maxLength = 4;
+  let symbol = sanitizedEventName.slice(0, maxLength);
+
+  // If the event name is too short, add padding (optional)
+  if (symbol.length < maxLength) {
+      symbol = symbol.padEnd(maxLength, 'X'); // Pads with 'X'
+  }
+
+  return symbol;
+}
+
 
 export async function createOrUpdateEvent(event: Event) {
   try {
@@ -21,20 +36,9 @@ export async function createOrUpdateEvent(event: Event) {
       where: { slug: event.slug },
     })
 
-
-    // Creating a new event on chain
-    if (!(isNewEvent && Object.keys(isNewEvent).length)) {
-      let response = await createEventProject(event);
-      if (response.code === 200) {
-        event.projectId = response?.data?.projectId ? "" + response?.data?.projectId : null;
-        event.mintAddress = response?.data?.mintAddress ?? null;
-        event.nftSymbol = response?.data?.nftSymbol ?? null;
-      }
-      else {
-        throw new Error(response.message);
-      }
-    }
-
+    // Create NFT symbol
+    event.nftSymbol = createNftSymbol(event.name);
+    
     const newEvent = await prisma.event.upsert({
       where: { slug: event.slug },
       update: {
@@ -69,8 +73,6 @@ export async function createOrUpdateEvent(event: Event) {
         thumbnail: event.thumbnail,
         description: event.description,
         organizerId: event.organizerId,
-        projectId: event.projectId,
-        mintAddress: event.mintAddress,
         nftSymbol: event.nftSymbol
       },
     });
