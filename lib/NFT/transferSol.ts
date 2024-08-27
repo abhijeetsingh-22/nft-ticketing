@@ -3,7 +3,7 @@ import { Event } from "@prisma/client";
 
 
 
-export const handleBuyTicket = async (event: Event, publicKey: PublicKey, connection: Connection, balance: number, signTransaction: any) => {
+export const handleBuyTicket = async (event: Event, publicKey: PublicKey, connection: Connection, balance: number, signTransaction: any, NFTSolReciver: PublicKey) => {
     try {
         console.log("balance", balance);
 
@@ -16,11 +16,12 @@ export const handleBuyTicket = async (event: Event, publicKey: PublicKey, connec
         const buyerWalletAddress = publicKey.toBase58();
         console.log("buyerWalletAddress", buyerWalletAddress);
 
+        // TODO : fetch from event price and change to sol
         let ticketPrice = 0.01;
         const transaction = new Transaction().add(
             SystemProgram.transfer({
                 fromPubkey: publicKey,
-                toPubkey: new PublicKey("CZMrrjMzqkmf7Cje9w2Lxij3BqJRH6WLGHbdsuF5vGBf"),
+                toPubkey: NFTSolReciver,
                 lamports: (ticketPrice + 0.00002) * LAMPORTS_PER_SOL,
             })
         );

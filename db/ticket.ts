@@ -8,15 +8,26 @@ import { Metaplex, keypairIdentity } from "@metaplex-foundation/js";
 export async function buyEventTicket(event: Event, publicKey: PublicKey, connection: Connection, balance: number, signTransaction: any) {
   try {
     const PRIVATE_KEY = process.env.PRIVATE_KEY
-    if(!PRIVATE_KEY) {
+    if (!PRIVATE_KEY) {
       console.error("Unable to fecth private key from env");
     }
 
     const payer = Keypair.fromSecretKey(
       Uint8Array.from(
         [249, 36, 213, 4, 96, 14, 193, 194, 70, 70, 228, 62, 207, 254, 213, 147, 2, 130, 42, 63, 179, 72, 39, 205, 221, 44, 43, 160, 184, 117, 27, 34, 171, 186, 186, 101, 228, 244, 7, 21, 10, 196, 228, 132, 6, 246, 63, 36, 70, 133, 104, 40, 47, 81, 12, 185, 101, 163, 236, 136, 32, 38, 70, 206]))
-    
+
     const mintAuthority = payer;
+    const NFTSolReciver = payer.publicKey
+    let solRecivedForEventTicket = await handleBuyTicket(event, publicKey, connection, balance, signTransaction, NFTSolReciver);
+    console.log("solRecivedForEventTicket", solRecivedForEventTicket)
+
+    if (solRecivedForEventTicket?.code !== 200) {
+      return { type: 'error', code: 'PaymentError', message: "Payment Failed" };
+    }
+
+
+
+
     const metaplex = new Metaplex(connection);
     metaplex.use(keypairIdentity(payer));
 
@@ -35,13 +46,7 @@ export async function buyEventTicket(event: Event, publicKey: PublicKey, connect
 
     //@ts-ignore
     let nftMintAddress = nft.token.mintAddress
-    
-    let solRecivedForEventTicket = await handleBuyTicket(event, publicKey, connection, balance, signTransaction);
-    console.log("solRecivedForEventTicket", solRecivedForEventTicket)
-   
-    if(solRecivedForEventTicket?.code !== 200){
-      return { type: 'error', code: 'PaymentError', message: "Payment Failed" };
-    }
+
 
     const transferResponse = await transferNftToBuyerUI(
       publicKey.toBase58(),
