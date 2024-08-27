@@ -42,12 +42,13 @@ export async function getUserById(id: string) {
 }
 
 
-export async function updateUser(id: string, data: { name?: string, bio?: string, email?: string, showEmail?: boolean, instagram?: string, discord?: string, twitter?: string, github?: string, streetAddress?: string, city?: string, state?: string, postalCode?: string, country?: string, currency?: string }) {
+export async function updateUser(id: string, data: { name?: string, bio?: string, email?: string, showEmail?: boolean, instagram?: string, discord?: string, twitter?: string, github?: string, streetAddress?: string, city?: string, state?: string, postalCode?: string, country?: string, currency?: string, isOnboarded?: boolean }) {
   try {
     const updatedUser = await prisma.user.update({
       where: { id },
       data: {
-        name: data.name,
+        name: data?.name,
+        isOnboarded: data?.isOnboarded,
         updatedAt: new Date(),
       },
     })

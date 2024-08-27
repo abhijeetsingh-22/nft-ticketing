@@ -4,6 +4,7 @@ export const Routes = {
   "LOGIN": "/login",
   "SIGNUP": "/signup",
   "DASHBOARD": "/dashboard",
+  "ONBOARDING": "/onboarding",
 }
 
 
@@ -21,4 +22,4 @@ export const authRoutes = [
 
 export const apiAuthPrefix = '/api/auth'
 
-export const DEFAULT_LOGIN_REDIRECT = Routes.DASHBOARD
+export const DEFAULT_LOGIN_REDIRECT = Routes.ONBOARDING

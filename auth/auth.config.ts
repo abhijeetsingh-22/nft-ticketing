@@ -11,25 +11,26 @@ export const authConfig = {
   },
 
   callbacks: {
-    async authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user
-      const isOnLoginPage = nextUrl.pathname.startsWith('/login')
-      const isOnSignupPage = nextUrl.pathname.startsWith('/signup')
-      const isOnHomePage = nextUrl.pathname.startsWith('/')
-      console.log("isLoggedIn", isLoggedIn, auth?.user?.email);
+    // async authorized({ auth, request: { nextUrl } }) {
+    //   const isLoggedIn = !!auth?.user
 
-      if (isLoggedIn) {
-        if (isOnLoginPage || isOnSignupPage) {
-          return Response.redirect(new URL('/', nextUrl))
-        }
-      } else {
-        if (!isOnLoginPage && !isOnSignupPage && !isOnHomePage) {
-          return Response.redirect(new URL('/login', nextUrl))
-        }
-      }
+    //   // const isOnLoginPage = nextUrl.pathname.startsWith('/login')
+    //   // const isOnSignupPage = nextUrl.pathname.startsWith('/signup')
+    //   // const isOnHomePage = nextUrl.pathname.startsWith('/')
+    //   // console.log("isLoggedIn", isLoggedIn, auth?.user?.email);
 
-      return true
-    },
+    //   // if (isLoggedIn) {
+    //   //   if (isOnLoginPage || isOnSignupPage) {
+    //   //     return Response.redirect(new URL('/', nextUrl))
+    //   //   }
+    //   // } else {
+    //   //   if (!isOnLoginPage && !isOnSignupPage && !isOnHomePage) {
+    //   //     return Response.redirect(new URL('/login', nextUrl))
+    //   //   }
+    //   // }
+
+    //   return true
+    // },
     async jwt({ token, user }) {
       if (user) {
         token = { ...token, id: user.id }
@@ -38,10 +39,6 @@ export const authConfig = {
       return token
     },
     async session({ session, token }) {
-      // console.log("session", session);
-      // console.log("token", token);
-
-
       if (token) {
         const { id } = token as { id: string }
         const { user } = session
@@ -75,7 +72,11 @@ export const authConfig = {
 
 
           if (hashedPassword === user.password) {
-            // console.log('AUTHORIZED user', user);
+            console.log("AUTHORIZED user", user);
+            // if (!user.isOnboarded) {
+            //   return Response.redirect(new URL('/onboarding').toString())
+            // }
+
             return user
           } else {
             // console.log('UNAUTHORIZED user', user);
