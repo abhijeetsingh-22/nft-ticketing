@@ -14,7 +14,7 @@ import { buyEventTicket } from "@/db/ticket"
 import {useConnection, useWallet} from "@solana/wallet-adapter-react"
 import { LAMPORTS_PER_SOL } from "@solana/web3.js"
 import { createNftForEvent, transferNftToBuyer } from "@/lib/NFT/creatEventProject"
-import { mintNFT } from "@/db/NFT"
+// import { mintNFT } from "@/db/NFT"
 
 
 export default function EventsList({ events }: { events: Event[] }) {
