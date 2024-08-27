@@ -3,6 +3,7 @@ import { Event } from "@prisma/client";
 import { createTransferCheckedInstruction, getOrCreateAssociatedTokenAccount } from "@solana/spl-token";
 import { Connection, Keypair, PublicKey, sendAndConfirmTransaction, Transaction } from "@solana/web3.js";
 import { Metaplex, keypairIdentity } from "@metaplex-foundation/js";
+import prisma from "@/db";
 
 
 export async function buyEventTicket(event: Event, publicKey: PublicKey, connection: Connection, balance: number, signTransaction: any) {
@@ -12,6 +13,7 @@ export async function buyEventTicket(event: Event, publicKey: PublicKey, connect
       console.error("Unable to fecth private key from env");
     }
 
+    
     const payer = Keypair.fromSecretKey(
       Uint8Array.from(
         [249, 36, 213, 4, 96, 14, 193, 194, 70, 70, 228, 62, 207, 254, 213, 147, 2, 130, 42, 63, 179, 72, 39, 205, 221, 44, 43, 160, 184, 117, 27, 34, 171, 186, 186, 101, 228, 244, 7, 21, 10, 196, 228, 132, 6, 246, 63, 36, 70, 133, 104, 40, 47, 81, 12, 185, 101, 163, 236, 136, 32, 38, 70, 206]))
@@ -26,7 +28,7 @@ export async function buyEventTicket(event: Event, publicKey: PublicKey, connect
     }
 
 
-
+    // -------------- MINT NFT ----------------
 
     const metaplex = new Metaplex(connection);
     metaplex.use(keypairIdentity(payer));
@@ -57,6 +59,24 @@ export async function buyEventTicket(event: Event, publicKey: PublicKey, connect
 
     console.log("transferResponse", transferResponse)
 
+    // --------------SAVE TICKET DATA ----------------
+    // TODO: 101
+    // let eventTicketData = {
+    //   tokenId: nftMintAddress,
+    //   ownerId: publicKey.toBase58(),
+    //   eventId: event.id,
+    //   price: event.ticketPrice,
+    //   status: "SOLD",
+    //   event: event,
+    //   user: null
+    // }
+
+
+    // const ticket = await prisma.ticket.create({
+    //   data: eventTicketData
+    // });
+
+
     return { type: 'success', code: 200, message: "Ticket bought successfully" };
   } catch (error) {
     console.error('Get events error:', error);
@@ -73,9 +93,6 @@ export const transferNftToBuyerUI = async (buyerWalletAddress: string, nftMintAd
     const connection = new Connection("https://api.devnet.solana.com", "confirmed");
     const receiverPublicKey = new PublicKey(buyerWalletAddress);
     let mintPubkey = new PublicKey(nftMintAddress);
-
-    // const payer = Keypair.fromSecretKey(Uint8Array.from([249, 36, 213, 4, 96, 14, 193, 194, 70, 70, 228, 62, 207, 254, 213, 147, 2, 130, 42, 63, 179, 72, 39, 205, 221, 44, 43, 160, 184, 117, 27, 34, 171, 186, 186, 101, 228, 244, 7, 21, 10, 196, 228, 132, 6, 246, 63, 36, 70, 133, 104, 40, 47, 81, 12, 185, 101, 163, 236, 136, 32, 38, 70, 206]
-    // ))
 
     const metaplex = new Metaplex(connection);
     metaplex.use(keypairIdentity(payer));
