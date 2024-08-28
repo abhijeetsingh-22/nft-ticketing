@@ -6,18 +6,29 @@ import { Calendar, Clock, MapPin, Users, User } from "lucide-react"
 import Image from "next/image"
 import { Event, User as PrismaUser } from '@prisma/client'
 import { getUserById } from "@/db/users"
+import { useSession } from "next-auth/react"
+import { redirect } from "next/navigation"
+import { Routes } from "@/routes"
 
-interface EventCardProps extends Partial<Event> {
+type EventWithOrganizer = Event & {
+  organizer: string
+}
 
+interface EventCardProps extends Partial<EventWithOrganizer> {
   handleBuyEventTicket: (id: string) => void
 }
 
 
-export const EventCard = ({ id, name, startDate, venueName, ticketPrice, coverPhoto, organizerId, handleBuyEventTicket }: EventCardProps) => {
+export const EventCard = ({ id, name, startDate, venueName, ticketPrice, coverPhoto, organizer, handleBuyEventTicket }: EventCardProps) => {
+  const session = useSession()
 
-  async function getOrganizerById(id: string): Promise<PrismaUser | null> {
-    const user = await getUserById(id);
-    return user || null;
+
+  const handleBuyTicket = () => {
+    if (session.status === "authenticated") {
+      handleBuyEventTicket(id as string)
+    } else {
+      redirect(Routes.LOGIN)
+    }
   }
 
   return (
@@ -34,7 +45,7 @@ export const EventCard = ({ id, name, startDate, venueName, ticketPrice, coverPh
             <h3 className="mb-1 font-semibold text-xl">{name}</h3>
             <p className="flex items-center mb-3 text-gray-600 text-sm">
               <User className="mr-1 w-4 h-4 text-primary" />
-              {getOrganizerById(organizerId as string).then((organizer) => organizer?.name || "Unknown Organizer")}
+              {organizer || "Unknown Organizer"}
             </p>
             <div className="space-y-2 text-gray-600 text-sm">
               <div className="flex items-center">
@@ -52,7 +63,7 @@ export const EventCard = ({ id, name, startDate, venueName, ticketPrice, coverPh
                 View Event
                 <Users className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Button>
-              <Button onClick={() => handleBuyEventTicket(id as string)}>Buy</Button>
+              <Button onClick={handleBuyTicket}>Buy</Button>
             </div>
           </div>
         </div>

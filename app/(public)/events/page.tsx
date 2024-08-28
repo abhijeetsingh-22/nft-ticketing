@@ -5,9 +5,24 @@ import { Suspense } from 'react';
 import { FiltersSkeleton } from './_components/Filters';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EventCardSkeleton } from './_components/EventCard';
+import { getUserById } from '@/db/users';
+import { User } from '@prisma/client';
 
 export default async function Events() {
   const { events } = await getAllPublicEvents();
+
+  const eventsWithOrganizer = events?.map((event) => {
+    return {
+      ...event,
+      organizer: getOrganizerById(event.organizerId)
+    }
+  })
+
+  async function getOrganizerById(id: string) {
+    const user = await getUserById(id);
+    return user?.name || null;
+  }
+
   return (
     <MaxWidthWrapper className="bg-white">
       <div className="bg-white p-4 md:p-8 min-h-screen text-gray-900">
@@ -26,7 +41,7 @@ export default async function Events() {
             </section>
           </div>
         }>
-          <AllEvents initialEvents={events || []} />
+          <AllEvents initialEvents={eventsWithOrganizer || []} />
         </Suspense>
       </div>
     </MaxWidthWrapper>
