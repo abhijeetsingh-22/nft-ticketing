@@ -12,9 +12,11 @@ import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 import { User } from "@prisma/client"
 import { updateUser } from "@/db/users"
+import { useSession } from "next-auth/react"
 
 export default function Onboarding({ user }: { user: User }) {
   const router = useRouter()
+  const session = useSession();
   const updateUserOnboardingStatus = async () => {
     try {
       await updateUser(user.id, { ...user, isOnboarded: true })
@@ -23,6 +25,8 @@ export default function Onboarding({ user }: { user: User }) {
     }
   };
   const handleGetStarted = async (userRole: "organizer" | "attendee") => {
+    //Call this to update the onBoarding status in jwt & session
+    // await session.update({user: {isOnboarded: true}})
     await updateUserOnboardingStatus();
     if (userRole === "organizer") {
       router.push(Routes.DASHBOARD)
