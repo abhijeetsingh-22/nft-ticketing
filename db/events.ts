@@ -12,7 +12,7 @@ const createNftSymbol = (eventName: string): string => {
 
   // If the event name is too short, add padding (optional)
   if (symbol.length < maxLength) {
-      symbol = symbol.padEnd(maxLength, 'X'); // Pads with 'X'
+    symbol = symbol.padEnd(maxLength, 'X'); // Pads with 'X'
   }
 
   return symbol;
@@ -21,7 +21,6 @@ const createNftSymbol = (eventName: string): string => {
 
 export async function createOrUpdateEvent(event: Event) {
   try {
-    console.log("event", event);
 
     const existingEvent: Event | null = await prisma.event.findUnique({
       where: { slug: event.slug },
@@ -38,7 +37,7 @@ export async function createOrUpdateEvent(event: Event) {
 
     // Create NFT symbol
     event.nftSymbol = createNftSymbol(event.name);
-    
+
     const newEvent = await prisma.event.upsert({
       where: { slug: event.slug },
       update: {

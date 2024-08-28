@@ -11,7 +11,6 @@ export async function createEventHandler(formData: FormData) {
   const organisationId = formData.get('organisationId') as string;
 
   if (!name || !date || !location || !organisationId) {
-    console.log("Missing fields");
     return 'Missing Fields';
   }
 

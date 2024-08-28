@@ -10,17 +10,19 @@ const OnboardingPage = async () => {
   const session = await auth()
 
   if (!session) {
-    return redirect(Routes.LOGIN)
+    redirect(Routes.LOGIN)
   }
 
   const loggedInUser = await getUserById(session?.user?.id as string)
 
   if (loggedInUser?.isOnboarded) {
-    return redirect(Routes.DASHBOARD)
+    redirect(Routes.DASHBOARD)
   }
 
   return (
-    <Onboarding user={loggedInUser as User} />
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <Onboarding user={loggedInUser as User} />
+    </React.Suspense>
   )
 }
 

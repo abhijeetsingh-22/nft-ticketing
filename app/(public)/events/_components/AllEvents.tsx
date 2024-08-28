@@ -42,7 +42,6 @@ export default function AllEvents({ initialEvents }: { initialEvents: Event[] })
   const handleBuyEventTicket = async (eventId: string) => {
     let selectedEvent = events.filter((event) => event.id === eventId)[0]
 
-    console.log("selectedEvent........", selectedEvent)
     if (!publicKey || !connection || !balance) return
 
     toast.promise(

@@ -5,7 +5,6 @@ import { redirect } from 'next/navigation'
 
 export default async function SignupPage() {
   const session: Session | null = await auth()
-  console.log("session in signup", session);
 
 
   if (session) {

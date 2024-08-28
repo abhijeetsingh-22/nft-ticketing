@@ -12,6 +12,8 @@ import { Label } from '../ui/label'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import { Routes } from '@/routes'
+import { auth } from '@/auth'
+import { getUserById } from '@/db/users'
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address').min(5, 'Email must be at least 5 characters long').max(255, 'Email must be at most 255 characters long'),
@@ -33,17 +35,14 @@ export default function LoginForm() {
 
   const handleSubmit = async (values: loginInput) => {
     toast.promise(
-      authenticate(values.email, values.password).then((data) => {
-        console.log("data in login form", data);
-        router.push(Routes.ONBOARDING)
-      }),
+      authenticate(values.email, values.password),
       {
         loading: 'Logging in...',
         success: 'Logged in successfully',
         error: 'Failed to log in',
       }
     )
-    form.reset()
+
   }
 
   return (

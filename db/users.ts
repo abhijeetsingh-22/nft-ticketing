@@ -8,7 +8,6 @@ export async function createUser({ email, name, walletAddress }: { email: string
   })
 
   if (existingUser) {
-    console.log("User exists");
     return { type: 'error', resultCode: 'USER_EXISTS' }
   }
 

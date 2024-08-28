@@ -72,7 +72,6 @@ export default function SecondProfile({ profile }: { profile: User }) {
 
   const onSubmit = async (data: any) => {
     setIsLoading(true)
-    console.log("data", data);
 
     toast.promise(
       updateUser(profile.id, data),

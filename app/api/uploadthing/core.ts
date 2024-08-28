@@ -15,7 +15,6 @@ export const ourFileRouter = {
       const session = await auth();
       const user = session?.user;
 
-      console.log("user in middleware", user);
 
 
       // If you throw, the user will not be able to upload
@@ -26,9 +25,7 @@ export const ourFileRouter = {
     })
     .onUploadComplete(async ({ metadata, file }) => {
       // This code RUNS ON YOUR SERVER after upload
-      console.log("Upload complete for userId:", metadata.userId);
 
-      console.log("file url", file.url);
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return { uploadedBy: metadata.userId };
