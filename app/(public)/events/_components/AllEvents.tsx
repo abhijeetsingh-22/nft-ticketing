@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Event } from '@prisma/client'
+import { Event, User } from '@prisma/client'
 import { Filters } from './Filters'
 import { EventCard } from './EventCard'
 import { buyEventTicket } from "@/db/ticket"
@@ -55,10 +55,6 @@ export default function AllEvents({ initialEvents }: { initialEvents: Event[] })
     )
   }
 
-
-
-
-
   useEffect(() => {
     const min = parseFloat(minPrice) || 0
     const max = parseFloat(maxPrice) || Infinity
@@ -81,8 +77,7 @@ export default function AllEvents({ initialEvents }: { initialEvents: Event[] })
   }
 
 
-
-  const Content = () => (
+  return (
     <div className="flex lg:flex-row flex-col gap-8">
       <aside className="space-y-6 w-full lg:w-1/4">
         <Filters
@@ -111,10 +106,5 @@ export default function AllEvents({ initialEvents }: { initialEvents: Event[] })
         </div>
       </section>
     </div>
-  )
-
-  return (
-
-    <Content />
   )
 }
