@@ -1,46 +1,36 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import EventsList from './_components/EventsList';
 import { getAllPublicEvents } from '@/db/events';
-
-interface Event {
-  id: number;
-  name: string;
-  date: string;
-  location: string;
-  image: string;
-  description: string;
-}
-
+import AllEvents from './_components/AllEvents';
+import MaxWidthWrapper from '@/components/MaxWidthWrapper';
+import { Suspense } from 'react';
+import { FiltersSkeleton } from './_components/Filters';
+import { Skeleton } from '@/components/ui/skeleton';
+import { EventCardSkeleton } from './_components/EventCard';
 
 export default async function Events() {
   const { events } = await getAllPublicEvents();
   return (
-    <EventsList events={events || []} />
-    // <div className='mx-auto px-6 py-12 container'>
-    //   <h1 className='mb-12 font-bold text-4xl text-center'>Upcoming Events</h1>
-    //   <div className='gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
-    //     {events.map((event) => (
-    //       <div key={event.id} className='bg-white shadow-md rounded-lg overflow-hidden'>
-    //         <Image
-    //           src={event.image}
-    //           alt={event.name}
-    //           width={500}
-    //           height={300}
-    //           className='w-full h-48 object-cover'
-    //         />
-    //         <div className='p-6'>
-    //           <h2 className='mb-2 font-semibold text-2xl'>{event.name}</h2>
-    //           <p className='mb-4 text-gray-600'>{event.date}</p>
-    //           <p className='mb-4 text-gray-600'>{event.location}</p>
-    //           <p className='mb-4 text-gray-700'>{event.description}</p>
-    //           <Link href={`/events/${event.id}`} className='text-blue-600 hover:underline'>
-    //             Learn more
-    //           </Link>
-    //         </div>
-    //       </div>
-    //     ))}
-    //   </div>
-    // </div>
+    <MaxWidthWrapper className="bg-white">
+      <div className="bg-white p-4 md:p-8 min-h-screen text-gray-900">
+        <Suspense fallback={
+          <div className="flex lg:flex-row flex-col gap-8">
+            <aside className="w-full lg:w-1/4">
+              <FiltersSkeleton />
+            </aside>
+            <section className="space-y-6 w-full lg:w-3/4">
+              <Skeleton className="w-full h-10" />
+              <div className="space-y-6">
+                {[1, 2, 3].map((item) => (
+                  <EventCardSkeleton key={item} />
+                ))}
+              </div>
+            </section>
+          </div>
+        }>
+          <AllEvents initialEvents={events || []} />
+        </Suspense>
+      </div>
+    </MaxWidthWrapper>
   );
 }
+
+

@@ -6,7 +6,7 @@ export default function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <main className="min-h-screen grainy">
+  return <main className="min-h-screen">
     <Navbar />
     {children}
   </main>
