@@ -10,9 +10,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { CalendarIcon, FilterIcon, ListOrderedIcon, SearchIcon, TicketIcon } from "lucide-react"
 import Image from "next/image"
 import { Event } from "@prisma/client"
-import { buyEventTicket } from "@/db/ticket"
-import {useConnection, useWallet} from "@solana/wallet-adapter-react"
-import { LAMPORTS_PER_SOL } from "@solana/web3.js"
+
 
 
 
@@ -22,22 +20,7 @@ export default function EventsList({ events }: { events: Event[] }) {
   const [sortBy, setSortBy] = useState("date")
   const [filterLocation, setFilterLocation] = useState("")
   const [filterPrice, setFilterPrice] = useState([0, 200])
-  const [balance, setBalance] = useState<number | null>(null)
-	const {publicKey, signTransaction} = useWallet()
-	const {connection} = useConnection()
 
-
-	useEffect(() => {
-		if (publicKey) {
-			(async function getBalanceEvery10Seconds() {
-				const newBalance = await connection.getBalance(publicKey)
-				setBalance(newBalance / LAMPORTS_PER_SOL)
-				setTimeout(getBalanceEvery10Seconds, 10000)
-			})()
-		} else {
-			setBalance(null)
-		}
-	}, [publicKey, connection, balance])
 
   const filteredEvents = useMemo(() => {
     return events
@@ -62,22 +45,6 @@ export default function EventsList({ events }: { events: Event[] }) {
         }
       })
   }, [events, searchTerm, filterLocation, sortBy])
-
-  const handleBuyEventTicket = async (eventId: string) => {
-    let selectedEvent = events.filter((event) => event.id === eventId)[0]
-
-    console.log("selectedEvent........", selectedEvent)   
-    if(!publicKey || !connection || !balance) return
-
-    let paymentStatus: any= await buyEventTicket(selectedEvent, publicKey, connection, balance, signTransaction)
-    
-    if(paymentStatus?.code !== 200){
-      alert(`buyEventTicket fail: ${paymentStatus?.message}`)
-      return
-    }
-    console.log("Ticket purchased successfully! Please check you wallet for your NFT")
-    alert("Ticket purchased successfully! Please check you wallet for your NFT")
-   }
 
   return (
     <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8 container">
@@ -183,7 +150,7 @@ export default function EventsList({ events }: { events: Event[] }) {
                   <TicketIcon className="w-4 h-4 text-muted-foreground" />
                   <span className="text-muted-foreground text-sm">10 left</span>
                 </div>
-                <Button onClick={() => handleBuyEventTicket(event.id)}>Buy</Button>
+                {/* <Button onClick={() => handleBuyEventTicket(event.id)}>Buy</Button> */}
               </div>
             </CardContent>
           </Card>
