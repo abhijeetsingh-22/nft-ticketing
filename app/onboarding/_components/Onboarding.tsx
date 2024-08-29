@@ -19,6 +19,7 @@ export default function Onboarding({ user }: { user: User }) {
   const session = useSession();
   const updateUserOnboardingStatus = async () => {
     try {
+      await session.update({ user: { isOnboarded: true } })
       await updateUser(user.id, { ...user, isOnboarded: true })
     } catch (error) {
       console.error('Error updating onboarding status:', error);
@@ -29,7 +30,7 @@ export default function Onboarding({ user }: { user: User }) {
     // await session.update({user: {isOnboarded: true}})
     await updateUserOnboardingStatus();
     if (userRole === "organizer") {
-      router.push(Routes.DASHBOARD)
+      router.push(`/${user.id}/events/new`)
     } else {
       router.push(Routes.EVENTS)
     }

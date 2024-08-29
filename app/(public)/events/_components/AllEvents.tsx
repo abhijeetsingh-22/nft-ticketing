@@ -18,7 +18,7 @@ export default function AllEvents({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [minPrice, setMinPrice] = useState("0");
-  const [maxPrice, setMaxPrice] = useState("500");
+  const [maxPrice, setMaxPrice] = useState("5000");
   const [selectedOrganizers, setSelectedOrganizers] = useState<string[]>([]);
   const [events, setEvents] = useState(initialEvents);
   const [filteredEvents, setFilteredEvents] = useState(initialEvents);
@@ -40,25 +40,36 @@ export default function AllEvents({
   }, [publicKey, connection, balance]);
 
   const handleBuyEventTicket = async (eventId: string) => {
+    setIsLoading(true);
     let selectedEvent = events.filter((event) => event.id === eventId)[0];
 
-    if (!publicKey || !connection || !balance) return;
-
-    toast.promise(
-      buyEventTicket(
-        selectedEvent,
-        publicKey,
-        connection,
-        balance,
-        signTransaction
-      ),
-      {
-        loading: "Processing payment...",
-        success:
-          "Ticket purchased successfully! Please check your wallet for your NFT",
-        error: (err) => `buyEventTicket fail: ${err.message}`,
-      }
-    );
+    if (!publicKey || !connection || !balance) {
+      toast.error("Please connect your wallet");
+      setIsLoading(false);
+      return;
+    }
+    try {
+      await toast.promise(
+        buyEventTicket(
+          selectedEvent,
+          publicKey,
+          connection,
+          balance,
+          signTransaction
+        ),
+        {
+          loading: "Processing payment...",
+          success:
+            "Ticket purchased successfully! Please check your wallet for your NFT",
+          error: (err) => `buyEventTicket fail: ${err.message}`,
+        }
+      );
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to buy ticket");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -117,6 +128,7 @@ export default function AllEvents({
           {filteredEvents.map((event) => (
             <EventCard
               key={event.id}
+              isLoading={isLoading}
               {...event}
               handleBuyEventTicket={handleBuyEventTicket}
             />

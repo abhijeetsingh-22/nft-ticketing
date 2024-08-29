@@ -1,5 +1,5 @@
 'use client'
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Calendar, Clock, MapPin, Users, User } from "lucide-react"
@@ -9,22 +9,28 @@ import { getUserById } from "@/db/users"
 import { useSession } from "next-auth/react"
 import { redirect } from "next/navigation"
 import { Routes } from "@/routes"
+import { IconSpinner } from "@/components/ui/icons"
+import { FaSpinner } from "react-icons/fa"
+import Link from "next/link"
+import { cn } from "@/lib/utils"
 
 type EventWithOrganizer = Event & {
   organizer: string
 }
 
 interface EventCardProps extends Partial<EventWithOrganizer> {
+  isLoading: boolean
   handleBuyEventTicket: (id: string) => void
 }
 
 
-export const EventCard = ({ id, name, startDate, venueName, ticketPrice, coverPhoto, organizer, handleBuyEventTicket }: EventCardProps) => {
+export const EventCard = ({ id, name, startDate, venueName, ticketPrice, coverPhoto, organizer, handleBuyEventTicket, isLoading }: EventCardProps) => {
   const session = useSession()
 
 
   const handleBuyTicket = () => {
     if (session.status === "authenticated") {
+      console.log("id", id)
       handleBuyEventTicket(id as string)
     } else {
       redirect(Routes.LOGIN)
@@ -59,11 +65,13 @@ export const EventCard = ({ id, name, startDate, venueName, ticketPrice, coverPh
             </div>
             <div className="flex justify-between items-center mt-4">
               <span className="font-bold text-lg text-primary">${ticketPrice?.toFixed(2)}</span>
-              <Button variant="outline" size="sm" className="group">
+              <Link href={`/events/${id}`} className={cn("group", buttonVariants({ variant: "outline" }))}>
                 View Event
                 <Users className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Button onClick={handleBuyTicket} disabled={isLoading}>
+                {isLoading ? <FaSpinner className="w-4 h-4 text-white animate-spin" /> : "Buy"}
               </Button>
-              <Button onClick={handleBuyTicket}>Buy</Button>
             </div>
           </div>
         </div>

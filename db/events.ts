@@ -54,6 +54,9 @@ export async function createOrUpdateEvent(event: Event) {
         thumbnail: event.thumbnail,
         description: event.description,
         organizerId: event.organizerId,
+        venueAddress: event.venueAddress,
+        zipCode: event.zipCode,
+        nftSymbol: event.nftSymbol
       },
       create: {
         name: event.name,
@@ -72,7 +75,9 @@ export async function createOrUpdateEvent(event: Event) {
         thumbnail: event.thumbnail,
         description: event.description,
         organizerId: event.organizerId,
-        nftSymbol: event.nftSymbol
+        nftSymbol: event.nftSymbol,
+        venueAddress: event.venueAddress,
+        zipCode: event.zipCode
       },
     });
 
@@ -97,6 +102,8 @@ export async function getEvents() {
 
 export async function getEventById(eventId: string) {
   try {
+    console.log("eventId", eventId);
+
     const event = await prisma.event.findUnique({
       where: { id: eventId },
     });

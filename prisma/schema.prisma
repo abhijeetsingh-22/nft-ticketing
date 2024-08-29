@@ -15,7 +15,6 @@ model Event {
   startDate           DateTime
   entryDate           DateTime?
   endDate             DateTime
-  venueName           String
   state               String?
   liveStatus          Boolean?
   publicVisibility    Boolean?
@@ -27,10 +26,11 @@ model Event {
   updatedAt           DateTime  @updatedAt
   numberOfTickets     Int?
   ticketPrice         Float?
-  mintAddress         String?
   nftSymbol           String?
   numberOfTicketsSold Int       @default(0)
-  projectId           String?
+  venueName           String
+  venueAddress        String
+  zipCode             String
   organizer           User      @relation(fields: [organizerId], references: [id])
   tickets             Ticket[]
 
