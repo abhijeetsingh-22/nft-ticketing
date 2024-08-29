@@ -19,22 +19,12 @@ const organizer = {
   eventsHosted: 15,
 }
 
-const ticketTypes = [
-  { id: 1, name: "General Admission", price: 0.5, available: 200 },
-  { id: 2, name: "VIP Access", price: 1.2, available: 50 },
-  { id: 3, name: "Backstage Pass", price: 2.5, available: 10 },
-]
-
 export default function EventDetails({ event }: { event: Event }) {
-  const [ticketCounts, setTicketCounts] = useState<Record<number, number>>({})
   const [isMinting, setIsMinting] = useState(false)
 
-  const handleTicketChange = (id: number, increment: number) => {
-    setTicketCounts(prev => {
-      const newCount = Math.max((prev[id] || 0) + increment, 0);
-      return { ...prev, [id]: newCount };
-    });
-  }
+  // const handleTicketChange = (increment: number) => {
+  //   setTicketCount(prev => Math.max(prev + increment, 0));
+  // }
 
   const handleMintNFT = () => {
     setIsMinting(true)
@@ -154,44 +144,7 @@ export default function EventDetails({ event }: { event: Event }) {
 
             <Separator />
 
-            {/* Ticket Types */}
-            <div>
-              <h2 className="mb-4 font-semibold text-2xl">Ticket Types</h2>
-              <div className="space-y-4">
-                {ticketTypes.map((ticket, index) => (
-                  <motion.div
-                    key={ticket.id}
-                    className="flex justify-between items-center p-4 border rounded-lg"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1, duration: 0.3 }}
-                  >
-                    <div>
-                      <h3 className="font-semibold">{ticket.name}</h3>
-                      <p className="text-gray-500 text-sm">{ticket.price} ETH - {ticket.available} available</p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Button variant="outline" size="icon" onClick={() => handleTicketChange(ticket.id, -1)}>
-                        <MinusIcon className="w-4 h-4" />
-                      </Button>
-                      <span className="w-8 text-center">{ticketCounts[ticket.id] || 0}</span>
-                      <Button variant="outline" size="icon" onClick={() => handleTicketChange(ticket.id, 1)}>
-                        <PlusIcon className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-              {/* <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5, duration: 0.3 }}
-              >
-                <Button className="mt-4 w-full" onClick={handleMintNFT} disabled={isMinting}>
-                  {isMinting ? "Minting..." : "Mint NFT Tickets"}
-                </Button>
-              </motion.div> */}
-            </div>
+
           </motion.div>
 
           {/* Sidebar */}

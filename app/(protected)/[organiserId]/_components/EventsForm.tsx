@@ -1,12 +1,5 @@
 "use client";
 
-import {
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,54 +12,19 @@ import {
   SelectItem,
   SelectGroup,
 } from "@/components/ui/select";
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { DatePicker } from "@/components/DatePicker";
-import { Checkbox } from "@/components/ui/checkbox";
-import { createOrUpdateEvent } from "@/db/events";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { UploadButton, UploadDropzone } from "@/lib/uploadthing";
+import { UploadDropzone } from "@/lib/uploadthing";
 import { useEffect } from "react";
 import Image from "next/image";
-import { ArrowLeft, CalendarIcon, Upload } from "lucide-react";
 import DateTimeSelector from "@/components/ui/TimeDatePicker";
+import { states } from "@/lib/constants";
+import { createOrUpdateEvent } from "@/db/events";
 
-const states = [
-  { value: 'ANDHRA_PRADESH', label: 'Andhra Pradesh' },
-  { value: 'ARUNACHAL_PRADESH', label: 'Arunachal Pradesh' },
-  { value: 'ASSAM', label: 'Assam' },
-  { value: 'BIHAR', label: 'Bihar' },
-  { value: 'CHHATTISGARH', label: 'Chhattisgarh' },
-  { value: 'GOA', label: 'Goa' },
-  { value: 'GUJARAT', label: 'Gujarat' },
-  { value: 'HARYANA', label: 'Haryana' },
-  { value: 'HIMACHAL_PRADESH', label: 'Himachal Pradesh' },
-  { value: 'JAMMU_AND_KASHMIR', label: 'Jammu and Kashmir' },
-  { value: 'JHARKHAND', label: 'Jharkhand' },
-  { value: 'KARNATAKA', label: 'Karnataka' },
-  { value: 'KERALA', label: 'Kerala' },
-  { value: 'MADHYA_PRADESH', label: 'Madhya Pradesh' },
-  { value: 'MAHARASHTRA', label: 'Maharashtra' },
-  { value: 'MANIPUR', label: 'Manipur' },
-  { value: 'MEGHALAYA', label: 'Meghalaya' },
-  { value: 'MIZORAM', label: 'Mizoram' },
-  { value: 'NAGALAND', label: 'Nagaland' },
-  { value: 'ODISHA', label: 'Odisha' },
-  { value: 'PUNJAB', label: 'Punjab' },
-  { value: 'RAJASTHAN', label: 'Rajasthan' },
-  { value: 'SIKKIM', label: 'Sikkim' },
-  { value: 'TAMIL_NADU', label: 'Tamil Nadu' },
-  { value: 'TELANGANA', label: 'Telangana' },
-  { value: 'TRIPURA', label: 'Tripura' },
-  { value: 'UTTAR_PRADESH', label: 'Uttar Pradesh' },
-  { value: 'UTTARAKHAND', label: 'Uttarakhand' },
-  { value: 'WEST_BENGAL', label: 'West Bengal' },
-  { value: 'DELHI', label: 'Delhi' },
-  { value: 'CHANDIGARH', label: 'Chandigarh' },
-];
+
 
 const schema = z
   .object({
@@ -121,7 +79,6 @@ export default function EventsForm({
   const watchStartDate = watch("startDate");
   const watchEndDate = watch("endDate");
 
-  // console.log(watchStartDate, watchEndDate);
 
   const onSubmit = async (data: any) => {
     data.organizerId = organiserId;
