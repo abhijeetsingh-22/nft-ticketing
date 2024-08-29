@@ -27,7 +27,7 @@ export default function ConnectWalletButton() {
 				className={buttonVariants({size: "sm"})}
 				style={{height: "36px" }}
 			>
-        {balance ? `${balance} SOL` : "Connect Wallet"}
+        {balance ? `${balance.toFixed(2)} SOL` : "Connect Wallet"}
       </WalletMultiButton>
 		</div>
 	)
