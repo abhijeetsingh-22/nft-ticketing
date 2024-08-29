@@ -6,7 +6,7 @@ import { format, parse, set } from "date-fns"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { Calendar, CalendarProps } from "@/components/ui/calendar"
 import {
   Popover,
   PopoverContent,
@@ -26,7 +26,7 @@ interface DateTimeSelectorProps {
   label: string;
 }
 
-const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({ selectedDate, onDateChange, label }) => {
+const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({ selectedDate, onDateChange, label, ...calendarProps }) => {
   const TimeSelect = ({ selectedDate, onSelect }: { selectedDate: Date | undefined; onSelect: (date: Date) => void }) => {
     const [hour, setHour] = React.useState("12")
     const [period, setPeriod] = React.useState("AM")
@@ -113,6 +113,7 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({ selectedDate, onDat
             selected={selectedDate}
             onSelect={onDateChange as any}
             initialFocus
+            {...calendarProps}
           />
           <div className="p-3 border-t border-border">
             <TimeSelect selectedDate={selectedDate} onSelect={onDateChange as any} />

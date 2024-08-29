@@ -134,7 +134,7 @@ export default function SecondProfile({ profile }: { profile: User }) {
               <p className="mt-1 text-gray-500 text-sm">This is how people can contact you.</p>
             </div>
             <div className="space-y-4 md:col-span-2">
-              <Input id="email" disabled type="email" placeholder="Enter your email" className="w-full" {...register("email")} />
+              <Input id="email" type="email" placeholder="Enter your email" className="w-full" {...register("email")} />
               {errors.email && <p className="text-red-500">{errors.email.message?.toString()}</p>}
               <div className="flex items-center space-x-2">
                 <Controller
@@ -322,7 +322,7 @@ export default function SecondProfile({ profile }: { profile: User }) {
           <Separator className="my-8" />
 
           <motion.div layout className="flex justify-end space-x-4 pt-6">
-            <Button type="button" variant="outline" className="border-gray-300 bg-white hover:bg-gray-50 text-gray-600">
+            <Button type="button" variant="outline" className="border-gray-300 bg-white hover:bg-gray-50 text-gray-600" disabled={isLoading}>
               Reset
             </Button>
             <Button type="submit" disabled={isLoading}>

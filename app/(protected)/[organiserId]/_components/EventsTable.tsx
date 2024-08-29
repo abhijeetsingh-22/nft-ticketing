@@ -49,51 +49,21 @@ export function EventsTable({ events, organiserId }: Readonly<Props>) {
   const columns: ColumnDef<(typeof events)[0]>[] = [
     {
       accessorKey: "id",
-      header: ({ column }) => (
-        <Button
-          className='p-0'
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          <div className='flex gap-2 capitalize'>
-            ID <ChevronsUpDown className='size-4' />
-          </div>
-        </Button>
-      ),
+      header: "ID",
       cell: (info) => (
         <div className='py-1'>{`${info.getValue() ?? "N/A"}`}</div>
       ),
     },
     {
       accessorKey: "name",
-      header: ({ column }) => (
-        <Button
-          className='p-0'
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          <div className='flex gap-2 capitalize'>
-            Name <ChevronsUpDown className='size-4' />
-          </div>
-        </Button>
-      ),
+      header: "Name",
       cell: (info) => (
         <div className='py-1'>{`${info.getValue() ?? "N/A"}`}</div>
       ),
     },
     {
       accessorKey: "date",
-      header: ({ column }) => (
-        <Button
-          className='p-0'
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          <div className='flex gap-2 capitalize'>
-            Date <ChevronsUpDown className='size-4' />
-          </div>
-        </Button>
-      ),
+      header: "Date",
       cell: (info) => (
         <div className='py-1'>{`${new Date().toLocaleDateString() ?? "N/A"
           }`}</div>
@@ -101,34 +71,14 @@ export function EventsTable({ events, organiserId }: Readonly<Props>) {
     },
     {
       accessorKey: "location",
-      header: ({ column }) => (
-        <Button
-          className='p-0'
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          <div className='flex gap-2 capitalize'>
-            Location <ChevronsUpDown className='size-4' />
-          </div>
-        </Button>
-      ),
+      header: "Location",
       cell: (info) => (
         <div className='py-1'>{`${info.getValue() ?? "N/A"}`}</div>
       ),
     },
     {
       accessorKey: "description",
-      header: ({ column }) => (
-        <Button
-          className='p-0'
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          <div className='flex gap-2 capitalize'>
-            Description <ChevronsUpDown className='size-4' />
-          </div>
-        </Button>
-      ),
+      header: "Description",
       cell: (info) => (
         <div className='py-1'>{`${info.getValue() ?? "No description available"
           }`}</div>
@@ -136,37 +86,11 @@ export function EventsTable({ events, organiserId }: Readonly<Props>) {
     },
     {
       accessorKey: "organizerId",
-      header: ({ column }) => (
-        <Button
-          className='p-0'
-          variant='ghost'
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          <div className='flex gap-2 capitalize'>
-            Organizer ID <ChevronsUpDown className='size-4' />
-          </div>
-        </Button>
-      ),
+      header: "Organizer ID",
       cell: (info) => (
         <div className='py-1'>{`${info.getValue() ?? "N/A"}`}</div>
       ),
     },
-    // {
-    //   id: 'actions',
-    //   cell: ({ row }) => {
-    //     const event = row.original;
-    //     return (
-    //       <Trash2
-    //         className="w-4 h-4 text-red-400 hover:text-red-500 cursor-pointer"
-    //         onClick={(e) => {
-    //           e.stopPropagation();
-    //           setSelectedItem(event);
-    //           setIsDialogOpen(true);
-    //         }}
-    //       />
-    //     );
-    //   },
-    // },
     {
       id: "actions",
       enableHiding: false,

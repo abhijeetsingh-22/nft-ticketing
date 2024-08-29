@@ -18,7 +18,7 @@ import * as z from "zod";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { UploadDropzone } from "@/lib/uploadthing";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import DateTimeSelector from "@/components/ui/TimeDatePicker";
 import { states } from "@/lib/constants";
@@ -56,7 +56,9 @@ export default function EventsForm({
   organiserId: string;
   event?: Event;
 }) {
+
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -82,9 +84,12 @@ export default function EventsForm({
 
   const onSubmit = async (data: any) => {
     data.organizerId = organiserId;
+    setIsLoading(true);
     toast.promise(
       createOrUpdateEvent({ organizerId: organiserId, ...data }).then(() => {
         router.push(`/${organiserId}/events`);
+      }).finally(() => {
+        setIsLoading(false);
       }),
       {
         loading: "Updating event...",
@@ -134,6 +139,7 @@ export default function EventsForm({
                 selectedDate={watchStartDate}
                 onDateChange={(date) => setValue("startDate", date)}
                 label='Start Date'
+              // disabled={isLoading}
               />
               {errors.startDate && (
                 <p className='text-red-500'>
@@ -147,6 +153,7 @@ export default function EventsForm({
                 selectedDate={watchEndDate}
                 onDateChange={(date) => setValue("endDate", date)}
                 label='End Date'
+              // disabled={isLoading}
               />
               {errors.endDate && (
                 <p className='text-red-500'>
@@ -291,13 +298,18 @@ export default function EventsForm({
                 <UploadDropzone
                   endpoint='imageUploader'
                   onClientUploadComplete={(res: any) => {
+                    setIsLoading(false);
                     setValue("coverPhoto", res[0].url);
                     toast.success("Upload Completed");
+                  }}
+                  onUploadProgress={(progress) => {
+                    setIsLoading(true);
                   }}
                   onUploadError={(error: Error) => {
                     console.log("error", error);
                     toast.error(`ERROR! ${error.message}`);
                   }}
+                  disabled={isLoading}
                 />
               )}
               {errors.coverPhoto && (
@@ -321,12 +333,17 @@ export default function EventsForm({
                   endpoint='imageUploader'
                   onClientUploadComplete={(res: any) => {
                     setValue("thumbnail", res[0].url);
+                    setIsLoading(false);
                     toast.success("Upload Completed");
+                  }}
+                  onUploadProgress={(progress) => {
+                    setIsLoading(true);
                   }}
                   onUploadError={(error: Error) => {
                     console.log("error", error);
                     toast.error(`ERROR! ${error.message}`);
                   }}
+                  disabled={isLoading}
                 />
               )}
               {errors.thumbnail && (
@@ -344,10 +361,13 @@ export default function EventsForm({
                 e.preventDefault();
                 router.back();
               }}
+              disabled={isLoading}
             >
               Cancel
             </Button>
-            <Button type='submit'>Create Event</Button>
+            <Button type='submit' disabled={isLoading}>
+              {isLoading ? "Creating Event..." : "Create Event"}
+            </Button>
           </div>
         </form>
       </main>
