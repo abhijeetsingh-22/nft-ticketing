@@ -33,6 +33,7 @@ model Event {
   zipCode             String
   organizer           User      @relation(fields: [organizerId], references: [id])
   tickets             Ticket[]
+  Order               Order[]
 
   @@map("events")
 }
@@ -49,6 +50,7 @@ model Ticket {
   userId    String?
   event     Event        @relation(fields: [eventId], references: [id])
   user      User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Order     Order[]
 
   @@map("tickets")
 }
@@ -67,8 +69,34 @@ model User {
   updatedAt     DateTime  @updatedAt
   events        Event[]
   tickets       Ticket[]
+  orders        Order[]
 
   @@map("users")
+}
+
+model Order {
+  id String @id @default(cuid())
+
+  customer User        @relation(fields: [userId], references: [id])
+  event    Event       @relation(fields: [eventId], references: [id])
+  ticket   Ticket      @relation(fields: [ticketId], references: [id])
+  price    Float
+  status   OrderStatus
+
+  ticketId String
+  eventId  String
+  userId   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
 }
 
 enum TicketStatus {
