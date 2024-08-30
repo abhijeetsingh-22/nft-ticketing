@@ -1,5 +1,6 @@
 import { Transaction, SystemProgram, PublicKey, LAMPORTS_PER_SOL, Connection } from '@solana/web3.js';
 import { Event } from "@prisma/client";
+import { convertUsdToSol } from './dollarToSol';
 
 
 
@@ -17,7 +18,11 @@ export const handleBuyTicket = async (event: Event, publicKey: PublicKey, connec
         console.log("buyerWalletAddress", buyerWalletAddress);
 
         // TODO : fetch from event price and change to sol
-        let ticketPrice = 0.01;
+        let ticketPrice = await convertUsdToSol(Number(event.ticketPrice));
+
+        if (!ticketPrice) {
+            throw new Error("Error while converting usd to sol");
+        }
         const transaction = new Transaction().add(
             SystemProgram.transfer({
                 fromPubkey: publicKey,
