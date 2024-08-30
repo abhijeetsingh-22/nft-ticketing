@@ -1,37 +1,40 @@
 "use client";
 
 import * as React from "react";
-import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider
-} from "@/components/ui/tooltip";
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function ModeToggle() {
-  const { setTheme, theme } = useTheme();
+	const { setTheme } = useTheme();
 
-  return (
-    <TooltipProvider disableHoverableContent>
-      <Tooltip delayDuration={100}>
-        <TooltipTrigger asChild>
-          <Button
-            className="bg-background rounded-full w-8 h-8"
-            variant="outline"
-            size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            <Sun className="w-[1.2rem] h-[1.2rem] transition-transform duration-500 ease-in-out rotate-90 scale-0 dark:rotate-0 dark:scale-100" />
-            <Moon className="absolute w-[1.2rem] h-[1.2rem] transition-transform duration-500 ease-in-out rotate-0 scale-1000 dark:-rotate-90 dark:scale-0" />
-            <span className="sr-only">Switch Theme</span>
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom">Switch Theme</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
+	return (
+		<DropdownMenu>
+			<DropdownMenuTrigger asChild>
+				<Button variant='outline' size='icon'>
+					<Sun className='w-[1.2rem] h-[1.2rem] transition-all rotate-0 scale-100 dark:-rotate-90 dark:scale-0' />
+					<Moon className='absolute w-[1.2rem] h-[1.2rem] transition-all rotate-90 scale-0 dark:rotate-0 dark:scale-100' />
+					<span className='sr-only'>Toggle theme</span>
+				</Button>
+			</DropdownMenuTrigger>
+			<DropdownMenuContent align='end'>
+				<DropdownMenuItem onClick={() => setTheme("light")}>
+					Light
+				</DropdownMenuItem>
+				<DropdownMenuItem onClick={() => setTheme("dark")}>
+					Dark
+				</DropdownMenuItem>
+				<DropdownMenuItem onClick={() => setTheme("system")}>
+					System
+				</DropdownMenuItem>
+			</DropdownMenuContent>
+		</DropdownMenu>
+	);
 }
