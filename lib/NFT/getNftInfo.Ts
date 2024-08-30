@@ -1,8 +1,25 @@
-import { Connection, PublicKey } from '@solana/web3.js'
-import { Metaplex } from '@metaplex-foundation/js'
+import { Connection, PublicKey } from '@solana/web3.js';
+import { Metaplex, Nft } from '@metaplex-foundation/js';
 
-async function getNftDetails(nftAddress) {
-    // Define the Solana mainnet cluster connection
+interface Creator {
+    address: string;
+    verified: boolean;
+    share: number;
+}
+
+interface NftDetails {
+    mintAddress: string;
+    owner: string;
+    updateAuthority: string;
+    name: string;
+    symbol: string;
+    uri: string;
+    sellerFeeBasisPoints: number;
+    creators: Creator[];
+}
+
+export const getNftDetails = async (nftAddress: string): Promise<NftDetails> => {
+    // Define the Solana devnet cluster connection
     const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
 
     // Initialize Metaplex
@@ -13,13 +30,12 @@ async function getNftDetails(nftAddress) {
         const nftPublicKey = new PublicKey(nftAddress);
 
         // Fetch the NFT metadata
-        const nft = await metaplex.nfts().findByMint({ mintAddress: nftPublicKey });
-
+        const nft = await metaplex.nfts().findByMint({ mintAddress: nftPublicKey }) as Nft;
 
         // Extract the relevant details
-        const nftDetails = {
-            mintAddress: nft.mint.address.toString(), 
-            owner: nft.updateAuthorityAddress.toString(), 
+        const nftDetails: NftDetails = {
+            mintAddress: nft.mint.address.toString(),
+            owner: nft.updateAuthorityAddress.toString(),
             updateAuthority: nft.updateAuthorityAddress.toString(),
             name: nft.name,
             symbol: nft.symbol,
@@ -28,12 +44,9 @@ async function getNftDetails(nftAddress) {
             creators: nft.creators.map(creator => ({
                 address: creator.address.toString(),
                 verified: creator.verified,
-                share: creator.share
-            }))
+                share: creator.share,
+            })),
         };
-        
-        // console.log(nftDetails);
-        
 
         // Fetch and log metadata from URI if needed
         const response = await fetch(nft.uri);
@@ -49,8 +62,3 @@ async function getNftDetails(nftAddress) {
         throw error;
     }
 }
-
-// Example usage
-getNftDetails('5fGobnj9dztAJS3RqCfZb7ThqiStbbg7fmTmq4GWxaKk')
-    .then(details => console.log(details))
-    .catch(error => console.error(error));
