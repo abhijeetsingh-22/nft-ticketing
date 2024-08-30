@@ -1,43 +1,50 @@
 'use client'
-import { Calendar, Users, ChevronRight, Wallet } from "lucide-react"
-import Link from "next/link"
+import { useState } from "react"
+import { Calendar, Users, ChevronRight } from "lucide-react"
 
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 
-import { useState } from "react"
 import { Routes } from "@/routes"
-import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 import { User } from "@prisma/client"
 import { updateUser } from "@/db/users"
 import { useSession } from "next-auth/react"
+import { toast } from "sonner"
 
 export default function Onboarding({ user }: { user: User }) {
   const router = useRouter()
   const session = useSession();
+  const [isLoading, setIsLoading] = useState(false);
+
   const updateUserOnboardingStatus = async () => {
     try {
       await session.update({ user: { isOnboarded: true } })
       await updateUser(user.id, { ...user, isOnboarded: true })
     } catch (error) {
-      console.error('Error updating onboarding status:', error);
+      throw error
     }
   };
+
   const handleGetStarted = async (userRole: "organizer" | "attendee") => {
-    //Call this to update the onBoarding status in jwt & session
-    // await session.update({user: {isOnboarded: true}})
-    await updateUserOnboardingStatus();
-    if (userRole === "organizer") {
-      router.push(`/${user.id}/events/new`)
-    } else {
-      router.push(Routes.EVENTS)
+    setIsLoading(true);
+    try {
+      await updateUserOnboardingStatus();
+      if (userRole === "organizer") {
+        router.push(`/${user.id}/events/new`)
+      } else {
+        router.push(Routes.EVENTS)
+      }
+    } catch (error) {
+      console.error("Error during onboarding:", error);
+      toast.error('An error occurred during onboarding. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
     <>
-
       <div className="flex justify-center items-center bg-white p-4 min-h-screen">
         <Card className="shadow-lg w-full max-w-4xl overflow-hidden">
           <CardContent className="p-8 sm:p-12">
@@ -60,8 +67,13 @@ export default function Onboarding({ user }: { user: User }) {
                     </div>
                     <h3 className="font-semibold text-xl">I&apos;m an event organizer</h3>
                     <p className="text-muted-foreground text-sm">Create and manage events, sell tickets, and grow your audience.</p>
-                    <Button onClick={() => handleGetStarted("organizer")} variant="outline" className="group-hover:bg-purple-500 group-hover:text-white w-full transition-colors duration-300">
-                      Get Started
+                    <Button
+                      onClick={() => handleGetStarted("organizer")}
+                      variant="outline"
+                      className="group-hover:bg-purple-500 group-hover:text-white w-full transition-colors duration-300"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? 'Loading...' : 'Get Started'}
                     </Button>
                   </div>
                 </CardContent>
@@ -76,36 +88,21 @@ export default function Onboarding({ user }: { user: User }) {
                     </div>
                     <h3 className="font-semibold text-xl">I&apos;m an attendee</h3>
                     <p className="text-muted-foreground text-sm">Discover exciting events, purchase tickets, and connect with others.</p>
-                    <Button onClick={() => handleGetStarted("attendee")} variant="outline" className="group-hover:bg-blue-500 group-hover:text-white w-full transition-colors duration-300">
-                      Get Started
+                    <Button
+                      onClick={() => handleGetStarted("attendee")}
+                      variant="outline"
+                      className="group-hover:bg-blue-500 group-hover:text-white w-full transition-colors duration-300"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? 'Loading...' : 'Get Started'}
                     </Button>
                   </div>
                 </CardContent>
               </Card>
             </div>
-            {/* <div className="space-y-4 mt-10 text-center">
-            <p className="text-muted-foreground text-sm">
-              Already using Mintix?{" "}
-              <Link className="font-medium text-primary hover:text-primary/80 transition-colors" href="#">
-                Sign in
-              </Link>
-            </p>
-            <p className="text-muted-foreground/60 text-xs">
-              By continuing, you agree to Mintix&apos;s{" "}
-              <Link className="hover:text-primary underline transition-colors" href="#">
-                Terms of Use
-              </Link>{" "}
-              and confirm that you have read Mintix&apos;s{" "}
-              <Link className="hover:text-primary underline transition-colors" href="#">
-                Privacy Policy
-              </Link>
-              .
-            </p>
-          </div> */}
           </CardContent>
         </Card>
       </div>
     </>
-
   )
 }

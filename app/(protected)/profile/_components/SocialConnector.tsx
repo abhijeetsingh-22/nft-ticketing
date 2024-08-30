@@ -10,10 +10,10 @@ import { updateSocialLink } from '@/db/users'
 import { SocialLink } from '@prisma/client'
 
 const SocialConnector = ({ userId, socialLinks }: { userId: string, socialLinks: SocialLink }) => {
-  const [discordUrl, setDiscordUrl] = useState(socialLinks.discordUrl || '')
-  const [twitterUrl, setTwitterUrl] = useState(socialLinks.twitterUrl || '')
-  const [githubUrl, setGithubUrl] = useState(socialLinks.githubUrl || '')
-  const [instagramUrl, setInstagramUrl] = useState(socialLinks.instagramUrl || '')
+  const [discordUrl, setDiscordUrl] = useState(socialLinks?.discordUrl || '')
+  const [twitterUrl, setTwitterUrl] = useState(socialLinks?.twitterUrl || '')
+  const [githubUrl, setGithubUrl] = useState(socialLinks?.githubUrl || '')
+  const [instagramUrl, setInstagramUrl] = useState(socialLinks?.instagramUrl || '')
 
   const handleConnect = async (platform: 'instagramUrl' | 'twitterUrl' | 'githubUrl' | 'discordUrl', url: string) => {
     try {

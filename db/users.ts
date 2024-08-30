@@ -1,8 +1,19 @@
 'use server'
 import prisma from "@/db";
-import { User } from "@prisma/client";
+import { SocialLink, User } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-export async function createUser({ email, name, walletAddress }: { email: string, name: string, walletAddress: string }) {
+
+
+interface CreateUserParams {
+  email: string;
+  name: string;
+  walletAddress?: string;
+  password: string;
+  salt: string;
+  id: string;
+}
+
+export async function createUser({ email, name, walletAddress, password, salt, id }: CreateUserParams) {
   const existingUser = await prisma.user.findUnique({
     where: { email },
   })
@@ -14,9 +25,20 @@ export async function createUser({ email, name, walletAddress }: { email: string
 
   const newUser = await prisma.user.create({
     data: {
+      id,
       email,
+      password,
+      salt,
       name,
       walletAddress,
+      socialLink: {
+        create: {
+          instagramUrl: '',
+          twitterUrl: '',
+          githubUrl: '',
+          discordUrl: '',
+        },
+      },
       updatedAt: new Date(),
     },
   })
@@ -45,12 +67,15 @@ export async function getUserById(id: string) {
 }
 
 
-export async function updateUser(id: string, data: Partial<User>) {
+export async function updateUser(id: string, data: Partial<User & { socialLink: SocialLink }>) {
   try {
+    const { id: _, socialLink, ...rest } = data;
+    console.log("updateData", rest);
+
     const updatedUser = await prisma.user.update({
       where: { id },
       data: {
-        ...data,
+        ...rest,
         updatedAt: new Date(),
       },
     })

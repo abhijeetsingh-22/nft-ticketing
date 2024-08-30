@@ -13,26 +13,6 @@ export const authConfig = {
   },
 
   callbacks: {
-    // async authorized({ auth, request: { nextUrl } }) {
-    //   const isLoggedIn = !!auth?.user
-
-    //   // const isOnLoginPage = nextUrl.pathname.startsWith('/login')
-    //   // const isOnSignupPage = nextUrl.pathname.startsWith('/signup')
-    //   // const isOnHomePage = nextUrl.pathname.startsWith('/')
-    //   // console.log("isLoggedIn", isLoggedIn, auth?.user?.email);
-
-    //   // if (isLoggedIn) {
-    //   //   if (isOnLoginPage || isOnSignupPage) {
-    //   //     return Response.redirect(new URL('/', nextUrl))
-    //   //   }
-    //   // } else {
-    //   //   if (!isOnLoginPage && !isOnSignupPage && !isOnHomePage) {
-    //   //     return Response.redirect(new URL('/login', nextUrl))
-    //   //   }
-    //   // }
-
-    //   return true
-    // },
     async jwt({ token, user: userParam, session, trigger }) {
       const user = userParam as User
       if (user) {

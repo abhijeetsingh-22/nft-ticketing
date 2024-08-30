@@ -4,8 +4,8 @@ import { ResultCode, getStringFromBuffer } from '@/lib/utils'
 import { z } from 'zod'
 
 import { AuthError } from 'next-auth'
-import prisma from '@/db'
 import { getUser } from '@/db/users'
+import { createUser as createUserInDb } from '@/db/users'
 
 export async function createUser(
   email: string,
@@ -29,15 +29,7 @@ export async function createUser(
       name
     }
 
-    await prisma.user.create({
-      data: {
-        id: user.id,
-        email: user.email,
-        password: user.password,
-        salt: user.salt,
-        name: user.name
-      }
-    })
+    await createUserInDb(user)
 
     return {
       type: 'success',
