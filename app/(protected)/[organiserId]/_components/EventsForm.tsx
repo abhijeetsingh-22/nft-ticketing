@@ -267,10 +267,10 @@ export default function EventsForm({
               )}
             </div>
             <div className='space-y-2'>
-              <Label htmlFor='ticket-price'>Ticket Price</Label>
+              <Label htmlFor='ticket-price'>Ticket Price (USD)</Label>
               <Input
                 id='ticket-price'
-                placeholder='Enter ticket price'
+                placeholder='Enter ticket price in USD'
                 type='number'
                 step='0.01'
                 {...register("ticketPrice", { valueAsNumber: true })}

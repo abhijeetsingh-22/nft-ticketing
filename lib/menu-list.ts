@@ -7,7 +7,8 @@ import {
   LayoutGrid,
   LucideIcon,
   Plus,
-  CalendarSearch
+  CalendarSearch,
+  HomeIcon
 } from "lucide-react";
 
 type Submenu = {
@@ -50,7 +51,7 @@ export function getMenuList(pathname: string, userId: string): Group[] {
           href: "/dashboard",
           label: "Dashboard",
           active: pathname.includes("/dashboard"),
-          icon: LayoutGrid,
+          icon: HomeIcon,
           submenus: []
         }
       ]
