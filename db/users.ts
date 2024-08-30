@@ -70,8 +70,6 @@ export async function getUserById(id: string) {
 export async function updateUser(id: string, data: Partial<User & { socialLink: SocialLink }>) {
   try {
     const { id: _, socialLink, ...rest } = data;
-    console.log("updateData", rest);
-
     const updatedUser = await prisma.user.update({
       where: { id },
       data: {
