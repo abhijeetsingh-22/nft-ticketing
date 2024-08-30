@@ -41,16 +41,14 @@ model Event {
 model Ticket {
   id        String       @id @default(cuid())
   tokenId   String       @unique
-  ownerId   String
   eventId   String
-  price     Float
   status    TicketStatus
   createdAt DateTime     @default(now())
-  updatedAt DateTime
-  userId    String?
+  updatedAt DateTime     @updatedAt
+  userId    String
   event     Event        @relation(fields: [eventId], references: [id])
-  user      User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Order     Order[]
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order     Order       @relation(fields: [id], references: [ticketId])
 
   @@map("tickets")
 }
@@ -103,17 +101,17 @@ model Order {
 
   customer User        @relation(fields: [userId], references: [id])
   event    Event       @relation(fields: [eventId], references: [id])
-  ticket   Ticket      @relation(fields: [ticketId], references: [id])
-  price    Float
+  ticket   Ticket?     
   status   OrderStatus
 
-  ticketId String
+  ticketId String? 
   eventId  String
   userId   String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([ticketId])
   @@map("orders")
 }
 
