@@ -9,11 +9,14 @@ import { updateUser } from "@/db/users" // Import the updateUser function
 import { useSession } from "next-auth/react" // Import useSession
 
 export default function ConnectWalletButton() {
+	const [isClient, setIsClient] = useState(false)
 	const [balance, setBalance] = useState<number | null>(null)
 	const { publicKey } = useWallet()
 	const { connection } = useConnection()
 	const { data: session } = useSession() // Get session data
-
+	useEffect(() => {
+		setIsClient(true)
+	}, [])
 	const handleUpdateUserWalletAddress = async () => {
 		if (session?.user) {
 			await updateUser(session.user.id, { walletAddress: publicKey?.toString() })
@@ -32,7 +35,9 @@ export default function ConnectWalletButton() {
 			setBalance(null)
 		}
 	}, [publicKey, connection, balance, session])
-
+	if (!isClient) {
+		return null
+	}
 	return (
 		<div className="flex flex-row">
 			<WalletMultiButton

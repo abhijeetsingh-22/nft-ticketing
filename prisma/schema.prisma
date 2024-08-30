@@ -33,7 +33,7 @@ model Event {
   zipCode             String
   organizer           User      @relation(fields: [organizerId], references: [id])
   tickets             Ticket[]
-  Order               Order[]
+  orders               Order[]
 
   @@map("events")
 }
@@ -41,16 +41,15 @@ model Event {
 model Ticket {
   id        String       @id @default(cuid())
   tokenId   String       @unique
-  ownerId   String
   eventId   String
-  price     Float
   status    TicketStatus
   createdAt DateTime     @default(now())
-  updatedAt DateTime
-  userId    String?
+  updatedAt DateTime     @updatedAt
+  userId    String
   event     Event        @relation(fields: [eventId], references: [id])
-  user      User?        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Order     Order[]
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderId  String      @unique
+  order     Order      @relation(fields: [orderId], references: [id])
 
   @@map("tickets")
 }
@@ -103,11 +102,9 @@ model Order {
 
   customer User        @relation(fields: [userId], references: [id])
   event    Event       @relation(fields: [eventId], references: [id])
-  ticket   Ticket      @relation(fields: [ticketId], references: [id])
-  price    Float
+  ticket   Ticket?     
   status   OrderStatus
 
-  ticketId String
   eventId  String
   userId   String
 
