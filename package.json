@@ -8,7 +8,11 @@
 		"start": "next start",
 		"lint": "next lint",
 		"vercel-build": "prisma generate && prisma migrate deploy && next build",
-		"postinstall": "prisma generate"
+		"postinstall": "prisma generate",
+		"db:start": "docker-compose up -d",
+		"db:migrate":"pnpm prisma migrate deploy || (echo 'Migration conflict, resetting database...' && pnpm prisma migrate reset --force)",
+		"prisma:generate": "pnpm prisma generate",
+		"dx": "pnpm run db:start && pnpm install && pnpm run db:migrate  && pnpm run prisma:generate && pnpm run dev"
 	},
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.4.2",
