@@ -1,13 +1,13 @@
-import NextAuth, {DefaultSession} from "next-auth"
-import {DefaultJWT} from "next-auth/jwt"
-import {authConfig} from "./auth.config"
+import NextAuth, { DefaultSession } from "next-auth"
+import { DefaultJWT } from "next-auth/jwt"
+import { authConfig } from "./auth.config"
 import prisma from "@/db"
-import {PrismaAdapter} from "@auth/prisma-adapter"
+import { PrismaAdapter } from "@auth/prisma-adapter"
 
 export type UserInfo = {
-  id: string
-  name: string
-  email?: string
+	id: string
+	name: string
+	email?: string
 	isOnboarded: boolean
 }
 declare module "next-auth" {
@@ -24,8 +24,8 @@ declare module "next-auth/jwt" {
 		id: string
 	}
 }
-export const {handlers, auth, signIn, signOut} = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
 	...authConfig,
 	adapter: PrismaAdapter(prisma),
-	session: {strategy: "jwt"},
+	session: { strategy: "jwt" },
 })

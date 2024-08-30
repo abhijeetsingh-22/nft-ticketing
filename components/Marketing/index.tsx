@@ -29,12 +29,10 @@ import {
 	Sun,
 } from "lucide-react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import { useTheme } from "next-themes";
 
 export default function Marketing() {
-	const { theme, setTheme } = useTheme();
-
 	const benefitsRef = useRef(null);
 	const benefitsInView = useInView(benefitsRef, { once: true });
 

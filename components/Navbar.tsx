@@ -12,6 +12,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { ModeToggle } from "./mode-toggle";
 import { signOut, useSession } from "next-auth/react";
+import { UserNavMenu } from "./UserNavMenu";
+import { User } from "next-auth";
 
 const Navbar = () => {
 	const session = useSession();
@@ -30,58 +32,44 @@ const Navbar = () => {
 					<span className='ml-2 font-bold text-xl'>Minttix</span>
 				</Link>
 				<nav className='md:flex gap-4 sm:gap-6 hidden ml-auto'>
-					<Link
-						className='font-medium text-sm hover:text-purple-600 dark:hover:text-purple-400 transition-colors'
-						href='#features'
-					>
-						Features
-					</Link>
-					<Link
-						className='font-medium text-sm hover:text-purple-600 dark:hover:text-purple-400 transition-colors'
-						href='#how-it-works'
-					>
-						How It Works
-					</Link>
-					<Link
-						className='font-medium text-sm hover:text-purple-600 dark:hover:text-purple-400 transition-colors'
-						href='/events'
-					>
-						Events
-					</Link>
 					{!isAuth ? (
-						<Link
-							href='/signup'
-							className={buttonVariants({
-								size: "sm",
-							})}
-						>
-							Get started <ArrowRight className='ml-1.5 w-5 h-5' />
-						</Link>
-					) : (
-						<>
-							{
-								<Link
-									href={`/${session?.data?.user?.id}/events`}
-									className={buttonVariants({
-										variant: "ghost",
-										size: "sm",
-									})}
-								>
-									My Events
-								</Link>
-							}
-							<Link className='cursor-pointer' href='/profile'>
-								{session?.data?.user?.name ||
-									session?.data?.user?.email?.split("@")[0]}
+						<div className='md:flex gap-4 sm:gap-6 hidden ml-auto'>
+							<Link
+								className='flex items-center font-medium text-sm hover:text-purple-600 dark:hover:text-purple-400 transition-colors'
+								href='#features'
+							>
+								Features
 							</Link>
+							<Link
+								className='flex items-center font-medium text-sm hover:text-purple-600 dark:hover:text-purple-400 transition-colors'
+								href='#how-it-works'
+							>
+								How It Works
+							</Link>
+							<Link
+								className='flex items-center font-medium text-sm hover:text-purple-600 dark:hover:text-purple-400 transition-colors'
+								href='/events'
+							>
+								<span className='flex items-center'>Events</span>
+							</Link>
+							<Link
+								href='/login'
+								className={buttonVariants({
+									size: "sm",
+								})}
+							>
+								Get started <ArrowRight className='ml-1.5 w-5 h-5' />
+							</Link>
+						</div>
+					) : (
+						<div className='flex items-center gap-4'>
+							<Link href={`/${session?.data?.user?.id}/events`}>Dashboard</Link>
 							<ConnectWalletButton />
-							<Button variant='outline' onClick={() => signOut()}>
-								Sign Out
-							</Button>
-						</>
+							<UserNavMenu user={session?.data?.user} />
+						</div>
 					)}
+					<ModeToggle />
 				</nav>
-				<ModeToggle />
 			</MaxWidthWrapper>
 		</header>
 	);
