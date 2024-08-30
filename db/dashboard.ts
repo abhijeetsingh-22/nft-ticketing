@@ -43,7 +43,8 @@ export async function getRecentOrders(organizerId: string): Promise<RecentOrder[
       },
       event: {
         select: {
-          name: true
+          name: true,
+          ticketPrice: true
         }
       },
     },
@@ -54,6 +55,6 @@ export async function getRecentOrders(organizerId: string): Promise<RecentOrder[
     date: order.createdAt.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
     customer: order.customer.name ?? 'Unknown',
     event: order.event.name,
-    amount: `US$${order.price.toFixed(2)}`,
+    amount: `US$${order.event.ticketPrice.toFixed(2)}`,
   }));
 }

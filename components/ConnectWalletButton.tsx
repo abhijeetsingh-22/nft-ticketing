@@ -5,7 +5,6 @@ import { useConnection, useWallet } from "@solana/wallet-adapter-react"
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
 import { LAMPORTS_PER_SOL } from "@solana/web3.js"
 import { useEffect, useState } from "react"
-import { updateUser } from "@/db/users" // Import the updateUser function
 import { useSession } from "next-auth/react" // Import useSession
 
 export default function ConnectWalletButton() {
@@ -17,11 +16,11 @@ export default function ConnectWalletButton() {
 	useEffect(() => {
 		setIsClient(true)
 	}, [])
-	const handleUpdateUserWalletAddress = async () => {
-		if (session?.user) {
-			await updateUser(session.user.id, { walletAddress: publicKey?.toString() })
-		}
-	}
+	// const handleUpdateUserWalletAddress = async () => {
+	// 	if (session?.user) {
+	// 		await updateUser(session.user.id, { walletAddress: publicKey?.toString() })
+	// 	}
+	// }
 	useEffect(() => {
 		if (publicKey) {
 			(async function getBalanceEvery10Seconds() {
@@ -30,7 +29,7 @@ export default function ConnectWalletButton() {
 				setTimeout(getBalanceEvery10Seconds, 10000)
 			})()
 
-			handleUpdateUserWalletAddress()
+			// handleUpdateUserWalletAddress()
 		} else {
 			setBalance(null)
 		}
