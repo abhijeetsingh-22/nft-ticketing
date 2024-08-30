@@ -1,6 +1,7 @@
 import { Transaction, SystemProgram, PublicKey, LAMPORTS_PER_SOL, Connection } from '@solana/web3.js';
 import { Event } from "@prisma/client";
 import { convertUsdToSol } from './dollarToSol';
+import { toast } from 'sonner';
 
 
 
@@ -56,7 +57,7 @@ export const handleBuyTicket = async (event: Event, publicKey: PublicKey, connec
         return { type: 'success', code: 200, message: "Payment recived from buyer" };
     } catch (error) {
         console.error("Transaction failed:", error);
-        alert("Transaction failed. Please try again.");
+        toast.error("Transaction failed. Please try again.");
         return { type: 'error', code: 500, message: "Transaction failed. Please try again." };
     }
 };

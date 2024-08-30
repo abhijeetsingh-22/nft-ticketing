@@ -31,7 +31,7 @@ export default function EventDetails({ event }: { event: Event }) {
     // Simulating minting process
     setTimeout(() => {
       setIsMinting(false)
-      alert("NFT minted successfully!")
+      toast.success("NFT minted successfully!")
     }, 2000)
   }
 
