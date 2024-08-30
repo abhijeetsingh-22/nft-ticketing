@@ -1,5 +1,6 @@
 "use server"
 
+import { auth } from "@/auth"
 import prisma from "@/db"
 import {getEventById} from "@/db/events"
 import {keypairIdentity, Metaplex} from "@metaplex-foundation/js"
@@ -13,6 +14,10 @@ type BuyEventTicketParams = {
 
 export const buyEventTicket = async ({eventId, signedTransaction}: BuyEventTicketParams) => {
 	try {
+    const session = await auth();
+    if(!session?.user.id){
+      return {type: "error", resultCode:"UNAUTHENTICATED", message: "Login to buy ticket"}
+    }
 		const event = await prisma.event.findUnique({
 			where: {id: eventId},
 		})
@@ -62,10 +67,26 @@ export const buyEventTicket = async ({eventId, signedTransaction}: BuyEventTicke
 
     console.log("NEW NFT", nft)
 
-    const nftMintAddress = nft.token.mintAddress
+    const order = await prisma.order.create({
+      data:{
+        eventId: event.id,
+        userId: session.user.id,
+        status: "COMPLETED",
+        ticket:{
+          create:{
+            tokenId: nft.address.toString(),
+            eventId: event.id,
+            userId: session.user.id,
+            status: "SOLD"
+        }
+      }
+    }})
+
+		console.log("Order created:", order)
+
     return {type: "success", code: 200, message: "Ticket bought successfully"}
 	} catch (error) {
-		console.error("Get events error:", error)
+		console.error("BUY TICKET error:", error)
 		return {type: "error", resultCode: "SERVER_ERROR", message: "Something went wrong"}
 	}
 }

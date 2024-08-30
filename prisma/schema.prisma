@@ -33,7 +33,7 @@ model Event {
   zipCode             String
   organizer           User      @relation(fields: [organizerId], references: [id])
   tickets             Ticket[]
-  Order               Order[]
+  orders               Order[]
 
   @@map("events")
 }
@@ -48,7 +48,8 @@ model Ticket {
   userId    String
   event     Event        @relation(fields: [eventId], references: [id])
   user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  order     Order       @relation(fields: [id], references: [ticketId])
+  orderId  String      @unique
+  order     Order      @relation(fields: [orderId], references: [id])
 
   @@map("tickets")
 }
@@ -104,14 +105,12 @@ model Order {
   ticket   Ticket?     
   status   OrderStatus
 
-  ticketId String? 
   eventId  String
   userId   String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([ticketId])
   @@map("orders")
 }
 
