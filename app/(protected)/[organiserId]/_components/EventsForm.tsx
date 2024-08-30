@@ -101,6 +101,7 @@ export default function EventsForm({
 
   return (
     <div className='bg-background min-h-screen'>
+
       <main className='mx-auto px-4 py-8 container'>
         <form
           className='space-y-8 mx-auto max-w-3xl'
