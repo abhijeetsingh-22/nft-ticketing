@@ -47,13 +47,13 @@ export function EventsTable({ events, organiserId }: Readonly<Props>) {
   };
 
   const columns: ColumnDef<(typeof events)[0]>[] = [
-    {
-      accessorKey: "id",
-      header: "ID",
-      cell: (info) => (
-        <div className='py-1'>{`${info.getValue() ?? "N/A"}`}</div>
-      ),
-    },
+    // {
+    //   accessorKey: "id",
+    //   header: "ID",
+    //   cell: (info) => (
+    //     <div className='py-1'>{`${info.getValue() ?? "N/A"}`}</div>
+    //   ),
+    // },
     {
       accessorKey: "name",
       header: "Name",
@@ -84,13 +84,13 @@ export function EventsTable({ events, organiserId }: Readonly<Props>) {
           }`}</div>
       ),
     },
-    {
-      accessorKey: "organizerId",
-      header: "Organizer ID",
-      cell: (info) => (
-        <div className='py-1'>{`${info.getValue() ?? "N/A"}`}</div>
-      ),
-    },
+    // {
+    //   accessorKey: "organizerId",
+    //   header: "Organizer ID",
+    //   cell: (info) => (
+    //     <div className='py-1'>{`${info.getValue() ?? "N/A"}`}</div>
+    //   ),
+    // },
     {
       id: "actions",
       enableHiding: false,
