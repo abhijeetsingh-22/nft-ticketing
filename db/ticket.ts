@@ -6,7 +6,7 @@ import { Metaplex, keypairIdentity } from "@metaplex-foundation/js";
 import prisma from "@/db";
 
 
-export async function buyEventTicket(event: Event, publicKey: PublicKey, connection: Connection, balance: number, signTransaction: any) {
+async function buyEventTicket(event: Event, publicKey: PublicKey, connection: Connection, balance: number, signTransaction: any) {
   try {
     const PRIVATE_KEY = process.env.PRIVATE_KEY
     if (!PRIVATE_KEY) {

@@ -78,8 +78,8 @@ export async function updateUser(id: string, data: Partial<User & { socialLink: 
       },
     })
 
-    revalidatePath('layout')
-    revalidatePath('/')
+    // revalidatePath('layout')
+    // revalidatePath('/')
 
     return { type: 'success', resultCode: 'USER_UPDATED', user: updatedUser }
   } catch (error) {

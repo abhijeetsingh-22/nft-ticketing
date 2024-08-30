@@ -5,11 +5,11 @@ import { Input } from "@/components/ui/input";
 import { Event, User } from "@prisma/client";
 import { Filters } from "./Filters";
 import { EventCard } from "./EventCard";
-import { buyEventTicket } from "@/db/ticket";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
 import { toast } from "sonner";
-import { getUserById } from "@/db/users";
+import bs58 from "bs58";
+import { buyEventTicket } from "@/server-actions/buy-ticket";
 
 export default function AllEvents({
   initialEvents,
@@ -40,23 +40,38 @@ export default function AllEvents({
   }, [publicKey, connection, balance]);
 
   const handleBuyEventTicket = async (eventId: string) => {
+    console.log("buying ticket for event", eventId);
+    console.log("publicKey", publicKey);
     setIsLoading(true);
     let selectedEvent = events.filter((event) => event.id === eventId)[0];
 
-    if (!publicKey || !connection || !balance) {
+    if (!publicKey || !connection || !balance || !signTransaction) {
       toast.error("Please connect your wallet");
       setIsLoading(false);
       return;
     }
+    const ticketCostLamports = 0.07 * LAMPORTS_PER_SOL;
+    console.log("ticketCostLamports", ticketCostLamports);
+    console.log("palatform wallet", process.env.NEXT_PUBLIC_PLATFORM_WALLET_PUBLIC_KEY);
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+          fromPubkey: publicKey,
+          toPubkey: new PublicKey(bs58.decode(process.env.NEXT_PUBLIC_PLATFORM_WALLET_PUBLIC_KEY!)), // Replace with your platform's public key
+          lamports: ticketCostLamports,
+      }),
+  );
+  transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+  transaction.feePayer = publicKey;
+
+  // Sign the transaction
+  const signedTransaction = await signTransaction(transaction);
+
     try {
       await toast.promise(
-        buyEventTicket(
-          selectedEvent,
-          publicKey,
-          connection,
-          balance,
-          signTransaction
-        ),
+        buyEventTicket({
+          eventId,
+          signedTransaction: Buffer.from(signedTransaction.serialize()).toString("base64"),
+        }),
         {
           loading: "Processing payment...",
           success:
