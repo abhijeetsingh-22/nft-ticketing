@@ -30,4 +30,30 @@ export const states: { value: string; label: string }[] = [
   { value: 'WEST_BENGAL', label: 'West Bengal' },
   { value: 'DELHI', label: 'Delhi' },
   { value: 'CHANDIGARH', label: 'Chandigarh' },
+  { value: 'OTHER', label: 'Other' },
 ];
+
+export const countries: { value: string; label: string }[] = [
+  { value: 'INDIA', label: 'India' },
+  { value: 'USA', label: 'USA' },
+  { value: 'UK', label: 'UK' },
+  { value: 'CANADA', label: 'Canada' },
+  { value: 'AUSTRALIA', label: 'Australia' },
+  { value: 'NEW_ZEALAND', label: 'New Zealand' },
+  { value: 'SOUTH_AFRICA', label: 'South Africa' },
+  { value: 'UNITED_KINGDOM', label: 'United Kingdom' },
+  { value: 'UNITED_STATES', label: 'United States' },
+  { value: 'OTHER', label: 'Other' },
+];
+
+export const currencies: { value: string; label: string }[] = [
+  { value: 'INR', label: 'Indian Rupee' },
+  { value: 'USD', label: 'United States Dollar' },
+  { value: 'EUR', label: 'Euro' },
+  { value: 'GBP', label: 'British Pound' },
+  { value: 'CAD', label: 'Canadian Dollar' },
+  { value: 'AUD', label: 'Australian Dollar' },
+  { value: 'NZD', label: 'New Zealand Dollar' },
+  { value: 'ZAR', label: 'South African Rand' },
+];
+

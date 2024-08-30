@@ -5,7 +5,6 @@ import Link from "next/link"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 
-// import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { useState } from "react"
 import { Routes } from "@/routes"
 import { cn } from "@/lib/utils"
@@ -35,32 +34,10 @@ export default function Onboarding({ user }: { user: User }) {
       router.push(Routes.EVENTS)
     }
   }
-  // const [isWalletDialogOpen, setIsWalletDialogOpen] = useState(false)
 
-  // const handleConnectWallet = () => {
-  //   // Here you would typically integrate with a Solana wallet provider
-  //   console.log("Connecting to Solana wallet...")
-  //   // For demonstration, we'll just close the dialog after a delay
-  //   setTimeout(() => setIsWalletDialogOpen(false), 2000)
-  // }
   return (
     <>
-      {/* <Dialog open={isWalletDialogOpen} onOpenChange={setIsWalletDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Connect Your Solana Wallet</DialogTitle>
-            <DialogDescription>
-              To use EventHub, you need to connect your Solana wallet. This allows you to securely manage tickets and payments.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-center py-4">
-            <Wallet className="w-16 h-16 text-purple-500" />
-          </div>
-          <Button onClick={handleConnectWallet} className="w-full">
-            Connect Wallet
-          </Button>
-        </DialogContent>
-      </Dialog> */}
+
       <div className="flex justify-center items-center bg-white p-4 min-h-screen">
         <Card className="shadow-lg w-full max-w-4xl overflow-hidden">
           <CardContent className="p-8 sm:p-12">

@@ -1,15 +1,24 @@
 "use client"
 
-import {buttonVariants} from "@/components/ui/button"
-import {useConnection, useWallet} from "@solana/wallet-adapter-react"
-import {WalletMultiButton} from "@solana/wallet-adapter-react-ui"
-import {LAMPORTS_PER_SOL} from "@solana/web3.js"
-import {useEffect, useState} from "react"
+import { buttonVariants } from "@/components/ui/button"
+import { useConnection, useWallet } from "@solana/wallet-adapter-react"
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui"
+import { LAMPORTS_PER_SOL } from "@solana/web3.js"
+import { useEffect, useState } from "react"
+import { updateUser } from "@/db/users" // Import the updateUser function
+import { useSession } from "next-auth/react" // Import useSession
 
 export default function ConnectWalletButton() {
 	const [balance, setBalance] = useState<number | null>(null)
-	const {publicKey} = useWallet()
-	const {connection} = useConnection()
+	const { publicKey } = useWallet()
+	const { connection } = useConnection()
+	const { data: session } = useSession() // Get session data
+
+	const handleUpdateUserWalletAddress = async () => {
+		if (session?.user) {
+			await updateUser(session.user.id, { walletAddress: publicKey?.toString() })
+		}
+	}
 	useEffect(() => {
 		if (publicKey) {
 			(async function getBalanceEvery10Seconds() {
@@ -17,18 +26,21 @@ export default function ConnectWalletButton() {
 				setBalance(newBalance / LAMPORTS_PER_SOL)
 				setTimeout(getBalanceEvery10Seconds, 10000)
 			})()
+
+			handleUpdateUserWalletAddress()
 		} else {
 			setBalance(null)
 		}
-	}, [publicKey, connection, balance])
+	}, [publicKey, connection, balance, session])
+
 	return (
 		<div className="flex flex-row">
 			<WalletMultiButton
-				className={buttonVariants({size: "sm"})}
-				style={{height: "36px" }}
+				className={buttonVariants({ size: "sm" })}
+				style={{ height: "36px" }}
 			>
-        {balance ? `${balance.toFixed(2)} SOL` : "Connect Wallet"}
-      </WalletMultiButton>
+				{balance ? `${balance.toFixed(2)} SOL` : "Connect Wallet"}
+			</WalletMultiButton>
 		</div>
 	)
 }

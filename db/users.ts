@@ -36,6 +36,9 @@ export async function getUser(email: string) {
 export async function getUserById(id: string) {
   const user = await prisma.user.findUnique({
     where: { id },
+    include: {
+      socialLink: true,
+    },
   })
 
   return user
@@ -47,8 +50,7 @@ export async function updateUser(id: string, data: Partial<User>) {
     const updatedUser = await prisma.user.update({
       where: { id },
       data: {
-        name: data?.name,
-        isOnboarded: data?.isOnboarded,
+        ...data,
         updatedAt: new Date(),
       },
     })
@@ -61,7 +63,6 @@ export async function updateUser(id: string, data: Partial<User>) {
     throw error;
   }
 }
-
 
 
 

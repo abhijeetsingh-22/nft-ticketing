@@ -58,8 +58,10 @@ model Ticket {
 model User {
   id            String    @id @default(cuid())
   name          String?
+  bio           String?
   email         String    @unique
   walletAddress String?   @unique
+  publicEmail   Boolean?
   salt          String?
   password      String?
   emailVerified DateTime?
@@ -67,11 +69,33 @@ model User {
   isOnboarded   Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  streetAddress String?
+  city          String?
+  state         String?
+  postalCode    String?
+  country       String?
+  currency      String?
   events        Event[]
   tickets       Ticket[]
   orders        Order[]
+  socialLink    SocialLink?
 
   @@map("users")
+}
+
+model SocialLink {
+  id           String   @id @default(cuid())
+  instagramUrl String?
+  twitterUrl   String?
+  githubUrl    String?
+  discordUrl   String?
+  userId       String   @unique // Ensuring one-to-one relationship
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("social_links")
 }
 
 model Order {
