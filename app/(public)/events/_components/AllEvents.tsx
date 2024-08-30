@@ -10,6 +10,7 @@ import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from "@solana
 import { toast } from "sonner";
 import bs58 from "bs58";
 import { buyEventTicket } from "@/server-actions/buy-ticket";
+import { convertUsdToSol } from "@/lib/NFT/dollarToSol";
 
 export default function AllEvents({
   initialEvents,
@@ -50,23 +51,32 @@ export default function AllEvents({
       setIsLoading(false);
       return;
     }
-    const ticketCostLamports = 0.07 * LAMPORTS_PER_SOL;
+    console.log("ticketPrice", selectedEvent.ticketPrice);
+    console.log("ticket cost", selectedEvent.ticketPrice, await convertUsdToSol(selectedEvent.ticketPrice));
+    const ticketPrice: number | null = await convertUsdToSol(selectedEvent.ticketPrice);
+    if (!ticketPrice) {
+      toast.error("Server Error! Please try again");
+      setIsLoading(false);
+      return;
+    }
+    const ticketCostLamports = Number((ticketPrice * LAMPORTS_PER_SOL).toFixed(0));
     console.log("ticketCostLamports", ticketCostLamports);
     console.log("palatform wallet", process.env.NEXT_PUBLIC_PLATFORM_WALLET_PUBLIC_KEY);
     const transaction = new Transaction().add(
       SystemProgram.transfer({
-          fromPubkey: publicKey,
-          toPubkey: new PublicKey(bs58.decode(process.env.NEXT_PUBLIC_PLATFORM_WALLET_PUBLIC_KEY!)), // Replace with your platform's public key
-          lamports: ticketCostLamports,
+        fromPubkey: publicKey,
+        toPubkey: new PublicKey(bs58.decode(process.env.NEXT_PUBLIC_PLATFORM_WALLET_PUBLIC_KEY!)), // Replace with your platform's public key
+        lamports: ticketCostLamports,
       }),
-  );
-  transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-  transaction.feePayer = publicKey;
+    );
+    transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+    transaction.feePayer = publicKey;
 
-  // Sign the transaction
-  const signedTransaction = await signTransaction(transaction);
 
     try {
+      // Sign the transaction
+      const signedTransaction = await signTransaction(transaction);
+
       await toast.promise(
         buyEventTicket({
           eventId,
