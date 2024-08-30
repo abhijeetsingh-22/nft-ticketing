@@ -224,14 +224,16 @@ export default function SecondProfile({ profile }: { profile: User & { socialLin
                     onBlur={async (e) => {
                       const zip = e.target.value;
                       if (zip) {
-                        // Fetch state and country based on zip code
+                        // Fetch state, city, and country based on zip code
                         const response = await fetch(`https://api.postalpincode.in/pincode/${zip}`);
                         const data = await response.json();
                         console.log(data);
                         if (data[0].Status === "Success") {
                           const state = data[0].PostOffice[0].State;
+                          const city = data[0].PostOffice[0].District;
                           const country = "INDIA"; // Assuming the API is for India
                           setValue("state", states.find((s) => s.label === state)?.value || null);
+                          setValue("city", city || null);
                           setValue("country", countries.find((c) => c.value === country)?.value || null);
                         } else {
                           // Show error if the zip is not valid
