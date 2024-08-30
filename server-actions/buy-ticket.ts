@@ -54,7 +54,7 @@ export const buyEventTicket = async ({eventId, signedTransaction}: BuyEventTicke
 		const {nft} = await metaplex.nfts().create({
 			uri: event.thumbnail,
 			name: event.name,
-			symbol: event.nftSymbol ?? "SYM",
+			symbol: event.nftSymbol ?? event.slug,
 			sellerFeeBasisPoints: 500,
 			creators: [
 				{
