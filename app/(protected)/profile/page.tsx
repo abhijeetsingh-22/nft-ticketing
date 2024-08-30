@@ -3,7 +3,7 @@ import { ContentLayout } from '@/components/admin-panel/content-layout'
 import SecondProfile from './_components/SecondProfile'
 import { auth } from '@/auth';
 import { getUserById } from '@/db/users';
-import { User } from '@prisma/client';
+import { SocialLink, User } from '@prisma/client';
 
 const ProfilePage = async () => {
   const session = await auth();
@@ -12,7 +12,7 @@ const ProfilePage = async () => {
   return (
     <ContentLayout title='Profile'>
       {/* <Profile /> */}
-      <SecondProfile profile={user as User} />
+      <SecondProfile profile={user as User & { socialLink: SocialLink }} />
     </ContentLayout>
   )
 }

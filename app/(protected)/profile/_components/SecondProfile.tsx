@@ -15,7 +15,7 @@ import { Copy, Check, Loader2 } from 'lucide-react'
 import { useForm, Controller } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { User } from '@prisma/client'
+import { SocialLink, User } from '@prisma/client'
 import { toast } from 'sonner'
 import { updateUser } from '@/db/users'
 import ConnectWallet from '@/app/(protected)/profile/_components/ConnectWallet'
@@ -35,7 +35,7 @@ const schema = z.object({
   currency: z.string().optional()
 })
 
-export default function SecondProfile({ profile }: { profile: User }) {
+export default function SecondProfile({ profile }: { profile: User & { socialLink: SocialLink } }) {
   const [isLoading, setIsLoading] = useState(false)
   const [copiedWallet, setCopiedWallet] = useState<string | null>(null);
 
@@ -72,6 +72,13 @@ export default function SecondProfile({ profile }: { profile: User }) {
     setIsLoading(false)
   }
 
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
+    if (event.key === 'Enter' && (event.target as HTMLElement).tagName !== 'TEXTAREA') {
+      event.preventDefault();
+    }
+  }
+
   return (
     <>
       <motion.div
@@ -81,7 +88,7 @@ export default function SecondProfile({ profile }: { profile: User }) {
         className="bg-white min-h-screen text-gray-900"
       >
         <main className="mx-auto px-4 py-8 max-w-6xl">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8" onKeyDown={handleKeyDown} >
             <motion.div layout className="gap-6 grid grid-cols-1 md:grid-cols-3">
               <div className="md:col-span-1">
                 <Label htmlFor="name" className="font-semibold text-lg">Name</Label>
@@ -177,7 +184,7 @@ export default function SecondProfile({ profile }: { profile: User }) {
 
             <Separator className="my-8" />
 
-            <SocialConnector />
+            <SocialConnector userId={profile.id} socialLinks={profile.socialLink} />
 
             <Separator className="my-8" />
 
@@ -293,9 +300,7 @@ export default function SecondProfile({ profile }: { profile: User }) {
             <Separator className="my-8" />
 
             <motion.div layout className="flex justify-end space-x-4 pt-6">
-              <Button type="button" variant="outline" className="border-gray-300 bg-white hover:bg-gray-50 text-gray-600" disabled={isLoading}>
-                Reset
-              </Button>
+
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? (
                   <Loader2 className="mr-2 w-4 h-4 animate-spin" />

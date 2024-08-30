@@ -63,6 +63,28 @@ export async function updateUser(id: string, data: Partial<User>) {
     throw error;
   }
 }
+export async function updateSocialLink(userId: string, platform: 'instagramUrl' | 'twitterUrl' | 'githubUrl' | 'discordUrl', link: string) {
+  try {
+    console.log('Updating social link for user:', userId, 'platform:', platform, 'link:', link)
+    const updatedSocialLink = await prisma.socialLink.upsert({
+      where: { userId },
+      update: {
+        [platform]: link,
+        updatedAt: new Date(),
+      },
+      create: {
+        userId,
+        [platform]: link,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    })
 
+    revalidatePath('layout')
+    revalidatePath('/')
 
-
+    return { type: 'success', resultCode: 'SOCIAL_LINK_UPDATED', socialLink: updatedSocialLink }
+  } catch (error) {
+    throw error;
+  }
+}
