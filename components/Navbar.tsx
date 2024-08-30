@@ -89,7 +89,7 @@ const Navbar = async () => {
 									className="cursor-pointer"
 									href="/profile"
 								>
-									{session?.user?.email}
+									{session?.user?.name || session?.user?.email?.split('@')[0]}
 								</Link>
 								<ConnectWalletButton />
 								<SignOutButton />
