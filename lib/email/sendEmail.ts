@@ -32,11 +32,11 @@ export async function sendBookingEmail(to: string[], subject: string, event: Eve
 }
 
 
-export const sendEmailUsingNodemailer = async (email: string, subject: string, event: Event): Promise<boolean> => {
+export const sendEmailUsingNodemailer = async (email: string, subject: string, html: string): Promise<boolean> => {
   try {
-    const html = generateBookingEmailBody(event);
     if(!email || !html || !subject) return false
-    console.log(process.env.NEXT_PUBLIC_ADMIN_EMAIL, process.env.NEXT_PUBLIC_ADMIN_EMAIL_PASSWORD)
+
+    // console.log(process.env.NEXT_PUBLIC_ADMIN_EMAIL, process.env.NEXT_PUBLIC_ADMIN_EMAIL_PASSWORD)
     // Transporter with your SMTP settings
     const transporter: Transporter = nodemailer.createTransport({
       service: 'gmail',

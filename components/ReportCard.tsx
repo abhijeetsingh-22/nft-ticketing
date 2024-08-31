@@ -20,14 +20,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { sendEmailUsingNodemailer } from "@/lib/email/sendEmail";
+import { toast } from "sonner";
+import { buildMailBodyForReportIssue } from "@/lib/email/emailBody";
 
 // Define the validation schema using Zod
 const reportSchema = z.object({
-	area: z.string().nonempty("Area is required"),
-	security: z.string().nonempty("Security level is required"),
-	subject: z.string().nonempty("Subject is required"),
-	description: z.string().nonempty("Description is required"),
+	area: z.optional(z.string().min(1, "Area is required")),
+	security: z.optional(z.string().min(1, "Security is required")),
+	subject: z.string().min(1, "Subject is required"),
+	description: z.string().min(1, "Description is required"),
 });
+
 
 type ReportFormData = z.infer<typeof reportSchema>;
 
@@ -40,8 +44,22 @@ export default function ReportCard() {
 		resolver: zodResolver(reportSchema),
 	});
 
-	const onSubmit = (data: ReportFormData) => {
+	const onSubmit = async (data: ReportFormData) => {
 		console.log(data);
+		let to = process.env.NEXT_PUBLIC_ADMIN_EMAIL
+		if (!to) {
+			toast.error("Failed to resgister your issue. Please try again");
+			return
+		}
+		let mailBody: string = await buildMailBodyForReportIssue(data)
+		
+		let response = await sendEmailUsingNodemailer(to, "Report Issue", mailBody)
+
+		if (response) {
+			toast.success("Issue reported successfully")
+		} else {
+			toast.error("Failed to resgister your issue. Please try again")
+		}
 	};
 
 	return (
@@ -153,6 +171,7 @@ export default function ReportCard() {
 					<Button
 						type='submit'
 						className='bg-primary hover:bg-primary-dark dark:bg-primary-dark text-white'
+						onClick={handleSubmit(onSubmit)}
 					>
 						Submit
 					</Button>

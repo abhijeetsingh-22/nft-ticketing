@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth"
 import prisma from "@/db"
+import { generateBookingEmailBody } from "@/lib/email/emailBody"
 import { sendBookingEmail, sendEmailUsingNodemailer } from "@/lib/email/sendEmail"
 import { keypairIdentity, Metaplex } from "@metaplex-foundation/js"
 import { Event } from "@prisma/client"
@@ -94,7 +95,8 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 		if (buyerEmailAddress && event) {
 			// will not wait for email to be sent
 			// sendBookingEmail([buyerEmailAddress], "Ticket Purchased", event)
-			sendEmailUsingNodemailer(buyerEmailAddress, "Ticket Purchased", event)
+			const emailBody = await  generateBookingEmailBody(event);
+			sendEmailUsingNodemailer(buyerEmailAddress, "Ticket Purchased", emailBody)
 		}
 		return { status: "success", message: "Ticket bought successfully", orderId: order.id, ticketId: order.ticket?.id }
 	} catch (error) {
