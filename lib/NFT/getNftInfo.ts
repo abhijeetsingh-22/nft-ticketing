@@ -7,7 +7,7 @@ interface Creator {
     share: number;
 }
 
-interface NftDetails {
+export interface NftDetails {
     mintAddress: string;
     owner: string;
     updateAuthority: string;

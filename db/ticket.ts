@@ -13,7 +13,7 @@ async function buyEventTicket(event: Event, publicKey: PublicKey, connection: Co
       console.error("Unable to fecth private key from env");
     }
 
-    
+
     const payer = Keypair.fromSecretKey(
       Uint8Array.from(
         [249, 36, 213, 4, 96, 14, 193, 194, 70, 70, 228, 62, 207, 254, 213, 147, 2, 130, 42, 63, 179, 72, 39, 205, 221, 44, 43, 160, 184, 117, 27, 34, 171, 186, 186, 101, 228, 244, 7, 21, 10, 196, 228, 132, 6, 246, 63, 36, 70, 133, 104, 40, 47, 81, 12, 185, 101, 163, 236, 136, 32, 38, 70, 206]))
@@ -141,3 +141,26 @@ export const transferNftToBuyerUI = async (buyerWalletAddress: string, nftMintAd
   }
 };
 
+export const getTicketsByUserId = async (userId: string) => {
+  try {
+    const tickets = await prisma.ticket.findMany({
+      where: {
+        userId: userId
+      },
+      include: {
+        event: {
+          select: {
+            name: true
+          }
+        },
+        order: true,
+        user: true
+      }
+    });
+
+    return { tickets, message: 'Tickets retrieved successfully', code: 200 };
+  } catch (error) {
+    console.error('Error fetching tickets:', error);
+    return { tickets: [], message: 'Error fetching tickets', code: 500 };
+  }
+};

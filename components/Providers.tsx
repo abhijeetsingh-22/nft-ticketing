@@ -15,7 +15,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 				disableTransitionOnChange
 			> */}
 			<AppWalletProvider>{children}</AppWalletProvider>
-			<Toaster closeButton position='top-right' />
+			<Toaster closeButton position='top-right' duration={3000} />
 			<ProgressBar
 				height='4px'
 				color='#0047ab'

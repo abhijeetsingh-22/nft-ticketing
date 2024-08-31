@@ -11,11 +11,10 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ChevronsUpDown, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
-// import { deleteInventory } from '../../action';
-import { Event } from "@prisma/client";
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
+// import { deleteTicket } from '../../action';
+import { Ticket } from "@prisma/client";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -27,18 +26,18 @@ import {
 import { toast } from "sonner";
 
 type Props = {
-	events: Event[];
+	tickets: Ticket[];
 	organiserId: string;
 };
 
-export function EventsTable({ events, organiserId }: Readonly<Props>) {
+export function TicketsTable({ tickets, organiserId }: Readonly<Props>) {
 	const router = useRouter();
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
-	const [selectedItem, setSelectedItem] = useState<Event | null>(null);
+	const [selectedItem, setSelectedItem] = useState<Ticket | null>(null);
 
 	const handleConfirm = () => {
 		if (selectedItem) {
-			// deleteInventory(selectedItem.id);
+			// deleteTicket(selectedItem.id);
 		}
 		setIsDialogOpen(false);
 	};
@@ -47,36 +46,34 @@ export function EventsTable({ events, organiserId }: Readonly<Props>) {
 		setIsDialogOpen(false);
 	};
 
-	const columns: ColumnDef<(typeof events)[0]>[] = [
+	const columns: ColumnDef<(typeof tickets)[0]>[] = [
 		{
-			accessorKey: "name",
-			header: "Name",
+			accessorKey: "tokenId",
+			header: "Ticket ID",
 			cell: (info) => (
 				<div className='py-1'>{`${info.getValue() ?? "N/A"}`}</div>
 			),
 		},
 		{
-			accessorKey: "date",
-			header: "Date",
-			cell: (info) => (
-				<div className='py-1'>{`${
-					new Date().toLocaleDateString() ?? "N/A"
-				}`}</div>
-			),
-		},
-		{
-			accessorKey: "location",
-			header: "Location",
+			accessorKey: "eventId",
+			header: "Event ID",
 			cell: (info) => (
 				<div className='py-1'>{`${info.getValue() ?? "N/A"}`}</div>
 			),
 		},
 		{
-			accessorKey: "description",
-			header: "Description",
+			accessorKey: "status",
+			header: "Status",
+			cell: (info) => (
+				<div className='py-1'>{`${info.getValue() ?? "N/A"}`}</div>
+			),
+		},
+		{
+			accessorKey: "createdAt",
+			header: "Created At",
 			cell: (info) => (
 				<div className='py-1'>{`${
-					info.getValue() ?? "No description available"
+					(info.getValue() as Date)?.toLocaleDateString() ?? "N/A"
 				}`}</div>
 			),
 		},
@@ -84,7 +81,7 @@ export function EventsTable({ events, organiserId }: Readonly<Props>) {
 			id: "actions",
 			enableHiding: false,
 			cell: ({ row }) => {
-				const event = row.original;
+				const ticket = row.original;
 				return (
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
@@ -98,29 +95,29 @@ export function EventsTable({ events, organiserId }: Readonly<Props>) {
 							<DropdownMenuSeparator />
 							<DropdownMenuItem
 								onClick={() => {
-									const shareUrl = `${window.location.origin}/${organiserId}/events/${event.slug}`;
-									navigator.clipboard.writeText(shareUrl);
-									toast.success("Event link copied to clipboard");
+									const ticketUrl = `${window.location.origin}/${organiserId}/tickets/${ticket.id}`;
+									navigator.clipboard.writeText(ticketUrl);
+									toast.success("Ticket link copied to clipboard");
 								}}
 							>
-								Share Event
+								Share Ticket
 							</DropdownMenuItem>
 							<DropdownMenuItem
 								onClick={() =>
-									router.push(`/${organiserId}/events/${event.slug}`)
+									router.push(`/${organiserId}/tickets/${ticket.id}`)
 								}
 							>
-								Edit Event
+								View Ticket
 							</DropdownMenuItem>
 							<DropdownMenuItem
 								onClick={(e) => {
 									e.stopPropagation();
-									setSelectedItem(event);
+									setSelectedItem(ticket);
 									setIsDialogOpen(true);
 								}}
 								className='cursor-pointer'
 							>
-								<span className='text-red-500'>Delete Event</span>
+								<span className='text-red-500'>Delete Ticket</span>
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
@@ -136,7 +133,7 @@ export function EventsTable({ events, organiserId }: Readonly<Props>) {
 					<DialogHeader>
 						<DialogTitle>Confirm Deletion</DialogTitle>
 						<DialogDescription>
-							{`Are you sure you want to delete this event ${selectedItem?.name}?`}
+							{`Are you sure you want to delete this ticket ${selectedItem?.tokenId}?`}
 						</DialogDescription>
 					</DialogHeader>
 					<div className='flex justify-end gap-4'>
@@ -148,7 +145,7 @@ export function EventsTable({ events, organiserId }: Readonly<Props>) {
 				</DialogContent>
 			</Dialog>
 			<div className='w-full'>
-				<ReusableTable data={events} columns={columns} />
+				<ReusableTable data={tickets} columns={columns} />
 			</div>
 		</>
 	);

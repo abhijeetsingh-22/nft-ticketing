@@ -65,16 +65,7 @@ export function getMenuList(pathname: string, userId: string): Group[] {
           active: pathname.includes(`/${userId}/events`),
           icon: SquarePen,
           submenus: [
-            // {
-            //   href: "/posts",
-            //   label: "All Posts",
-            //   active: pathname === "/posts"
-            // },
-            // {
-            //   href: "/posts/new",
-            //   label: "New Post",
-            //   active: pathname === "/posts/new"
-            // }
+
           ]
         },
         {
@@ -84,59 +75,23 @@ export function getMenuList(pathname: string, userId: string): Group[] {
           icon: Bookmark,
           submenus: []
         },
-        // {
-        //   href: "/tags",
-        //   label: "My Profile",
-        //   active: pathname.includes("/tags"),
-        //   icon: Tag,
-        //   submenus: []
-        // },
+
         {
           href: "/events",
           label: "All Events",
           active: pathname == "/events",
           icon: CalendarSearch,
           submenus: []
-        }
+        },
+        {
+          href: "/nft-details",
+          label: "Get NFT Details",
+          active: pathname.includes("/nft-details?nftAddress="),
+          icon: Tag,
+          submenus: []
+        },
       ]
     },
-    // {
-    //   groupLabel: "Upcoming Events",
-    //   menus: [
-    //     // {
-    //     //   href: "/users",
-    //     //   label: "Users",
-    //     //   active: pathname.includes("/users"),
-    //     //   icon: Users,
-    //     //   submenus: []
-    //     // },
-    //     {
-    //       href: "/events",
-    //       label: "All Events",
-    //       active: pathname.includes("/events"),
-    //       icon: CalendarSearch,
-    //       submenus: []
-    //     }
-    //   ]
-    // },
-    // {
-    //   groupLabel: "",
-    //   menus: [
-    //     // {
-    //     //   href: "/users",
-    //     //   label: "Users",
-    //     //   active: pathname.includes("/users"),
-    //     //   icon: Users,
-    //     //   submenus: []
-    //     // },
-    //     {
-    //       href: "/profile",
-    //       label: "Profile",
-    //       active: pathname.includes("/profile"),
-    //       icon: Settings,
-    //       submenus: []
-    //     }
-    //   ]
-    // }
+
   ];
 }
