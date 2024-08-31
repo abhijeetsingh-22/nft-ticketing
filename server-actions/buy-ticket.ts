@@ -8,6 +8,7 @@ import { keypairIdentity, Metaplex } from "@metaplex-foundation/js"
 import { Event } from "@prisma/client"
 import { Connection, Cluster, clusterApiUrl, Keypair, Transaction } from "@solana/web3.js"
 import bs58 from "bs58"
+import { UseMethod } from "@metaplex-foundation/mpl-token-metadata"
 
 
 type BuyEventTicketParams = {
@@ -52,20 +53,34 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 		console.log("userWallet", userWallet)
 
 		const metaplex = new Metaplex(connection)
+		const {uri} = await metaplex.nfts().uploadMetadata({
+			name: event.name,
+			symbol: event.nftSymbol ?? event.slug,
+			image: event.thumbnail,
+			eventId: event.id,
+		})
+
+
 		metaplex.use(keypairIdentity(platformWallet))
 
 		const { nft } = await metaplex.nfts().create({
-			uri: event.thumbnail,
+			uri: uri,
 			name: event.name,
 			symbol: event.nftSymbol ?? event.slug,
 			sellerFeeBasisPoints: 500,
+			uses: {
+				total: 1,
+				remaining: 1,
+				useMethod: UseMethod.Single ,
+			},
+			primarySaleHappened: true,
 			creators: [
 				{
 					address: platformWallet.publicKey,
 					share: 100,
 				},
 			],
-			tokenOwner: userWallet,
+			tokenOwner: userWallet
 		})
 
 		console.log("NEW NFT", nft)
