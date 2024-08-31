@@ -33,23 +33,23 @@ model Event {
   zipCode             String
   organizer           User      @relation(fields: [organizerId], references: [id])
   tickets             Ticket[]
-  orders               Order[]
+  orders              Order[]
 
   @@map("events")
 }
 
 model Ticket {
-  id        String       @id @default(cuid())
-  tokenId   String       @unique
+  id        String   @id @default(cuid())
+  tokenId   String   @unique
   eventId   String
-  status    TicketStatus
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   userId    String
-  event     Event        @relation(fields: [eventId], references: [id])
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  orderId  String      @unique
-  order     Order      @relation(fields: [orderId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderId   String   @unique
+  order     Order    @relation(fields: [orderId], references: [id])
 
   @@map("tickets")
 }
@@ -102,11 +102,11 @@ model Order {
 
   customer User        @relation(fields: [userId], references: [id])
   event    Event       @relation(fields: [eventId], references: [id])
-  ticket   Ticket?     
+  ticket   Ticket?
   status   OrderStatus
 
-  eventId  String
-  userId   String
+  eventId String
+  userId  String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -118,11 +118,4 @@ enum OrderStatus {
   PENDING
   COMPLETED
   CANCELLED
-}
-
-enum TicketStatus {
-  AVAILABLE
-  SOLD
-  TRANSFERRED
-  REDEEMED
 }

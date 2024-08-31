@@ -20,14 +20,12 @@ import {
 	Eye,
 } from "lucide-react";
 import { Ticket as PrismaTicket } from "@prisma/client";
-import { useTheme } from "next-themes";
 
 export default function MyTickets({
 	allTickets,
 }: {
 	allTickets: PrismaTicket[];
 }) {
-	const { theme, setTheme } = useTheme();
 	const [activeTab, setActiveTab] = useState("all");
 	const [tickets, setTickets] = useState<PrismaTicket[]>(allTickets);
 
@@ -72,14 +70,14 @@ export default function MyTickets({
 	};
 
 	return (
-		<div className='bg-background min-h-screen text-foreground'>
-			<main className='mx-auto sm:px-6 lg:px-8 py-6 max-w-7xl'>
+		<div className='min-h-[70vh] text-foreground'>
+			<main className='max-w-7xl'>
 				<Tabs
 					defaultValue='all'
 					className='w-full'
 					onValueChange={setActiveTab}
 				>
-					<TabsList className='gap-4 grid grid-cols-3 bg-muted p-2 rounded-xl w-full'>
+					<TabsList className='gap-4 grid grid-cols-3 bg-muted p-2 rounded-xl w-full h-full'>
 						{["all", "upcoming", "past"].map((tab) => (
 							<TabsTrigger
 								key={tab}
@@ -169,7 +167,7 @@ function TicketList({
 								</div>
 							</div>
 						</CardContent>
-						<CardFooter className='flex justify-between'>
+						<CardFooter className='gap-4 grid grid-cols-2'>
 							<Button variant='outline' size='sm'>
 								<Eye className='mr-2 w-4 h-4' />
 								View Details
@@ -177,6 +175,14 @@ function TicketList({
 							<Button variant='outline' size='sm'>
 								<Download className='mr-2 w-4 h-4' />
 								Download
+							</Button>
+							<Button variant='outline' size='sm'>
+								<Eye className='mr-2 w-4 h-4' />
+								View NFT
+							</Button>
+							<Button variant='outline' size='sm'>
+								<Download className='mr-2 w-4 h-4' />
+								View QR Code
 							</Button>
 						</CardFooter>
 					</Card>
