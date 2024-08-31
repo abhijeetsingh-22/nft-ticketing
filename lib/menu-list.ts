@@ -62,7 +62,7 @@ export function getMenuList(pathname: string, userId: string): Group[] {
         {
           href: `/${userId}/events`,
           label: "My Events",
-          active: pathname.includes("/events"),
+          active: pathname.includes(`/${userId}/events`),
           icon: SquarePen,
           submenus: [
             // {
@@ -90,28 +90,35 @@ export function getMenuList(pathname: string, userId: string): Group[] {
         //   active: pathname.includes("/tags"),
         //   icon: Tag,
         //   submenus: []
-        // }
-      ]
-    },
-    {
-      groupLabel: "Upcoming Events",
-      menus: [
-        // {
-        //   href: "/users",
-        //   label: "Users",
-        //   active: pathname.includes("/users"),
-        //   icon: Users,
-        //   submenus: []
         // },
         {
           href: "/events",
           label: "All Events",
-          active: pathname.includes("/events"),
+          active: pathname == "/events",
           icon: CalendarSearch,
           submenus: []
         }
       ]
     },
+    // {
+    //   groupLabel: "Upcoming Events",
+    //   menus: [
+    //     // {
+    //     //   href: "/users",
+    //     //   label: "Users",
+    //     //   active: pathname.includes("/users"),
+    //     //   icon: Users,
+    //     //   submenus: []
+    //     // },
+    //     {
+    //       href: "/events",
+    //       label: "All Events",
+    //       active: pathname.includes("/events"),
+    //       icon: CalendarSearch,
+    //       submenus: []
+    //     }
+    //   ]
+    // },
     // {
     //   groupLabel: "",
     //   menus: [
