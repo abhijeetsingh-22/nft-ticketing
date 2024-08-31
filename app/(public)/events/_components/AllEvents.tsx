@@ -91,7 +91,7 @@ export default function AllEvents({
           loading: "Processing payment...",
           success:
             "Ticket purchased successfully! Please check your wallet for your NFT",
-          error: (err) => `buyEventTicket fail: ${err.message}`,
+          error: (err) => `${err.message}`,
         }
       );
     } catch (error) {

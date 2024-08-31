@@ -1,4 +1,4 @@
-"use server"
+// "use server"
 
 import { auth } from "@/auth"
 import prisma from "@/db"
@@ -6,6 +6,8 @@ import { getEventById } from "@/db/events"
 import { keypairIdentity, Metaplex } from "@metaplex-foundation/js"
 import { Connection, Cluster, clusterApiUrl, Keypair, Transaction } from "@solana/web3.js"
 import bs58 from "bs58"
+
+export const maxDuration = 60; // Allow to run for 60 sec
 
 type BuyEventTicketParams = {
 	eventId: string
@@ -80,14 +82,18 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 						status: "SOLD"
 					}
 				}
+			},
+			select :{
+				id: true,
+				ticket: true
 			}
 		})
 
 		console.log("Order created:", order)
 
-		return { status: "success", message: "Ticket bought successfully" }
+		return { status: "success", message: "Ticket bought successfully" ,orderId : order.id, ticketId: order.ticket?.id }
 	} catch (error) {
 		console.error("BUY TICKET error:", error)
-		return { status: "error", message: "Something went wrong" }
+		throw new Error("Something went wrong. Please try again")
 	}
 }
