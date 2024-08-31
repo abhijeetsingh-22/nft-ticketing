@@ -56,14 +56,19 @@ export async function getUser(email: string) {
 
 
 export async function getUserById(id: string) {
-  const user = await prisma.user.findUnique({
-    where: { id },
-    include: {
-      socialLink: true,
-    },
-  })
-
-  return user
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      include: {
+        socialLink: true,
+      },
+    })
+  
+    return user
+  }
+  catch (error) {
+    return null
+  }
 }
 
 
