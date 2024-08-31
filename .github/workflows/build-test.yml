@@ -1,0 +1,38 @@
+name: NextJS Build Test
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 7
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Build NextJS
+      run: pnpm run build
+
+    - name: Check build status
+      run: |
+        if [ $? -eq 0 ]; then
+          echo "Build successful"
+          exit 0
+        else
+          echo "Build failed"
+          exit 1
+        fi
