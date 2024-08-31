@@ -7,12 +7,13 @@ import Image from "next/image";
 import { Event, User as PrismaUser } from "@prisma/client";
 import { getUserById } from "@/db/users";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { redirect, RedirectType } from "next/navigation";
 import { Routes } from "@/routes";
 import { IconSpinner } from "@/components/ui/icons";
 import { FaSpinner } from "react-icons/fa";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 type EventWithOrganizer = Event & {
 	organizer: string;
@@ -41,6 +42,7 @@ export const EventCard = ({
 			console.log("id", id);
 			handleBuyEventTicket(id as string);
 		} else {
+			toast.error("Please login to buy ticket");
 			redirect(Routes.LOGIN);
 		}
 	};
