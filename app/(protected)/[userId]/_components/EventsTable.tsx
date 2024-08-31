@@ -28,10 +28,10 @@ import { toast } from "sonner";
 
 type Props = {
 	events: Event[];
-	organiserId: string;
+	userId: string;
 };
 
-export function EventsTable({ events, organiserId }: Readonly<Props>) {
+export function EventsTable({ events, userId }: Readonly<Props>) {
 	const router = useRouter();
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [selectedItem, setSelectedItem] = useState<Event | null>(null);
@@ -98,7 +98,7 @@ export function EventsTable({ events, organiserId }: Readonly<Props>) {
 							<DropdownMenuSeparator />
 							<DropdownMenuItem
 								onClick={() => {
-									const shareUrl = `${window.location.origin}/${organiserId}/events/${event.slug}`;
+									const shareUrl = `${window.location.origin}/${userId}/events/${event.slug}`;
 									navigator.clipboard.writeText(shareUrl);
 									toast.success("Event link copied to clipboard");
 								}}
@@ -106,9 +106,7 @@ export function EventsTable({ events, organiserId }: Readonly<Props>) {
 								Share Event
 							</DropdownMenuItem>
 							<DropdownMenuItem
-								onClick={() =>
-									router.push(`/${organiserId}/events/${event.slug}`)
-								}
+								onClick={() => router.push(`/${userId}/events/${event.slug}`)}
 							>
 								Edit Event
 							</DropdownMenuItem>

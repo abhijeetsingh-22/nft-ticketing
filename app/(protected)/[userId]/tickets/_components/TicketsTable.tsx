@@ -27,10 +27,10 @@ import { toast } from "sonner";
 
 type Props = {
 	tickets: Ticket[];
-	organiserId: string;
+	userId: string;
 };
 
-export function TicketsTable({ tickets, organiserId }: Readonly<Props>) {
+export function TicketsTable({ tickets, userId }: Readonly<Props>) {
 	const router = useRouter();
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const [selectedItem, setSelectedItem] = useState<Ticket | null>(null);
@@ -95,7 +95,7 @@ export function TicketsTable({ tickets, organiserId }: Readonly<Props>) {
 							<DropdownMenuSeparator />
 							<DropdownMenuItem
 								onClick={() => {
-									const ticketUrl = `${window.location.origin}/${organiserId}/tickets/${ticket.id}`;
+									const ticketUrl = `${window.location.origin}/${userId}/tickets/${ticket.id}`;
 									navigator.clipboard.writeText(ticketUrl);
 									toast.success("Ticket link copied to clipboard");
 								}}
@@ -103,9 +103,7 @@ export function TicketsTable({ tickets, organiserId }: Readonly<Props>) {
 								Share Ticket
 							</DropdownMenuItem>
 							<DropdownMenuItem
-								onClick={() =>
-									router.push(`/${organiserId}/tickets/${ticket.id}`)
-								}
+								onClick={() => router.push(`/${userId}/tickets/${ticket.id}`)}
 							>
 								View Ticket
 							</DropdownMenuItem>

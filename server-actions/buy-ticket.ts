@@ -2,7 +2,6 @@
 
 import { auth } from "@/auth"
 import prisma from "@/db"
-import { getEventById } from "@/db/events"
 import { sendBookingEmail } from "@/lib/email/sendEmail"
 import { keypairIdentity, Metaplex } from "@metaplex-foundation/js"
 import { Event } from "@prisma/client"
@@ -84,7 +83,7 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 					}
 				}
 			},
-			select :{
+			select: {
 				id: true,
 				ticket: true
 			}
@@ -92,11 +91,11 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 
 		console.log("Order created:", order)
 		let buyerEmailAddress = session.user.email
-		if(buyerEmailAddress && event) {
+		if (buyerEmailAddress && event) {
 			// will not wait for email to be sent
 			sendBookingEmail([buyerEmailAddress], "Ticket Purchased", event)
 		}
-		return { status: "success", message: "Ticket bought successfully" ,orderId : order.id, ticketId: order.ticket?.id }
+		return { status: "success", message: "Ticket bought successfully", orderId: order.id, ticketId: order.ticket?.id }
 	} catch (error) {
 		console.error("BUY TICKET error:", error)
 		throw new Error("Something went wrong. Please try again")

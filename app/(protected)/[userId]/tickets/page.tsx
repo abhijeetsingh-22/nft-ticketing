@@ -1,8 +1,3 @@
-import { Event } from "@prisma/client";
-import { getEventsByOrganisationId } from "@/db/events";
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { EventTools } from "../_components/EventTools";
-import { EventsTable } from "../_components/EventsTable";
 import { ContentLayout } from "@/components/admin-panel/content-layout";
 import {
 	Breadcrumb,
@@ -13,16 +8,19 @@ import {
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
+import { TicketsTable } from "./_components/TicketsTable";
+import { TicketTools } from "./_components/TicketTools";
+import { getTicketsByUserId } from "@/db/ticket";
+import MyTickets from "@/components/my-tickets";
 
-export default async function EventsPage({
+export default async function TicketsPage({
 	params,
 }: {
-	params: { organiserId: string };
+	params: { userId: string };
 }) {
-	const { events } = await getEventsByOrganisationId(params.organiserId);
-
+	const { tickets } = await getTicketsByUserId(params.userId);
 	return (
-		<ContentLayout title='Events'>
+		<ContentLayout title='My Tickets'>
 			<Breadcrumb className=''>
 				<BreadcrumbList>
 					<BreadcrumbItem>
@@ -32,16 +30,12 @@ export default async function EventsPage({
 					</BreadcrumbItem>
 					<BreadcrumbSeparator />
 					<BreadcrumbItem>
-						<BreadcrumbPage>All Events</BreadcrumbPage>
+						<BreadcrumbPage>My Tickets</BreadcrumbPage>
 					</BreadcrumbItem>
 				</BreadcrumbList>
 			</Breadcrumb>
 			<div className='mt-10 space-y-4'>
-				<EventTools organiserId={params.organiserId} />
-				<EventsTable
-					events={events as Event[]}
-					organiserId={params.organiserId}
-				/>
+				<MyTickets allTickets={tickets} />
 			</div>
 		</ContentLayout>
 	);

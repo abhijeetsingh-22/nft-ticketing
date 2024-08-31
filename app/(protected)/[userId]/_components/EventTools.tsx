@@ -6,10 +6,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 type Props = {
-	organiserId: string;
+	userId: string;
 };
 
-export const EventTools = ({ organiserId }: Props) => {
+export const EventTools = ({ userId }: Props) => {
 	const router = useRouter();
 	return (
 		<div className='flex flex-wrap justify-between'>
@@ -20,7 +20,7 @@ export const EventTools = ({ organiserId }: Props) => {
 
 			<div className='flex *:flex justify-between gap-4 *:gap-2 w-full md:w-fit'>
 				<Link
-					href={`/${organiserId}/events/new`}
+					href={`/${userId}/events/new`}
 					className={cn(buttonVariants({ variant: "default" }))}
 				>
 					<PlusCircle className='size-4' />

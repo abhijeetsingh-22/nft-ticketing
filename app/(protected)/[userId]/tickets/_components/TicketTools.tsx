@@ -4,10 +4,10 @@ import { PlusCircle, Printer } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 type Props = {
-	organiserId: string;
+	userId: string;
 };
 
-export const TicketTools = ({ organiserId }: Props) => {
+export const TicketTools = ({ userId }: Props) => {
 	const router = useRouter();
 	return (
 		<div className='flex flex-wrap justify-between'>
@@ -17,7 +17,7 @@ export const TicketTools = ({ organiserId }: Props) => {
 			</h3>
 
 			<div className='flex *:flex justify-between gap-4 *:gap-2 w-full md:w-fit'>
-				<Button onClick={() => router.push(`/${organiserId}/events/new`)}>
+				<Button onClick={() => router.push(`/${userId}/events/new`)}>
 					<PlusCircle className='size-4' />
 					New Event
 				</Button>
