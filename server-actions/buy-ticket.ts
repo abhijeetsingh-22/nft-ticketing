@@ -3,7 +3,9 @@
 import { auth } from "@/auth"
 import prisma from "@/db"
 import { getEventById } from "@/db/events"
+import { sendBookingEmail } from "@/lib/email/sendEmail"
 import { keypairIdentity, Metaplex } from "@metaplex-foundation/js"
+import { Event } from "@prisma/client"
 import { Connection, Cluster, clusterApiUrl, Keypair, Transaction } from "@solana/web3.js"
 import bs58 from "bs58"
 
@@ -18,7 +20,7 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 		if (!session?.user.id) {
 			return { type: "error", resultCode: "UNAUTHENTICATED", message: "Login to buy ticket" }
 		}
-		const event = await prisma.event.findUnique({
+		const event: Event | null = await prisma.event.findUnique({
 			where: { id: eventId },
 		})
 		if (!event) {
@@ -84,7 +86,11 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 		})
 
 		console.log("Order created:", order)
-
+		let buyerEmailAddress = session.user.email
+		if(buyerEmailAddress && event) {
+			// will not wait for email to be sent
+			sendBookingEmail([buyerEmailAddress], "Ticket Purchased", event)
+		}
 		return { status: "success", message: "Ticket bought successfully" }
 	} catch (error) {
 		console.error("BUY TICKET error:", error)
