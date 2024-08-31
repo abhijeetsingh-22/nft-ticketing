@@ -12,22 +12,37 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-	Ticket as TicketIcon,
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import {
+	Ticket,
 	Calendar,
 	MapPin,
 	Clock,
+	QrCode,
 	Download,
 	Eye,
+	Sun,
+	Moon,
+	DollarSign,
+	Users,
+	Info,
+	User,
+	TicketIcon,
 } from "lucide-react";
+import Image from "next/image";
 import { Ticket as PrismaTicket } from "@prisma/client";
-import { useTheme } from "next-themes";
 
 export default function MyTickets({
 	allTickets,
 }: {
 	allTickets: PrismaTicket[];
 }) {
-	const { theme, setTheme } = useTheme();
 	const [activeTab, setActiveTab] = useState("all");
 	const [tickets, setTickets] = useState<PrismaTicket[]>(allTickets);
 
@@ -72,14 +87,14 @@ export default function MyTickets({
 	};
 
 	return (
-		<div className='bg-background min-h-screen text-foreground'>
-			<main className='mx-auto sm:px-6 lg:px-8 py-6 max-w-7xl'>
+		<div className='min-h-[70vh] text-foreground'>
+			<main className='max-w-7xl'>
 				<Tabs
 					defaultValue='all'
 					className='w-full'
 					onValueChange={setActiveTab}
 				>
-					<TabsList className='gap-4 grid grid-cols-3 bg-muted p-2 rounded-xl w-full'>
+					<TabsList className='gap-4 grid grid-cols-3 bg-muted p-2 rounded-xl w-full h-full'>
 						{["all", "upcoming", "past"].map((tab) => (
 							<TabsTrigger
 								key={tab}
@@ -157,11 +172,11 @@ function TicketList({
 							<div className='space-y-2 mt-2'>
 								<div className='flex items-center text-sm'>
 									<Calendar className='mr-2 w-4 h-4' />
-									{ticket.createdAt.toLocaleDateString()}
+									{new Date(ticket.createdAt).toLocaleDateString()}
 								</div>
 								<div className='flex items-center text-sm'>
 									<Clock className='mr-2 w-4 h-4' />
-									{ticket.createdAt.toLocaleTimeString()}
+									{new Date(ticket.createdAt).toLocaleTimeString()}
 								</div>
 								<div className='flex items-center text-sm'>
 									<MapPin className='mr-2 w-4 h-4' />
@@ -169,14 +184,120 @@ function TicketList({
 								</div>
 							</div>
 						</CardContent>
-						<CardFooter className='flex justify-between'>
-							<Button variant='outline' size='sm'>
-								<Eye className='mr-2 w-4 h-4' />
-								View Details
-							</Button>
+						<CardFooter className='gap-4 grid grid-cols-2'>
+							<Dialog>
+								<DialogTrigger asChild>
+									<Button variant='outline' size='sm'>
+										<Eye className='mr-2 w-4 h-4' />
+										View Details
+									</Button>
+								</DialogTrigger>
+								<DialogContent className='sm:max-w-[700px] max-h-[90vh] overflow-y-auto'>
+									<DialogHeader>
+										<DialogTitle className='text-2xl'>
+											{ticket.eventId}
+										</DialogTitle>
+									</DialogHeader>
+									<div className='gap-6 grid py-4'>
+										<div className='gap-2 grid'>
+											<h3 className='font-semibold text-lg'>
+												Event Description
+											</h3>
+											<p className='text-gray-500 text-sm dark:text-gray-400'>
+												Description not available
+											</p>
+										</div>
+										<Separator />
+										<div className='gap-4 grid sm:grid-cols-2'>
+											<div>
+												<h3 className='mb-2 font-semibold text-lg'>
+													Event Details
+												</h3>
+												<div className='space-y-2'>
+													<div className='flex items-center text-sm'>
+														<Calendar className='mr-2 w-4 h-4' />
+														<span>Start Date not available</span>
+													</div>
+													<div className='flex items-center text-sm'>
+														<Clock className='mr-2 w-4 h-4' />
+														<span>Start Time not available</span>
+													</div>
+													<div className='flex items-center text-sm'>
+														<MapPin className='mr-2 w-4 h-4' />
+														<span>Venue not available</span>
+													</div>
+													<div className='flex items-center text-sm'>
+														<DollarSign className='mr-2 w-4 h-4' />
+														<span>Price not available</span>
+													</div>
+													<div className='flex items-center text-sm'>
+														<Users className='mr-2 w-4 h-4' />
+														<span>Tickets sold not available</span>
+													</div>
+												</div>
+											</div>
+											<div>
+												<h3 className='mb-2 font-semibold text-lg'>
+													Ticket Information
+												</h3>
+												<div className='space-y-2'>
+													<div className='flex items-center text-sm'>
+														<Ticket className='mr-2 w-4 h-4' />
+														<span>Token ID: {ticket.tokenId}</span>
+													</div>
+													<div className='flex items-center text-sm'>
+														<Info className='mr-2 w-4 h-4' />
+														<span>Status: {ticket.status}</span>
+													</div>
+													<div className='flex items-center text-sm'>
+														<Calendar className='mr-2 w-4 h-4' />
+														<span>
+															Purchased:{" "}
+															{new Date(ticket.createdAt).toLocaleString()}
+														</span>
+													</div>
+												</div>
+											</div>
+										</div>
+										<Separator />
+										<div>
+											<h3 className='mb-2 font-semibold text-lg'>Organizer</h3>
+											<div className='space-y-2'>
+												<div className='flex items-center text-sm'>
+													<User className='mr-2 w-4 h-4' />
+													<span>Organizer name not available</span>
+												</div>
+												<div className='flex items-center text-sm'>
+													<Info className='mr-2 w-4 h-4' />
+													<span>Organizer email not available</span>
+												</div>
+											</div>
+										</div>
+										<Separator />
+										<div>
+											<h3 className='mb-2 font-semibold text-lg'>QR Code</h3>
+											<Image
+												src='/placeholder.png'
+												alt='QR Code'
+												width={200}
+												height={200}
+												className='mx-auto'
+											/>
+										</div>
+									</div>
+								</DialogContent>
+							</Dialog>
 							<Button variant='outline' size='sm'>
 								<Download className='mr-2 w-4 h-4' />
 								Download
+							</Button>
+							<Button variant='outline' size='sm'>
+								<Eye className='mr-2 w-4 h-4' />
+								View NFT
+							</Button>
+							<Button variant='outline' size='sm'>
+								<Download className='mr-2 w-4 h-4' />
+								View QR Code
 							</Button>
 						</CardFooter>
 					</Card>
