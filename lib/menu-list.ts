@@ -9,7 +9,8 @@ import {
   Plus,
   CalendarSearch,
   HomeIcon,
-  QrCode
+  QrCode,
+  BugIcon
 } from "lucide-react";
 
 type Submenu = {
@@ -92,12 +93,21 @@ export function getMenuList(pathname: string, userId: string): Group[] {
           submenus: []
         },
         {
-          href: "/ticket-validation",
+          href: `/${userId}/ticket-validation`,
           label: "Ticket Validation",
           active: pathname.includes("/ticket-validation"),
           icon: QrCode,
           submenus: []
         },
+
+        {
+          href: "/report-issue",
+          label: "Report a Bug",
+          active: pathname.includes("/report-issue"),
+          icon: BugIcon,
+          submenus: []
+        },
+
       ]
     },
 

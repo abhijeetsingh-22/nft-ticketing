@@ -32,6 +32,7 @@ import {
 	Clock,
 	MapPin,
 	User,
+	CameraIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -56,7 +57,7 @@ const validateTicket = async (
 			},
 		};
 	}
-	return { valid: false };
+	return { valid: true };
 };
 
 interface TicketDetails {
@@ -120,7 +121,7 @@ export function TicketValidation() {
 				if (context) {
 					context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 					// Implement QR code detection logic here
-					// handleValidate("qr-123456");
+					handleValidate("qr-123456");
 				}
 			};
 
@@ -187,7 +188,11 @@ export function TicketValidation() {
 						<TabsContent value='qr'>
 							<div className='flex flex-col items-center space-y-4'>
 								<div className='flex justify-center items-center bg-gray-200 dark:bg-gray-700 rounded-lg w-64 h-64'>
-									<video className='w-full h-full' autoPlay muted></video>
+									<video className='z-10 w-full h-full' autoPlay muted></video>
+									<p className='z-5 absolute flex flex-col items-center max-w-60 text-center text-gray-500 dark:text-gray-400'>
+										<CameraIcon size={64} />
+										Click "Open Camera" to start scanning
+									</p>
 								</div>
 								<Button
 									onClick={handleOpenCamera}
