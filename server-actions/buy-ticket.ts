@@ -7,6 +7,8 @@ import { keypairIdentity, Metaplex } from "@metaplex-foundation/js"
 import { Connection, Cluster, clusterApiUrl, Keypair, Transaction } from "@solana/web3.js"
 import bs58 from "bs58"
 
+export const maxDuration = 60; // Allow to run for 60 sec
+
 type BuyEventTicketParams = {
 	eventId: string
 	signedTransaction: any
