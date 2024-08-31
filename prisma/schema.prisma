@@ -133,7 +133,18 @@ model Order {
 
   @@map("orders")
 }
+model EntryCode{
+  id String @id @default(cuid())
+  code String
+  walletAddress String
+  nftAddress String
+  eventId String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
+  @@map("entry_codes")
+}
 enum OrderStatus {
   PENDING
   COMPLETED
