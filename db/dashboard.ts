@@ -5,17 +5,20 @@ import prisma from "@/db";
 export async function getDashboardStats(userId: string) {
   const events = await prisma.event.findMany({
     where: { organizerId: userId },
-    include: { tickets: true }
+    include: { orders: true }
   });
 
+  // Calculate total tickets sold
+  const totalTicketsSold = events.reduce((acc: number, event: any) => acc + event.orders.length, 0);
+
+  // Calculate total revenue based on the price of tickets and the number of orders
   const totalRevenue = events.reduce((acc: number, event: any) => {
-    const eventRevenue = event.tickets.reduce((sum: number, ticket: any) => sum + ticket.price, 0);
+    const eventRevenue = event.ticketPrice * event.orders.length;
     return acc + eventRevenue;
   }, 0);
 
-  const totalTicketsSold = events.reduce((acc: number, event: any) => acc + event.tickets.length, 0);
-
-  const averageOrderValue = totalTicketsSold ? (totalRevenue / totalTicketsSold).toFixed(2) : 0;
+  // Calculate average order value
+  const averageOrderValue = totalTicketsSold ? (totalRevenue / totalTicketsSold).toFixed(2) : '0.00';
 
   return [
     { title: "Total revenue", value: `$${totalRevenue.toFixed(2)}`, change: "+4.5%", icon: "DollarSignIcon" },
