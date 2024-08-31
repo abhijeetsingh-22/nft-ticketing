@@ -8,8 +8,6 @@ import {
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
-import { TicketsTable } from "./_components/TicketsTable";
-import { TicketTools } from "./_components/TicketTools";
 import { getTicketsByUserId } from "@/db/ticket";
 import MyTickets from "@/components/my-tickets";
 
