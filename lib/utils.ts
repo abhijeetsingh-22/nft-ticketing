@@ -49,7 +49,7 @@ export function constructMetadata({
       creator: "@whyrohitwhy"
     },
     icons,
-    metadataBase: new URL('https://boltix.vercel.app/'),
+    metadataBase: new URL('https://minttix.in/'),
     // themeColor: '#FFF',
     ...(noIndex && {
       robots: {
