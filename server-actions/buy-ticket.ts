@@ -9,6 +9,7 @@ import { Event } from "@prisma/client"
 import { Connection, Cluster, clusterApiUrl, Keypair, Transaction } from "@solana/web3.js"
 import bs58 from "bs58"
 
+
 type BuyEventTicketParams = {
 	eventId: string
 	signedTransaction: any
@@ -82,6 +83,10 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 						status: "SOLD"
 					}
 				}
+			},
+			select :{
+				id: true,
+				ticket: true
 			}
 		})
 
@@ -91,9 +96,9 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 			// will not wait for email to be sent
 			sendBookingEmail([buyerEmailAddress], "Ticket Purchased", event)
 		}
-		return { status: "success", message: "Ticket bought successfully" }
+		return { status: "success", message: "Ticket bought successfully" ,orderId : order.id, ticketId: order.ticket?.id }
 	} catch (error) {
 		console.error("BUY TICKET error:", error)
-		return { status: "error", message: "Something went wrong" }
+		throw new Error("Something went wrong. Please try again")
 	}
 }
