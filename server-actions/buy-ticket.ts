@@ -2,7 +2,7 @@
 
 import { auth } from "@/auth"
 import prisma from "@/db"
-import { sendBookingEmail } from "@/lib/email/sendEmail"
+import { sendBookingEmail, sendEmailUsingNodemailer } from "@/lib/email/sendEmail"
 import { keypairIdentity, Metaplex } from "@metaplex-foundation/js"
 import { Event } from "@prisma/client"
 import { Connection, Cluster, clusterApiUrl, Keypair, Transaction } from "@solana/web3.js"
@@ -93,11 +93,12 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 		let buyerEmailAddress = session.user.email
 		if (buyerEmailAddress && event) {
 			// will not wait for email to be sent
-			sendBookingEmail([buyerEmailAddress], "Ticket Purchased", event)
+			// sendBookingEmail([buyerEmailAddress], "Ticket Purchased", event)
+			sendEmailUsingNodemailer(buyerEmailAddress, "Ticket Purchased", event)
 		}
 		return { status: "success", message: "Ticket bought successfully", orderId: order.id, ticketId: order.ticket?.id }
 	} catch (error) {
 		console.error("BUY TICKET error:", error)
-		throw new Error("Something went wrong. Please try again")
+		return { type: "error", resultCode: "SERVER_ERROR", message: "Something went wrong" }
 	}
 }
