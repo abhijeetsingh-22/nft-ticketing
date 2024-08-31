@@ -1,4 +1,4 @@
-"use server"
+// "use server"
 
 import { auth } from "@/auth"
 import prisma from "@/db"
@@ -82,14 +82,18 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 						status: "SOLD"
 					}
 				}
+			},
+			select :{
+				id: true,
+				ticket: true
 			}
 		})
 
 		console.log("Order created:", order)
 
-		return { status: "success", message: "Ticket bought successfully" }
+		return { status: "success", message: "Ticket bought successfully" ,orderId : order.id, ticketId: order.ticket?.id }
 	} catch (error) {
 		console.error("BUY TICKET error:", error)
-		return { status: "error", message: "Something went wrong" }
+		throw new Error("Something went wrong. Please try again")
 	}
 }
