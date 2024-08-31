@@ -8,12 +8,6 @@ export async function getDashboardStats(userId: string) {
     include: { orders: true }
   });
 
-  console.log("events", events);
-
-  // const totalRevenue = events.reduce((acc: number, event: any) => {
-  //   const eventRevenue = event.orders.reduce((sum: number, ticket: any) => sum + event.ticketPrice, 0);
-  //   return acc + eventRevenue;
-  // }, 0);
   // Calculate total tickets sold
   const totalTicketsSold = events.reduce((acc: number, event: any) => acc + event.orders.length, 0);
 
