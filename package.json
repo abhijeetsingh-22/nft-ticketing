@@ -10,7 +10,7 @@
 		"vercel-build": "prisma generate && prisma migrate deploy && next build",
 		"postinstall": "prisma generate",
 		"db:start": "docker-compose up -d",
-		"db:migrate":"pnpm prisma migrate deploy || (echo 'Migration conflict, resetting database...' && pnpm prisma migrate reset --force)",
+		"db:migrate": "pnpm prisma migrate deploy || (echo 'Migration conflict, resetting database...' && pnpm prisma migrate reset --force)",
 		"prisma:generate": "pnpm prisma generate",
 		"dx": "pnpm run db:start && pnpm install && pnpm run db:migrate  && pnpm run prisma:generate && pnpm run dev"
 	},
@@ -34,6 +34,7 @@
 		"@radix-ui/react-slot": "^1.1.0",
 		"@radix-ui/react-switch": "^1.1.0",
 		"@radix-ui/react-tooltip": "^1.1.2",
+		"@sentry/nextjs": "^8",
 		"@solana/spl-token": "^0.4.8",
 		"@solana/wallet-adapter-base": "^0.9.23",
 		"@solana/wallet-adapter-react": "^0.15.35",
