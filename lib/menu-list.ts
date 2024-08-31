@@ -8,7 +8,8 @@ import {
   LucideIcon,
   Plus,
   CalendarSearch,
-  HomeIcon
+  HomeIcon,
+  QrCode
 } from "lucide-react";
 
 type Submenu = {
@@ -88,6 +89,13 @@ export function getMenuList(pathname: string, userId: string): Group[] {
           label: "Get NFT Details",
           active: pathname.includes("/nft-details?nftAddress="),
           icon: Tag,
+          submenus: []
+        },
+        {
+          href: "/ticket-validation",
+          label: "Ticket Validation",
+          active: pathname.includes("/ticket-validation"),
+          icon: QrCode,
           submenus: []
         },
       ]

@@ -148,11 +148,7 @@ export const getTicketsByUserId = async (userId: string) => {
         userId: userId
       },
       include: {
-        event: {
-          select: {
-            name: true
-          }
-        },
+        event: true,
         order: true,
         user: true
       }

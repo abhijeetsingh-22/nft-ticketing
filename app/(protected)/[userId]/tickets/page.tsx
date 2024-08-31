@@ -43,6 +43,16 @@ export default async function TicketsPage({
 				paymentMethod: "Credit Card",
 				paymentStatus: "Pending",
 			},
+			event: {
+				id: "event-id-placeholder",
+				name: "Event Name Placeholder",
+				description: "Event Description Placeholder",
+				startDate: new Date(),
+				endDate: new Date(),
+				venueName: "Venue Name Placeholder",
+				venueAddress: "Venue Address Placeholder",
+				zipCode: "Zip Code Placeholder",
+			},
 		};
 	});
 
