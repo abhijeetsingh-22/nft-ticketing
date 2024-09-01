@@ -1,13 +1,22 @@
+import { auth } from "@/auth";
 import Navbar from "@/components/Navbar";
+import { LoggedInUserProvider } from "@/contexts/LoggedInUserContext";
+import { getUserById } from "@/db/users";
+import { User } from "@prisma/client";
 
-
-export default function PublicLayout({
-  children
+export default async function PublicLayout({
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return <main className="min-h-screen">
-    <Navbar />
-    {children}
-  </main>
+	const session = await auth();
+	const user = await getUserById(session?.user?.id || "");
+	return (
+		<main className='min-h-screen'>
+			<LoggedInUserProvider user={user as User}>
+				<Navbar />
+				{children}
+			</LoggedInUserProvider>
+		</main>
+	);
 }
