@@ -15,8 +15,8 @@ export const publicRoutes = [
   Routes.EVENTS,
   Routes.LOGIN,
   Routes.SIGNUP,
-  Routes.REPORT_ISSUE,
   Routes.EVENT_DETAILS,
+  Routes.REPORT_ISSUE,
 ]
 
 export const authRoutes = [

@@ -21,8 +21,6 @@ import {
 	MapPinIcon,
 	TicketIcon,
 	TagIcon,
-	PlusIcon,
-	MinusIcon,
 	Share2Icon,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -55,55 +53,42 @@ export default function EventDetails({ event }: { event: Event }) {
 
 	useEffect(() => {
 		if (publicKey) {
-			(async function getBalanceEvery10Seconds() {
+			const getBalanceEvery10Seconds = async () => {
 				const newBalance = await connection.getBalance(publicKey);
 				setBalance(newBalance / LAMPORTS_PER_SOL);
 				setTimeout(getBalanceEvery10Seconds, 10000);
-			})();
+			};
+			getBalanceEvery10Seconds();
 		} else {
 			setBalance(null);
 		}
-	}, [publicKey, connection, balance]);
+	}, [publicKey, connection]);
 
 	const handleBuyEventTicket = async () => {
 		console.log("buying ticket for event", eventId);
 		console.log("publicKey", publicKey);
 		setIsLoading(true);
-		let selectedEvent = event;
 
 		if (!publicKey || !connection || !balance || !signTransaction) {
 			toast.error("Please login and connect your wallet");
 			setIsLoading(false);
 			return;
 		}
-		console.log("ticketPrice", selectedEvent.ticketPrice);
-		console.log(
-			"ticket cost",
-			selectedEvent.ticketPrice,
-			await convertUsdToSol(selectedEvent.ticketPrice)
-		);
-		const ticketPrice: number | null = await convertUsdToSol(
-			selectedEvent.ticketPrice
-		);
+
+		const ticketPrice: number | null = await convertUsdToSol(event.ticketPrice);
 		if (!ticketPrice) {
 			toast.error("Server Error! Please try again");
 			setIsLoading(false);
 			return;
 		}
-		const ticketCostLamports = Number(
-			(ticketPrice * LAMPORTS_PER_SOL).toFixed(0)
-		);
-		console.log("ticketCostLamports", ticketCostLamports);
-		console.log(
-			"palatform wallet",
-			process.env.NEXT_PUBLIC_PLATFORM_WALLET_PUBLIC_KEY
-		);
+
+		const ticketCostLamports = Math.round(ticketPrice * LAMPORTS_PER_SOL);
 		const transaction = new Transaction().add(
 			SystemProgram.transfer({
 				fromPubkey: publicKey,
 				toPubkey: new PublicKey(
 					bs58.decode(process.env.NEXT_PUBLIC_PLATFORM_WALLET_PUBLIC_KEY!)
-				), // Replace with your platform's public key
+				),
 				lamports: ticketCostLamports,
 			})
 		);
@@ -113,9 +98,7 @@ export default function EventDetails({ event }: { event: Event }) {
 		transaction.feePayer = publicKey;
 
 		try {
-			// Sign the transaction
 			const signedTransaction = await signTransaction(transaction);
-
 			await toast.promise(
 				buyEventTicket({
 					eventId,
@@ -145,14 +128,14 @@ export default function EventDetails({ event }: { event: Event }) {
 			.then(() => {
 				toast.success("Event URL copied to clipboard");
 			})
-			.catch((err) => {
+			.catch(() => {
 				toast.error("Failed to copy event URL");
 			});
 	};
 
 	return (
-		<div className='dark:bg-gray-900 mx-auto px-4 py-8 dark:text-white container space-y-6'>
-			<Breadcrumb className=''>
+		<div className='space-y-6 dark:bg-gray-900 mx-auto px-4 py-8 dark:text-white container'>
+			<Breadcrumb>
 				<BreadcrumbList>
 					<BreadcrumbItem>
 						<BreadcrumbLink asChild>

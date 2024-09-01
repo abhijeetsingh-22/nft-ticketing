@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import { getTicketsByUserId } from "@/db/ticket";
 import MyTickets from "@/components/my-tickets";
+import { Ticket } from "@prisma/client";
 
 export default async function TicketsPage({
 	params,

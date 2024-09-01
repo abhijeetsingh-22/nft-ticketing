@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { Routes } from "@/routes";
 import { auth } from "@/auth";
 import { getUserById } from "@/db/users";
+import { signIn } from "next-auth/react";
 
 const loginSchema = z.object({
 	email: z
@@ -36,6 +37,10 @@ export default function LoginForm() {
 			password: "",
 		},
 	});
+
+	const handleGoogleSignIn = () => {
+		signIn("google", { callbackUrl: Routes.DASHBOARD });
+	};
 
 	const handleSubmit = async (values: loginInput) => {
 		toast.promise(authenticate(values.email, values.password), {
@@ -95,6 +100,13 @@ export default function LoginForm() {
 				type='submit'
 			>
 				Log in
+			</Button>
+			<Button
+				type='button'
+				onClick={handleGoogleSignIn}
+				className='border-gray-300 bg-white hover:bg-gray-100 mt-4 border w-full text-gray-700'
+			>
+				Sign in with Google
 			</Button>
 			<Link
 				className={cn("mt-4 w-full", buttonVariants({ variant: "outline" }))}

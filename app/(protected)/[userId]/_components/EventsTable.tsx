@@ -52,14 +52,16 @@ export function EventsTable({ events, userId }: Readonly<Props>) {
 			accessorKey: "name",
 			header: "Name",
 			cell: (info) => (
-				<div className='py-1'>{`${info.getValue() ?? "N/A"}`}</div>
+				<div className='py-1 text-gray-900 dark:text-gray-100'>{`${
+					info.getValue() ?? "N/A"
+				}`}</div>
 			),
 		},
 		{
 			accessorKey: "date",
 			header: "Date",
 			cell: (info) => (
-				<div className='py-1'>{`${
+				<div className='py-1 text-gray-900 dark:text-gray-100'>{`${
 					new Date().toLocaleDateString() ?? "N/A"
 				}`}</div>
 			),
@@ -68,14 +70,16 @@ export function EventsTable({ events, userId }: Readonly<Props>) {
 			accessorKey: "location",
 			header: "Location",
 			cell: (info) => (
-				<div className='py-1'>{`${info.getValue() ?? "N/A"}`}</div>
+				<div className='py-1 text-gray-900 dark:text-gray-100'>{`${
+					info.getValue() ?? "N/A"
+				}`}</div>
 			),
 		},
 		{
 			accessorKey: "description",
 			header: "Description",
 			cell: (info) => (
-				<div className='py-1'>{`${
+				<div className='py-1 text-gray-900 dark:text-gray-100'>{`${
 					info.getValue() ?? "No description available"
 				}`}</div>
 			),
@@ -90,7 +94,7 @@ export function EventsTable({ events, userId }: Readonly<Props>) {
 						<DropdownMenuTrigger asChild>
 							<Button variant='ghost' className='p-0 w-8 h-8'>
 								<span className='sr-only'>Open menu</span>
-								<MoreHorizontal className='w-4 h-4' />
+								<MoreHorizontal className='w-4 h-4 text-gray-900 dark:text-gray-100' />
 							</Button>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align='end'>
@@ -132,8 +136,10 @@ export function EventsTable({ events, userId }: Readonly<Props>) {
 			<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Confirm Deletion</DialogTitle>
-						<DialogDescription>
+						<DialogTitle className='text-gray-900 dark:text-gray-100'>
+							Confirm Deletion
+						</DialogTitle>
+						<DialogDescription className='text-gray-700 dark:text-gray-300'>
 							{`Are you sure you want to delete this event ${selectedItem?.name}?`}
 						</DialogDescription>
 					</DialogHeader>
