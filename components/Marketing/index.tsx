@@ -50,9 +50,11 @@ export default function Marketing() {
 
 	const handleEarlyAccess = async () => {
 		toast.success("Registering for early access...");
+		let emailId = email;
 		setEmail("");
-		registerForEarlyAccess(email)
+		registerForEarlyAccess(emailId)
 			.then((resp) => {
+				console.log("resp", resp);
 				if (resp.code == 200) {
 					toast.success(resp.message);
 				} else {
@@ -551,6 +553,7 @@ export default function Marketing() {
 									className='border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white'
 									placeholder='Enter your email'
 									type='email'
+									value={email}
 									onChange={(e) => setEmail(e.target.value)}
 								/>
 								<Button

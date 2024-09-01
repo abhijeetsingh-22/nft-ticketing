@@ -1,3 +1,4 @@
+"use server"
 import prisma from "@/db";
 
 export const registerForEarlyAccess = async (email: string) => {
@@ -17,6 +18,7 @@ export const registerForEarlyAccess = async (email: string) => {
         }
         return ({ message: "Oops! Something went wrong.", code: 500 });
     } catch (error) {
-        return ({ error: "Something went wrong. Please try again later.", code: 500 });
+        console.error(error);
+        return ({ message: "Something went wrong. Please try again later.", code: 500 });
     }
 }
