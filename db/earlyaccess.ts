@@ -9,10 +9,17 @@ export const registerForEarlyAccess = async (email: string) => {
 
     try {
         // Attempt to create a new registration
+        const existingRegistration = await prisma.newsletterEmails.findUnique({
+            where: { email },
+        })
+
+        if (existingRegistration) {
+            return ({ message: "You have already registered for early access!", code: 200 });
+        }
         const newRegistration = await prisma.newsletterEmails.create({
             data: { email },
         });
-
+        
         if (newRegistration) {
             return ({ message: "Thank you for registering for early access!", code: 200 });
         }
