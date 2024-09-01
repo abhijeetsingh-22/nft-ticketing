@@ -26,8 +26,8 @@ import { buildMailBodyForReportIssue } from "@/lib/email/emailBody";
 
 // Define the validation schema using Zod
 const reportSchema = z.object({
-	area: z.optional(z.string().min(1, "Area is required")),
-	security: z.optional(z.string().min(1, "Security is required")),
+	area: z.string(),
+	security: z.string().optional(),
 	subject: z.string().min(1, "Subject is required"),
 	description: z.string().min(1, "Description is required"),
 });
@@ -51,15 +51,16 @@ export default function ReportCard() {
 			toast.error("Failed to resgister your issue. Please try again");
 			return
 		}
-		let mailBody: string = await buildMailBodyForReportIssue(data)
 		
-		let response = await sendEmailUsingNodemailer(to, "Report Issue", mailBody)
+		// let mailBody: string = await buildMailBodyForReportIssue(data)
+		
+		// let response = await sendEmailUsingNodemailer(to, "Report Issue", mailBody)
 
-		if (response) {
-			toast.success("Issue reported successfully")
-		} else {
-			toast.error("Failed to resgister your issue. Please try again")
-		}
+		// if (response) {
+		// 	toast.success("Issue reported successfully")
+		// } else {
+		// 	toast.error("Failed to resgister your issue. Please try again")
+		// }
 	};
 
 	return (

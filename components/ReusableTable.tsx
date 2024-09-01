@@ -87,7 +87,7 @@ export function ReusableTable<T>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows.length ? (
+            {table?.getRowModel()?.rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
