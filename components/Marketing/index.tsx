@@ -27,6 +27,7 @@ import {
 	FileText,
 	Moon,
 	Sun,
+	Bug,
 } from "lucide-react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
@@ -579,6 +580,9 @@ export default function Marketing() {
 								href='#'
 							>
 								FAQ
+							</Link>
+							<Link href='/report-issue'>
+								<Bug className='w-6 h-6 text-purple-600 dark:text-purple-400' />
 							</Link>
 						</nav>
 					</div>

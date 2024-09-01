@@ -2,18 +2,14 @@
 
 import Link from "next/link";
 import MaxWidthWrapper from "./MaxWidthWrapper";
-import { Button, buttonVariants } from "./ui/button";
-import { ArrowRight, Github, Moon, Sun, Ticket } from "lucide-react";
-import MobileNav from "./MobileNav";
-import SignOutButton from "./auth/SignOutButton";
-import { auth } from "@/auth";
+import { buttonVariants } from "./ui/button";
+import { ArrowRight, Ticket } from "lucide-react";
 import ConnectWalletButton from "@/components/ConnectWalletButton";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import { ModeToggle } from "./mode-toggle";
-import { signOut, useSession } from "next-auth/react";
 import { UserNavMenu } from "./UserNavMenu";
-import { User } from "next-auth";
+import { LoggedInUserContext } from "@/contexts/LoggedInUserContext";
+import { Routes } from "@/routes";
 
 const Navbar = () => {
 	const session = useSession();
@@ -63,11 +59,12 @@ const Navbar = () => {
 						</div>
 					) : (
 						<div className='flex items-center gap-4'>
-							<Link href={`/${session?.data?.user?.id}/events`}>Dashboard</Link>
+							<Link href={Routes.DASHBOARD}>Dashboard</Link>
 							<ConnectWalletButton />
 							<UserNavMenu user={session?.data?.user} />
 						</div>
 					)}
+
 					<ModeToggle />
 				</nav>
 			</MaxWidthWrapper>

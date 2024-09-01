@@ -6,7 +6,6 @@ import { FiltersSkeleton } from "./_components/Filters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EventCardSkeleton } from "./_components/EventCard";
 import { getUserById } from "@/db/users";
-import { User } from "@prisma/client";
 
 export default async function Events() {
 	const { events } = await getAllPublicEvents();

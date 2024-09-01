@@ -1,16 +1,25 @@
 import NextAuth from 'next-auth'
 import { authConfig } from './auth/auth.config'
-import { apiAuthPrefix, authRoutes, DEFAULT_LOGIN_REDIRECT, publicRoutes, Routes } from '@/routes';
+import { apiAuthPrefix, authRoutes, publicRoutes, Routes } from '@/routes';
 
 const { auth } = NextAuth(authConfig)
 
 export default auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth?.user
+
   console.log("isLoggedIn", isLoggedIn, req.auth?.user);
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isAuthroute = authRoutes.includes(nextUrl.pathname);
-  const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+  const isPublicRoute = publicRoutes.some(route => {
+    // Handle dynamic routes
+    if (route.includes(':')) {
+      const routeParts = route.split('/');
+      const urlParts = nextUrl.pathname.split('/');
+      return routeParts.every((part, i) => part.startsWith(':') || part === urlParts[i]);
+    }
+    return route === nextUrl.pathname;
+  });
 
   if (isApiAuthRoute) {
     return;
@@ -36,6 +45,7 @@ export const config = {
     '/((?!_next|api|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
     // Always run for trpc routes
     '/trpc(.*)',
+    '/events(.*)',
   ],
 }
 
