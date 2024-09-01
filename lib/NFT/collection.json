@@ -1,0 +1,22 @@
+{
+    "name": "YOUR_COLLECTION_NAME",
+    "symbol": "YOUR_SYMBOL",
+    "description": "YOUR_COLLECTION_DESCRIPTION",
+    "external_url": "https://link-to-your-collection-website.com",
+    "image": "https://link-to-your-collection-metadata.json",
+    "seller_fee_basis_points": 500,
+    "creators": [
+      {
+        "address": "YOUR_WALLET_ADDRESS",
+        "share": 100
+      }
+    ],
+    "properties": {
+      "files": [
+        {
+          "uri": "https://link-to-your-metadata.json",
+          "type": "application/json"
+        }
+      ]
+    }
+  }
