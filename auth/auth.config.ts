@@ -15,8 +15,8 @@ export const authConfig = {
   callbacks: {
     async authorized({ auth, request }) {
       const session = auth
-      console.log("session", session);
-      console.log("request", request);
+      // console.log("session", session);
+      // console.log("request", request);
 
       return !!session?.user
     },
