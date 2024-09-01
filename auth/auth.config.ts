@@ -15,13 +15,10 @@ export const authConfig = {
   callbacks: {
     async authorized({ auth, request }) {
       const session = auth
-      console.log("session", session);
-      console.log("request", request);
 
       return !!session?.user
     },
     async redirect({ url, baseUrl }) {
-      console.log("redirect", url, baseUrl);
 
       return url.startsWith(baseUrl) ? url : baseUrl
     },
