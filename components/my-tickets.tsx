@@ -44,8 +44,14 @@ export default function MyTickets({
 	allTickets: PrismaTicket[];
 }) {
 	const [activeTab, setActiveTab] = useState("all");
-	const [tickets, setTickets] = useState<PrismaTicket[]>(allTickets);
+	const [tickets, setTickets] = useState<PrismaTicket[]>([]);
+	const [loading, setLoading] = useState(true);
 
+	useEffect(() => {
+		setTickets(allTickets);
+		setLoading(false);
+	}, [allTickets]);
+	console.log(allTickets);
 	useEffect(() => {
 		const currentDate = new Date();
 		switch (activeTab) {
@@ -106,28 +112,33 @@ export default function MyTickets({
 						))}
 					</TabsList>
 					<TabsContent value='all'>
-						<TicketList
-							tickets={tickets}
-							variants={containerVariants}
-							itemVariants={itemVariants}
-						/>
+						{loading ? <LoadingSkeleton /> : <TicketList tickets={tickets} variants={containerVariants} itemVariants={itemVariants} />}
 					</TabsContent>
 					<TabsContent value='upcoming'>
-						<TicketList
-							tickets={tickets}
-							variants={containerVariants}
-							itemVariants={itemVariants}
-						/>
+						{loading ? <LoadingSkeleton /> : <TicketList tickets={tickets} variants={containerVariants} itemVariants={itemVariants} />}
 					</TabsContent>
 					<TabsContent value='past'>
-						<TicketList
-							tickets={tickets}
-							variants={containerVariants}
-							itemVariants={itemVariants}
-						/>
+						{loading ? <LoadingSkeleton /> : <TicketList tickets={tickets} variants={containerVariants} itemVariants={itemVariants} />}
 					</TabsContent>
 				</Tabs>
 			</main>
+		</div>
+	);
+}
+
+function LoadingSkeleton() {
+	return (
+		<div className='gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mt-6'>
+			{[...Array(6)].map((_, index) => (
+				<div key={index} className='animate-pulse'>
+					<div className='bg-muted w-full h-48 mb-4'></div>
+					<div className='space-y-2'>
+						<div className='bg-muted w-3/4 h-4'></div>
+						<div className='bg-muted w-1/2 h-4'></div>
+						<div className='bg-muted w-1/4 h-4'></div>
+					</div>
+				</div>
+			))}
 		</div>
 	);
 }
