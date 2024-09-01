@@ -29,7 +29,7 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 			return { type: "error", resultCode: "EVENT_NOT_FOUND" }
 		}
 
-		const connection = new Connection(clusterApiUrl("devnet"))
+		const connection = new Connection(process.env.SOLANA_RPC_URL!, "confirmed")
 		const PLATFORM_WALLET_PRIVATE_KEY = process.env.PLATFORM_WALLET_PRIVATE_KEY
 		if (!PLATFORM_WALLET_PRIVATE_KEY) {
 			console.error("Unable to fecth PLATFORM_WALLET_PRIVATE_KEY from env")
@@ -59,12 +59,12 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 			image: event.thumbnail,
 			eventId: event.id,
 		})
-
+		console.log("uri", uri)	
 
 		metaplex.use(keypairIdentity(platformWallet))
 
 		const { nft } = await metaplex.nfts().create({
-			uri: uri,
+			uri: event.thumbnail,
 			name: event.name,
 			symbol: event.nftSymbol ?? event.slug,
 			sellerFeeBasisPoints: 500,
@@ -108,10 +108,14 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 		console.log("Order created:", order)
 		let buyerEmailAddress = session.user.email
 		if (buyerEmailAddress && event) {
+			try{
 			// will not wait for email to be sent
-			// sendBookingEmail([buyerEmailAddress], "Ticket Purchased", event)
-			const emailBody = await  generateBookingEmailBody(event);
-			sendEmailUsingNodemailer(buyerEmailAddress, "Ticket Purchased", emailBody)
+				// sendBookingEmail([buyerEmailAddress], "Ticket Purchased", event)
+				const emailBody = await  generateBookingEmailBody(event);
+				sendEmailUsingNodemailer(buyerEmailAddress, "Ticket Purchased", emailBody)
+			} catch (error) {
+				console.error("Error sending email:", error)
+			}
 		}
 		return { status: "success", message: "Ticket bought successfully", orderId: order.id, ticketId: order.ticket?.id }
 	} catch (error) {
