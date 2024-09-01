@@ -140,10 +140,12 @@ enum OrderStatus {
   CANCELLED
 }
 
-model EarlyAccessEmail {
+model NewsletterEmails {
   id           Int      @id @default(autoincrement())
   email        String   @unique
   isNotified   Boolean  @default(false)
   createdAt    DateTime @default(now())
+
+  @@map("newsletter_emails")
 }
 

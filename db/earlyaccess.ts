@@ -8,7 +8,7 @@ export const registerForEarlyAccess = async (email: string) => {
 
     try {
         // Attempt to create a new registration
-        const newRegistration = await prisma.EarlyAccessEmail.create({
+        const newRegistration = await prisma.newsletterEmails.create({
             data: { email },
         });
 
