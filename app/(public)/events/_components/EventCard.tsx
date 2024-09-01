@@ -78,7 +78,7 @@ export const EventCard = ({
 							</div>
 						</div>
 						<div className='flex justify-between items-center mt-4'>
-							<span className='font-bold text-lg text-primary dark:text-primary-400'>
+							<span className='font-bold text-lg'>
 								${ticketPrice?.toFixed(2)}
 							</span>
 							<Link
