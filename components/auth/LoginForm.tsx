@@ -15,6 +15,7 @@ import { Routes } from "@/routes";
 import { auth } from "@/auth";
 import { getUserById } from "@/db/users";
 import { signIn } from "next-auth/react";
+import { FaGoogle } from "react-icons/fa";
 
 const loginSchema = z.object({
 	email: z
@@ -106,6 +107,7 @@ export default function LoginForm() {
 				onClick={handleGoogleSignIn}
 				className='border-gray-300 bg-white hover:bg-gray-100 mt-4 border w-full text-gray-700'
 			>
+				<FaGoogle className='mr-2' />
 				Sign in with Google
 			</Button>
 			<Link

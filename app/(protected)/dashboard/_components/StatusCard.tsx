@@ -6,6 +6,7 @@ import {
 	DollarSignIcon,
 	TrendingUpIcon,
 	TicketIcon,
+	EyeIcon,
 } from "lucide-react";
 import { Stat } from "./Dashboard";
 
@@ -13,6 +14,7 @@ const iconMap = {
 	DollarSignIcon: DollarSignIcon,
 	TrendingUpIcon: TrendingUpIcon,
 	TicketIcon: TicketIcon,
+	EyeIcon: EyeIcon,
 };
 
 interface StatCardsProps {

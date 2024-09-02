@@ -2,6 +2,7 @@ import { SheetMenu } from "@/components/admin-panel/sheet-menu";
 import { ModeToggle } from "../mode-toggle";
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
+import { cn } from "@/lib/utils";
 
 interface NavbarProps {
 	title: string;
@@ -16,11 +17,16 @@ export function Navbar({ title }: NavbarProps) {
 					<h1 className='font-bold'>{title}</h1>
 				</div>
 				<div className='flex flex-1 justify-end items-center space-x-2'>
-					<Link className={buttonVariants({ variant: "link" })} href='/'>
+					<Link
+						className={cn(
+							buttonVariants({ variant: "link" }),
+							"dark:text-white text-black"
+						)}
+						href='/'
+					>
 						Home
 					</Link>
 					<ModeToggle />
-					{/* <UserNav /> */}
 				</div>
 			</div>
 		</header>
