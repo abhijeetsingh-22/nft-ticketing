@@ -16,6 +16,7 @@ export default function QRCodeModal({ ticket }: { ticket: TicketWithEvent }) {
   const {
     data: qrCodeData,
     isLoading,
+    isFetching,
     error,
     isError,
     refetch,
@@ -71,9 +72,13 @@ export default function QRCodeModal({ ticket }: { ticket: TicketWithEvent }) {
           <DialogTitle>QR Code for {ticket.event.name}</DialogTitle>
         </DialogHeader>
         <div className="py-4 flex flex-col items-center">
-          {isLoading && <p>Loading QR code...</p>}
+          {isLoading || isFetching && (
+            <div className="flex items-center justify-center">
+              <div className="w-8 h-8 border-4 border-blue-500 border-dotted rounded-full animate-spin"></div>
+            </div>
+          )}
           {isError && <p>Error loading QR code. Please try again.</p>}
-          {qrCodeData?.entryCode?.code && (
+          {qrCodeData?.entryCode?.code && !isFetching && (
             <>
               <QRCodeSVG value={qrCodeData.entryCode.code} size={200} />
               <p className="mt-4 text-2xl font-bold">{qrCodeData.entryCode.code}</p>
