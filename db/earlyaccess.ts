@@ -1,3 +1,4 @@
+"use server"
 import prisma from "@/db";
 
 export const registerForEarlyAccess = async (email: string) => {
@@ -8,15 +9,23 @@ export const registerForEarlyAccess = async (email: string) => {
 
     try {
         // Attempt to create a new registration
+        const existingRegistration = await prisma.newsletterEmails.findUnique({
+            where: { email },
+        })
+
+        if (existingRegistration) {
+            return ({ message: "You have already registered for early access!", code: 200 });
+        }
         const newRegistration = await prisma.newsletterEmails.create({
             data: { email },
         });
-
+        
         if (newRegistration) {
             return ({ message: "Thank you for registering for early access!", code: 200 });
         }
         return ({ message: "Oops! Something went wrong.", code: 500 });
     } catch (error) {
-        return ({ error: "Something went wrong. Please try again later.", code: 500 });
+        console.error(error);
+        return ({ message: "Something went wrong. Please try again later.", code: 500 });
     }
 }
