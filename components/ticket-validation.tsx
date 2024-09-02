@@ -66,9 +66,6 @@ export function TicketValidation() {
 		null
 	);
 	const [showDialog, setShowDialog] = useState(false);
-	const [qrScannerKey, setQrScannerKey] = useState(0);
-	const qrRef = useRef(null);
-
 	useEffect(() => {
 		return () => {
 			// Cleanup function to ensure camera is released when component unmounts
@@ -109,12 +106,18 @@ export function TicketValidation() {
 
 	const handleTabChange = (value: string) => {
 		setActiveTab(value as "manual" | "qr");
-		if (value === "qr") {
-			// Delay starting the QR scanner
+
+		if (value !== "qr") {
+			// Stop the video stream when switching away from the QR tab
+			const videoElement = document.querySelector("video");
+			if (videoElement) {
+				const stream = videoElement.srcObject as MediaStream;
+				if (stream) {
+					const tracks = stream.getTracks();
+					tracks.forEach((track) => track.stop());
+				}
+			}
 		}
-		// Increment the key to force re-mount of QrReader
-		setQrScannerKey(prevKey => prevKey + 1);
-		console.log(qrScannerKey)
 	};
 
 	return (
@@ -162,8 +165,6 @@ export function TicketValidation() {
 								<div className='flex justify-center items-center bg-gray-200 dark:bg-gray-700 rounded-lg w-64 h-64'>
 									{activeTab === 'qr' && !isValidating ? (
 										<QrReader
-											
-											key={qrScannerKey}
 											onResult={(result, error) => {
 												if (result) {
 													handleQRScan(result.getText());
