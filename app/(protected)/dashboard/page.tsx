@@ -16,15 +16,11 @@ export default async function DashboardPage() {
 		return redirect("/login");
 	}
 
-	if (!session.user.isOnboarded) {
-		return redirect("/onboarding");
-	}
-
 	const stats = await getDashboardStats(userId);
 	const recentOrders = await getRecentOrders(userId);
 
 	return (
-		<ContentLayout title='Dashboard' className='bg-gray-50 min-h-screen'>
+		<ContentLayout title='Dashboard' className='min-h-[70vh]'>
 			<Dashboard
 				name={session?.user?.name as string}
 				stats={stats}
