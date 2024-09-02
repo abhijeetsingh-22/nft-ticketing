@@ -13,6 +13,7 @@ import { getEventsByOrganisationId } from "@/db/events";
 
 export default async function TicketValidationPage(params: {userId:string}) {
 	const events = await getEventsByOrganisationId(params.userId);
+
 	return (
 		<ContentLayout title='My Tickets'>
 			<Breadcrumb className=''>
