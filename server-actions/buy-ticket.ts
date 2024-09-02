@@ -3,7 +3,7 @@
 import { auth } from "@/auth"
 import prisma from "@/db"
 import { generateBookingEmailBody } from "@/lib/email/emailBody"
-import { sendBookingEmail, sendEmailUsingNodemailer } from "@/lib/email/sendEmail"
+import { sendEmailUsingNodemailer } from "@/lib/email/sendEmail"
 import { keypairIdentity, Metaplex } from "@metaplex-foundation/js"
 import { Event } from "@prisma/client"
 import { Connection, Cluster, clusterApiUrl, Keypair, Transaction } from "@solana/web3.js"
@@ -109,14 +109,10 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 		console.log("Order created:", order)
 		let buyerEmailAddress = session.user.email
 		if (buyerEmailAddress && event) {
-			try{
 			// will not wait for email to be sent
-				// sendBookingEmail([buyerEmailAddress], "Ticket Purchased", event)
-				const emailBody = await  generateBookingEmailBody(event);
-				sendEmailUsingNodemailer(buyerEmailAddress, "Ticket Purchased", emailBody)
-			} catch (error) {
-				console.error("Error sending email:", error)
-			}
+			// sendBookingEmail([buyerEmailAddress], "Ticket Purchased", event)
+			const emailBody = await generateBookingEmailBody(event);
+			sendEmailUsingNodemailer(buyerEmailAddress, "Ticket Purchased", emailBody)
 		}
 		return { status: "success", message: "Ticket bought successfully", orderId: order.id, ticketId: order.ticket?.id }
 	} catch (error) {

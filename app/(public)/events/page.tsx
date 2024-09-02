@@ -6,7 +6,6 @@ import { FiltersSkeleton } from "./_components/Filters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EventCardSkeleton } from "./_components/EventCard";
 import { getUserById } from "@/db/users";
-import { User } from "@prisma/client";
 
 export default async function Events() {
 	const { events } = await getAllPublicEvents();
@@ -24,8 +23,8 @@ export default async function Events() {
 	}
 
 	return (
-		<MaxWidthWrapper className='bg-white dark:bg-gray-900 mx-auto mt-8 !px-8 max-w-[94rem]'>
-			<div className='bg-white dark:bg-gray-900 p-4 md:p-8 min-h-screen text-gray-900 dark:text-gray-100'>
+		<MaxWidthWrapper className='mx-auto mt-8 !px-8 max-w-[94rem]'>
+			<div className='p-4 md:p-8 min-h-screen text-gray-900 dark:text-gray-100'>
 				<Suspense
 					fallback={
 						<div className='flex lg:flex-row flex-col gap-8'>

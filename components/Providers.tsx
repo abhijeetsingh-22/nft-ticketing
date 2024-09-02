@@ -2,7 +2,6 @@
 
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 import { Toaster } from "./ui/sonner";
-// import { ThemeProvider } from "@/providers/theme-provider";
 import AppWalletProvider from "@/providers/AppWalletProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -19,14 +18,14 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 			<QueryClientProvider client={queryClient}> 
 			<AppWalletProvider>{children}</AppWalletProvider>
 			</QueryClientProvider>
-			<Toaster closeButton position='top-right' duration={3000} />
+			<AppWalletProvider>{children}</AppWalletProvider>
+			<Toaster closeButton duration={3000} richColors />
 			<ProgressBar
 				height='4px'
-				color='#0047ab'
+				color='#6426C7'
 				options={{ showSpinner: false }}
 				shallowRouting
 			/>
-			{/* </ThemeProvider> */}
 		</>
 	);
 };

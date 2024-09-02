@@ -2,28 +2,18 @@
 
 import Link from "next/link";
 import MaxWidthWrapper from "./MaxWidthWrapper";
-import { Button, buttonVariants } from "./ui/button";
-import { ArrowRight, Github, Moon, Sun, Ticket } from "lucide-react";
-import MobileNav from "./MobileNav";
-import SignOutButton from "./auth/SignOutButton";
-import { auth } from "@/auth";
+import { buttonVariants } from "./ui/button";
+import { ArrowRight, Ticket } from "lucide-react";
 import ConnectWalletButton from "@/components/ConnectWalletButton";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useContext } from "react";
 import { ModeToggle } from "./mode-toggle";
-import { signOut, useSession } from "next-auth/react";
 import { UserNavMenu } from "./UserNavMenu";
-import { User } from "next-auth";
+import { LoggedInUserContext } from "@/contexts/LoggedInUserContext";
+import { Routes } from "@/routes";
 
 const Navbar = () => {
-	const session = useSession();
-	const [isAuth, setIsAuth] = useState(false);
-
-	useEffect(() => {
-		if (session.status === "authenticated") {
-			setIsAuth(true);
-		}
-	}, [session.status]);
+	const { user } = useContext(LoggedInUserContext);
+	const isAuth = !!user;
 	return (
 		<header className='top-0 z-50 sticky inset-x-0 flex items-center border-gray-200 dark:border-gray-800 bg-white bg-white/75 dark:bg-gray-900 opacity-100 shadow-sm dark:shadow-gray-800 backdrop-blur-lg px-4 lg:px-6 border-b w-full h-14 transform transition-all translate-y-0 duration-300 ease-in-out'>
 			<MaxWidthWrapper className='flex justify-between items-center mx-auto max-w-[94rem]'>
@@ -63,11 +53,12 @@ const Navbar = () => {
 						</div>
 					) : (
 						<div className='flex items-center gap-4'>
-							<Link href={`/${session?.data?.user?.id}/events`}>Dashboard</Link>
+							<Link href={Routes.DASHBOARD}>Dashboard</Link>
 							<ConnectWalletButton />
-							<UserNavMenu user={session?.data?.user} />
+							<UserNavMenu user={user} />
 						</div>
 					)}
+
 					<ModeToggle />
 				</nav>
 			</MaxWidthWrapper>

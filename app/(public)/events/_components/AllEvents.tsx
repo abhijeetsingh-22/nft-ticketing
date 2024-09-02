@@ -51,56 +51,72 @@ export default function AllEvents({
 		setIsLoading(true);
 		let selectedEvent = events.filter((event) => event.id === eventId)[0];
 
-    if (!publicKey || !connection || !balance || !signTransaction) {
-      toast.error("Please connect your wallet");
-      setIsLoading(false);
-      return;
-    }
-    console.log("ticketPrice", selectedEvent.ticketPrice);
-    console.log("ticket cost", selectedEvent.ticketPrice, await convertUsdToSol(selectedEvent.ticketPrice));
-    const ticketPrice: number | null = await convertUsdToSol(selectedEvent.ticketPrice);
-    if (!ticketPrice) {
-      toast.error("Server Error! Please try again");
-      setIsLoading(false);
-      return;
-    }
-    const ticketCostLamports = Number((ticketPrice * LAMPORTS_PER_SOL).toFixed(0));
-    console.log("ticketCostLamports", ticketCostLamports);
-    console.log("palatform wallet", process.env.NEXT_PUBLIC_PLATFORM_WALLET_PUBLIC_KEY);
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: publicKey,
-        toPubkey: new PublicKey(bs58.decode(process.env.NEXT_PUBLIC_PLATFORM_WALLET_PUBLIC_KEY!)), // Replace with your platform's public key
-        lamports: ticketCostLamports,
-      }),
-    );
-    transaction.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
-    transaction.feePayer = publicKey;
+		if (!publicKey || !connection || !balance || !signTransaction) {
+			toast.error("Please connect your wallet");
+			setIsLoading(false);
+			return;
+		}
+		console.log("ticketPrice", selectedEvent.ticketPrice);
+		console.log(
+			"ticket cost",
+			selectedEvent.ticketPrice,
+			await convertUsdToSol(selectedEvent.ticketPrice)
+		);
+		const ticketPrice: number | null = await convertUsdToSol(
+			selectedEvent.ticketPrice
+		);
+		if (!ticketPrice) {
+			toast.error("Server Error! Please try again");
+			setIsLoading(false);
+			return;
+		}
+		const ticketCostLamports = Number(
+			(ticketPrice * LAMPORTS_PER_SOL).toFixed(0)
+		);
+		console.log("ticketCostLamports", ticketCostLamports);
+		console.log(
+			"palatform wallet",
+			process.env.NEXT_PUBLIC_PLATFORM_WALLET_PUBLIC_KEY
+		);
+		const transaction = new Transaction().add(
+			SystemProgram.transfer({
+				fromPubkey: publicKey,
+				toPubkey: new PublicKey(
+					bs58.decode(process.env.NEXT_PUBLIC_PLATFORM_WALLET_PUBLIC_KEY!)
+				), // Replace with your platform's public key
+				lamports: ticketCostLamports,
+			})
+		);
+		transaction.recentBlockhash = (
+			await connection.getLatestBlockhash()
+		).blockhash;
+		transaction.feePayer = publicKey;
 
+		try {
+			// Sign the transaction
+			const signedTransaction = await signTransaction(transaction);
 
-    try {
-      // Sign the transaction
-      const signedTransaction = await signTransaction(transaction);
-
-      await toast.promise(
-        buyEventTicket({
-          eventId,
-          signedTransaction: Buffer.from(signedTransaction.serialize()).toString("base64"),
-        }),
-        {
-          loading: "Processing payment...",
-          success:
-            "Ticket purchased successfully! Please check your wallet for your NFT",
-          error: (err) => `${err.message}`,
-        }
-      );
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to buy ticket");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+			await toast.promise(
+				buyEventTicket({
+					eventId,
+					signedTransaction: Buffer.from(
+						signedTransaction.serialize()
+					).toString("base64"),
+				}),
+				{
+					loading: "Processing payment...",
+					success:
+						"Ticket purchased successfully! Please check your wallet for your NFT",
+					error: (err) => `${err.message}`,
+				}
+			);
+		} catch (error) {
+			console.error(error);
+			toast.error("Failed to buy ticket");
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	useEffect(() => {
 		const min = parseFloat(minPrice) || 0;

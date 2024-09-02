@@ -27,12 +27,16 @@ import {
 	FileText,
 	Moon,
 	Sun,
+	Bug,
 } from "lucide-react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { useTheme } from "next-themes";
+import { registerForEarlyAccess } from "@/db/earlyaccess";
+import { toast } from "sonner";
 
 export default function Marketing() {
+	const [email, setEmail] = React.useState("");
 	const benefitsRef = useRef(null);
 	const benefitsInView = useInView(benefitsRef, { once: true });
 
@@ -44,6 +48,21 @@ export default function Marketing() {
 		target: scrollRef,
 		offset: ["start start", "end start"],
 	});
+
+	const handleEarlyAccess = async () => {
+		toast.success("Registering for early access...");
+		let emailId = email;
+		setEmail("");
+		registerForEarlyAccess(emailId)
+			.then((resp) => {
+				console.log("resp", resp);
+				if (resp.code == 200) {
+					toast.success(resp.message);
+				} else {
+					toast.error(resp.message);
+				}
+			})
+	};
 
 	const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 	const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
@@ -535,10 +554,13 @@ export default function Marketing() {
 									className='border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white'
 									placeholder='Enter your email'
 									type='email'
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
 								/>
 								<Button
 									className='bg-purple-600 hover:bg-purple-700 dark:hover:bg-purple-600 dark:bg-purple-500 w-full text-white'
 									size='lg'
+									onClick={handleEarlyAccess}
 								>
 									Get Early Access <Zap className='ml-2 w-5 h-4' />
 								</Button>
@@ -579,6 +601,9 @@ export default function Marketing() {
 								href='#'
 							>
 								FAQ
+							</Link>
+							<Link href='/report-issue'>
+								<Bug className='w-6 h-6 text-purple-600 dark:text-purple-400' />
 							</Link>
 						</nav>
 					</div>

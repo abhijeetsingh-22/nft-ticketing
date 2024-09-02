@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -26,19 +26,20 @@ import { buildMailBodyForReportIssue } from "@/lib/email/emailBody";
 
 // Define the validation schema using Zod
 const reportSchema = z.object({
-	area: z.optional(z.string().min(1, "Area is required")),
-	security: z.optional(z.string().min(1, "Security is required")),
+	area: z.string().min(1, "Area is required"),
+	security: z.string().min(1, "Security is required"),
 	subject: z.string().min(1, "Subject is required"),
 	description: z.string().min(1, "Description is required"),
 });
-
 
 type ReportFormData = z.infer<typeof reportSchema>;
 
 export default function ReportCard() {
 	const {
+		control,
 		register,
 		handleSubmit,
+		reset,
 		formState: { errors },
 	} = useForm<ReportFormData>({
 		resolver: zodResolver(reportSchema),
@@ -46,19 +47,27 @@ export default function ReportCard() {
 
 	const onSubmit = async (data: ReportFormData) => {
 		console.log(data);
-		let to = process.env.NEXT_PUBLIC_ADMIN_EMAIL
+		const to = process.env.NEXT_PUBLIC_NEXT_PUBLIC_ADMIN_EMAIL;
 		if (!to) {
-			toast.error("Failed to resgister your issue. Please try again");
-			return
+			toast.error("Failed to register your issue. Please try again");
+			return;
 		}
-		let mailBody: string = await buildMailBodyForReportIssue(data)
-		
-		let response = await sendEmailUsingNodemailer(to, "Report Issue", mailBody)
+		const mailBody: string = await buildMailBodyForReportIssue(data);
 
-		if (response) {
-			toast.success("Issue reported successfully")
-		} else {
-			toast.error("Failed to resgister your issue. Please try again")
+		try {
+			const response = await sendEmailUsingNodemailer(
+				to,
+				"Report Issue",
+				mailBody
+			);
+			if (response) {
+				toast.success("Issue reported successfully");
+				reset(); // Clear all values after successful submission
+			} else {
+				throw new Error("Email sending failed");
+			}
+		} catch (error) {
+			toast.error("Failed to register your issue. Please try again");
 		}
 	};
 
@@ -81,21 +90,28 @@ export default function ReportCard() {
 						>
 							Area
 						</label>
-						<Select {...register("area")}>
-							<SelectTrigger
-								id='area'
-								className='border-gray-300 dark:border-gray-600 focus:ring-gray-500 dark:focus:ring-gray-400'
-							>
-								<SelectValue placeholder='Select area' />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value='billing'>Billing</SelectItem>
-								<SelectItem value='technical'>Technical</SelectItem>
-								<SelectItem value='account'>Account</SelectItem>
-							</SelectContent>
-						</Select>
+						<Controller
+							name='area'
+							control={control}
+							render={({ field }) => (
+								<Select onValueChange={field.onChange} value={field.value}>
+									<SelectTrigger
+										id='area'
+										className='border-gray-300 dark:border-gray-600 focus:ring-gray-500 dark:focus:ring-gray-400'
+									>
+										<SelectValue placeholder='Select area' />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value='buy-tickets'>Buy Tickets</SelectItem>
+										<SelectItem value='create-event'>Create Event</SelectItem>
+										<SelectItem value='account'>Account</SelectItem>
+										<SelectItem value='other'>Other</SelectItem>
+									</SelectContent>
+								</Select>
+							)}
+						/>
 						{errors.area && (
-							<p className='text-red-500'>{errors.area.message as string}</p>
+							<p className='text-red-500'>{errors.area.message}</p>
 						)}
 					</div>
 					<div className='space-y-2'>
@@ -105,23 +121,27 @@ export default function ReportCard() {
 						>
 							Security Level
 						</label>
-						<Select {...register("security")}>
-							<SelectTrigger
-								id='security'
-								className='border-gray-300 dark:border-gray-600 focus:ring-gray-500 dark:focus:ring-gray-400'
-							>
-								<SelectValue placeholder='Select security level' />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value='1'>Severity 1</SelectItem>
-								<SelectItem value='2'>Severity 2</SelectItem>
-								<SelectItem value='3'>Severity 3</SelectItem>
-							</SelectContent>
-						</Select>
+						<Controller
+							name='security'
+							control={control}
+							render={({ field }) => (
+								<Select onValueChange={field.onChange} value={field.value}>
+									<SelectTrigger
+										id='security'
+										className='border-gray-300 dark:border-gray-600 focus:ring-gray-500 dark:focus:ring-gray-400'
+									>
+										<SelectValue placeholder='Select security level' />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem value='low'>Low priority</SelectItem>
+										<SelectItem value='medium'>Medium priority</SelectItem>
+										<SelectItem value='high'>High priority</SelectItem>
+									</SelectContent>
+								</Select>
+							)}
+						/>
 						{errors.security && (
-							<p className='text-red-500'>
-								{errors.security.message as string}
-							</p>
+							<p className='text-red-500'>{errors.security.message}</p>
 						)}
 					</div>
 					<div className='space-y-2'>
@@ -138,7 +158,7 @@ export default function ReportCard() {
 							{...register("subject")}
 						/>
 						{errors.subject && (
-							<p className='text-red-500'>{errors.subject.message as string}</p>
+							<p className='text-red-500'>{errors.subject.message}</p>
 						)}
 					</div>
 					<div className='space-y-2'>
@@ -155,9 +175,7 @@ export default function ReportCard() {
 							{...register("description")}
 						/>
 						{errors.description && (
-							<p className='text-red-500'>
-								{errors.description.message as string}
-							</p>
+							<p className='text-red-500'>{errors.description.message}</p>
 						)}
 					</div>
 				</CardContent>
@@ -165,13 +183,13 @@ export default function ReportCard() {
 					<Button
 						variant='outline'
 						className='border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-900 text-black dark:text-white'
+						onClick={() => reset()} // Reset form on cancel
 					>
 						Cancel
 					</Button>
 					<Button
 						type='submit'
 						className='bg-primary hover:bg-primary-dark dark:bg-primary-dark text-white'
-						onClick={handleSubmit(onSubmit)}
 					>
 						Submit
 					</Button>

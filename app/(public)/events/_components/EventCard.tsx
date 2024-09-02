@@ -7,13 +7,14 @@ import Image from "next/image";
 import { Event, User as PrismaUser } from "@prisma/client";
 import { getUserById } from "@/db/users";
 import { useSession } from "next-auth/react";
-import { redirect, RedirectType } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Routes } from "@/routes";
 import { IconSpinner } from "@/components/ui/icons";
 import { FaSpinner } from "react-icons/fa";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useState } from "react";
 
 type EventWithOrganizer = Event & {
 	organizer: string;
@@ -33,17 +34,20 @@ export const EventCard = ({
 	coverPhoto,
 	organizer,
 	handleBuyEventTicket,
-	isLoading,
 }: EventCardProps) => {
+	const [isLoading, setIsLoading] = useState(false);
 	const session = useSession();
+	const router = useRouter();
 
-	const handleBuyTicket = () => {
+	const handleBuyTicket = async () => {
+		setIsLoading(true);
 		if (session.status === "authenticated") {
 			console.log("id", id);
-			handleBuyEventTicket(id as string);
+			await handleBuyEventTicket(id as string);
+			setIsLoading(false);
 		} else {
 			toast.error("Please login to buy ticket");
-			redirect(Routes.LOGIN);
+			router.push(Routes.LOGIN);
 		}
 	};
 
@@ -78,7 +82,7 @@ export const EventCard = ({
 							</div>
 						</div>
 						<div className='flex justify-between items-center mt-4'>
-							<span className='font-bold text-lg text-primary dark:text-primary-400'>
+							<span className='font-bold text-lg'>
 								${ticketPrice?.toFixed(2)}
 							</span>
 							<Link

@@ -5,6 +5,8 @@ export const Routes = {
   "SIGNUP": "/signup",
   "DASHBOARD": "/dashboard",
   "ONBOARDING": "/onboarding",
+  "REPORT_ISSUE": "/report-issue",
+  "EVENT_DETAILS": "/events/:eventId"
 }
 
 
@@ -13,6 +15,8 @@ export const publicRoutes = [
   Routes.EVENTS,
   Routes.LOGIN,
   Routes.SIGNUP,
+  Routes.EVENT_DETAILS,
+  Routes.REPORT_ISSUE,
 ]
 
 export const authRoutes = [
