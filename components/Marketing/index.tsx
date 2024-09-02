@@ -34,11 +34,15 @@ import React, { useRef } from "react";
 import { useTheme } from "next-themes";
 import { registerForEarlyAccess } from "@/db/earlyaccess";
 import { toast } from "sonner";
+import {useRouter} from "next/navigation"
+import { Routes } from "@/routes";
+
 
 export default function Marketing() {
 	const [email, setEmail] = React.useState("");
 	const benefitsRef = useRef(null);
 	const benefitsInView = useInView(benefitsRef, { once: true });
+    const router = useRouter()
 
 	const featuredRef = useRef(null);
 	const featuredInView = useInView(featuredRef, { once: true });
@@ -102,6 +106,11 @@ export default function Marketing() {
 		},
 	};
 
+	const handleGotoEvents = () => {
+		console.log("going to events");
+		router.push(Routes.EVENTS)
+	}
+
 	return (
 		<div
 			className='flex flex-col bg-white dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white transition-colors duration-300'
@@ -144,6 +153,7 @@ export default function Marketing() {
 									<Button
 										className='bg-gradient-to-r from-purple-600 hover:from-purple-700 dark:hover:from-purple-600 dark:from-purple-500 to-pink-600 hover:to-pink-700 dark:hover:to-pink-600 dark:to-pink-500 text-white transform hover:scale-105 transition-all duration-200'
 										size='lg'
+										onClick={handleGotoEvents}
 									>
 										<Sparkles className='mr-2 w-5 h-5' /> Mint Your Ticket
 									</Button>
@@ -151,6 +161,7 @@ export default function Marketing() {
 										variant='outline'
 										size='lg'
 										className='border-purple-600 dark:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 text-purple-600 dark:text-purple-400 transform hover:scale-105 transition-all duration-200'
+										onClick={handleGotoEvents}
 									>
 										Explore Minttix
 									</Button>
