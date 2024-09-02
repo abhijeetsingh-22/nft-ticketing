@@ -22,7 +22,7 @@ export default function HeroSection() {
 		>
 			<div className='inline-flex justify-between items-center gap-1 border-white/5 bg-white/10 hover:bg-white/20 opacity-0 backdrop-filter-[12px] px-3 border rounded-full h-7 text-white text-xs dark:text-black transition-all translate-y-[-1rem] animate-fade-in hover:cursor-pointer ease-in group'>
 				<TextShimmer className='inline-flex justify-center items-center'>
-					<span>✨ Introducing MintTix</span>{" "}
+					<span>✨ Beta version (Devnet only)</span>{" "}
 					<ArrowRightIcon className='ml-1 transition-transform group-hover:translate-x-0.5 duration-300 ease-in-out size-3' />
 				</TextShimmer>
 			</div>
