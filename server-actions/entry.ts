@@ -3,6 +3,8 @@
 import {auth} from "@/auth"
 import prisma from "@/db"
 import {TicketWithEvent} from "@/db/types"
+import { Metaplex } from "@metaplex-foundation/js"
+import { Connection, PublicKey } from "@solana/web3.js"
 
 export async function generateEntryCode(walletAddress: string, ticket: TicketWithEvent) {
 	try {
@@ -10,7 +12,15 @@ export async function generateEntryCode(walletAddress: string, ticket: TicketWit
 		if (!session?.user) {
 			return {status: "error", message: "Unauthorized"}
 		}
-		const code = Math.floor(100000 + Math.random() * 900000).toString()
+    const connection = new Connection(process.env.SOLANA_RPC_URL!, "confirmed")		
+    const metaplex = new Metaplex(connection)
+
+    const nft = await metaplex.nfts().findByMint({mintAddress: new PublicKey(ticket.tokenId)})
+    console.log("nft", nft)
+    if(!nft) {
+      return {status: "error", message: "NFT not found"}
+    }
+    const code = Math.floor(100000 + Math.random() * 900000).toString()
 		const entryCode = await prisma.entryCode.create({
 			data: {
 				code,
@@ -57,6 +67,8 @@ export async function validateEntryCode(code: string, eventId: string) {
 				event: true,
 			},
 		})
+
+    //TODO: Mark ticket used before returning
 		return {status: "success", entryCode, ticket}
 	} catch (error) {
 		return {status: "error", message: "Internal server error"}
