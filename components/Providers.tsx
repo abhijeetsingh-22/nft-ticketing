@@ -18,7 +18,6 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 			<QueryClientProvider client={queryClient}> 
 			<AppWalletProvider>{children}</AppWalletProvider>
 			</QueryClientProvider>
-			<AppWalletProvider>{children}</AppWalletProvider>
 			<Toaster closeButton duration={3000} richColors />
 			<ProgressBar
 				height='4px'

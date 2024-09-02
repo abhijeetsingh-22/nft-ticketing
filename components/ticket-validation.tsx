@@ -60,6 +60,8 @@ export function TicketValidation({events}:TicketValidationProps) {
 
 	useEffect(() => {
 		showDialogRef.current = showDialog;
+		
+		// return ()=> stopCamera()
 	}, [showDialog]);
 
 	const handleValidate = async (code: string) => {

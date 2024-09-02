@@ -55,11 +55,12 @@ export default function ReportCard() {
 		const mailBody: string = await buildMailBodyForReportIssue(data);
 
 		try {
-			const response = await sendEmailUsingNodemailer(
-				to,
-				"Report Issue",
-				mailBody
-			);
+			// const response = await sendEmailUsingNodemailer(
+			// 	to,
+			// 	"Report Issue",
+			// 	mailBody
+			// );
+			const response = null
 			if (response) {
 				toast.success("Issue reported successfully");
 				reset(); // Clear all values after successful submission
