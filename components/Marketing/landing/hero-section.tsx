@@ -28,7 +28,7 @@ export default function HeroSection() {
 			</div>
 			<h1 className='bg-clip-text bg-gradient-to-br from-30% from-black dark:from-white to-black/40 dark:to-white/40 opacity-0 py-6 font-medium text-5xl text-balance text-transparent sm:text-6xl md:text-7xl lg:text-8xl leading-none tracking-tighter translate-y-[-1rem] animate-fade-in [--animation-delay:200ms]'>
 				MintTix is the new way
-				<br className='md:block hidden' /> to experience live events
+				<br className='md:block hidden' /> to experience events
 			</h1>
 			<p className='opacity-0 mb-12 text-balance text-gray-400 text-lg md:text-xl tracking-tight translate-y-[-1rem] animate-fade-in [--animation-delay:400ms]'>
 				MintTix allows you to create, transact and store digital tickets

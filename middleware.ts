@@ -6,12 +6,13 @@ const { auth } = NextAuth(authConfig)
 
 export default auth((req) => {
   const { nextUrl } = req;
-  const isLoggedIn = !!req.auth?.user
-  // console.log("isLoggedIn", isLoggedIn, req.auth?.user);
+  const user = req.auth?.user;
+
+  const isLoggedIn = !!user;
+
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isAuthroute = authRoutes.includes(nextUrl.pathname);
   const isPublicRoute = publicRoutes.some(route => {
-    // Handle dynamic routes
     if (route.includes(':')) {
       const routeParts = route.split('/');
       const urlParts = nextUrl.pathname.split('/');
@@ -24,12 +25,15 @@ export default auth((req) => {
     return;
   }
 
+
+
   if (isAuthroute) {
     if (isLoggedIn) {
       return Response.redirect(new URL(Routes.DASHBOARD, nextUrl).toString())
     }
     return;
   }
+
 
   if (!isLoggedIn && !isPublicRoute) {
     return Response.redirect(new URL('/login', nextUrl).toString())
