@@ -36,15 +36,16 @@ import {
 	TicketIcon,
 } from "lucide-react";
 import Image from "next/image";
-import { Ticket as PrismaTicket } from "@prisma/client";
+import { TicketWithEvent } from "@/db/types";
+import QRCodeModal from "@/components/qr-modal";
 
 export default function MyTickets({
 	allTickets,
 }: {
-	allTickets: PrismaTicket[];
+	allTickets: TicketWithEvent[];
 }) {
 	const [activeTab, setActiveTab] = useState("all");
-	const [tickets, setTickets] = useState<PrismaTicket[]>([]);
+	const [tickets, setTickets] = useState<TicketWithEvent[]>([]);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -148,7 +149,7 @@ function TicketList({
 	variants,
 	itemVariants,
 }: {
-	tickets: PrismaTicket[];
+	tickets: TicketWithEvent[];
 	variants: any;
 	itemVariants: any;
 }) {
@@ -175,11 +176,10 @@ function TicketList({
 				<motion.div key={ticket.id} variants={itemVariants}>
 					<Card className='overflow-hidden'>
 						<CardHeader className='p-0'>
-							{/* Placeholder for image - you might want to add this to your Ticket type */}
-							<div className='bg-muted w-full h-48'></div>
+							<Image src={ticket.event.coverPhoto} alt={ticket.event.name} className="w-full h-48 object-cover" width={500} height={500} />
 						</CardHeader>
 						<CardContent className='p-4'>
-							<CardTitle>{ticket.eventId}</CardTitle>
+							<CardTitle>{ticket.event.name}</CardTitle>
 							<div className='space-y-2 mt-2'>
 								<div className='flex items-center text-sm'>
 									<Calendar className='mr-2 w-4 h-4' />
@@ -187,11 +187,11 @@ function TicketList({
 								</div>
 								<div className='flex items-center text-sm'>
 									<Clock className='mr-2 w-4 h-4' />
-									{new Date(ticket.createdAt).toLocaleTimeString()}
+									{new Date(ticket.event.startDate).toLocaleTimeString()}
 								</div>
 								<div className='flex items-center text-sm'>
 									<MapPin className='mr-2 w-4 h-4' />
-									{ticket.status}
+									{ticket.event.venueName}
 								</div>
 							</div>
 						</CardContent>
@@ -298,18 +298,15 @@ function TicketList({
 									</div>
 								</DialogContent>
 							</Dialog>
-							<Button variant='outline' size='sm'>
+							{/* <Button variant='outline' size='sm'>
 								<Download className='mr-2 w-4 h-4' />
 								Download
 							</Button>
 							<Button variant='outline' size='sm'>
 								<Eye className='mr-2 w-4 h-4' />
 								View NFT
-							</Button>
-							<Button variant='outline' size='sm'>
-								<Download className='mr-2 w-4 h-4' />
-								View QR Code
-							</Button>
+							</Button> */}
+							<QRCodeModal ticket={ticket} />
 						</CardFooter>
 					</Card>
 				</motion.div>

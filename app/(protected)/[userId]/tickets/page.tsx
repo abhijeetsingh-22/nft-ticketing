@@ -19,6 +19,9 @@ export default async function TicketsPage({
 }) {
 	const tickets = await prisma.ticket.findMany({
 		where: { userId: params.userId },
+		include: {
+			event: true,
+		},
 	});
 
 	return (

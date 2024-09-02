@@ -31,9 +31,6 @@ export async function createOrUpdateEvent(event: Event) {
       throw new Error("Cannot update event with tickets already sold");
     }
 
-    const isNewEvent: Event | null = await prisma.event.findUnique({
-      where: { slug: event.slug },
-    })
 
     // Create NFT symbol
     event.nftSymbol = createNftSymbol(event.name);

@@ -53,13 +53,14 @@ export const buyEventTicket = async ({ eventId, signedTransaction }: BuyEventTic
 		console.log("userWallet", userWallet)
 
 		const metaplex = new Metaplex(connection)
-		const {uri} = await metaplex.nfts().uploadMetadata({
-			name: event.name,
-			symbol: event.nftSymbol ?? event.slug,
-			image: event.thumbnail,
-			eventId: event.id,
-		})
-		console.log("uri", uri)	
+		// TODO: fix this
+		// const {uri} = await metaplex.nfts().uploadMetadata({
+		// 	name: event.name,
+		// 	symbol: event.nftSymbol ?? event.slug,
+		// 	image: event.thumbnail,
+		// 	eventId: event.id,
+		// })
+		// console.log("uri", uri)	
 
 		metaplex.use(keypairIdentity(platformWallet))
 

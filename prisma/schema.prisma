@@ -50,6 +50,8 @@ model Ticket {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   orderId   String   @unique
   order     Order    @relation(fields: [orderId], references: [id])
+  maxUses   Int      @default(1)
+  uses      Int      @default(0)
 
   @@map("tickets")
 }

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "tickets" ADD COLUMN     "maxUses" INTEGER NOT NULL DEFAULT 1,
+ADD COLUMN     "uses" INTEGER NOT NULL DEFAULT 0;

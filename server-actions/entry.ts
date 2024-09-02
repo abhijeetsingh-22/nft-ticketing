@@ -3,8 +3,9 @@
 
 import { auth } from "@/auth";
 import prisma from "@/db";
+import { TicketWithEvent } from "@/db/types";
 
-export  async function generateEntryCode(walletAddress: string , nftAddress:string , eventId:string){
+export  async function generateEntryCode(walletAddress: string , ticket: TicketWithEvent){
   try{
     const session = await auth();
     if(!session?.user){
@@ -15,13 +16,13 @@ export  async function generateEntryCode(walletAddress: string , nftAddress:stri
       data: {
         code,
         walletAddress,
-        nftAddress,
-        eventId,
+        nftAddress: ticket.tokenId,
+        eventId: ticket.eventId,
         expiresAt: new Date(Date.now() + 30 * 1000), // 30 seconds from now
       },
     });
-
-    return { status : "success", code: entryCode.code }
+    console.log("Entry code created:", entryCode);
+    return { status : "success", entryCode }
   }
   catch(error){
     return { status : "error", message : "Internal server error" };
