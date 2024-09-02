@@ -27,7 +27,7 @@ export async function generateEntryCode(walletAddress: string, ticket: TicketWit
 	}
 }
 
-export async function validateEntryCode(code: string) {
+export async function validateEntryCode(code: string, eventId: string) {
 	try {
 		console.log("Validating entry code:", code)
 		const session = await auth()
@@ -38,6 +38,7 @@ export async function validateEntryCode(code: string) {
 		const entryCode = await prisma.entryCode.findFirst({
 			where: {
 				code,
+        eventId
 			},
 		})
 		console.log("Entry code found:", entryCode)

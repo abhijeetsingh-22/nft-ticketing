@@ -9,8 +9,10 @@ import {
 	BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
+import { getEventsByOrganisationId } from "@/db/events";
 
-export default function TicketValidationPage() {
+export default async function TicketValidationPage(params: {userId:string}) {
+	const events = await getEventsByOrganisationId(params.userId);
 	return (
 		<ContentLayout title='My Tickets'>
 			<Breadcrumb className=''>
@@ -27,7 +29,7 @@ export default function TicketValidationPage() {
 				</BreadcrumbList>
 			</Breadcrumb>
 			<div className='mt-10 space-y-4'>
-				<TicketValidation />
+				<TicketValidation events={events.events ??[]}/>
 			</div>
 		</ContentLayout>
 	);

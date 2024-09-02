@@ -39,17 +39,15 @@ import { QrReader } from 'react-qr-reader';
 import { useEffect, useRef } from "react";
 import { TicketWithEvent } from "@/db/types";
 import { validateEntryCode } from "@/server-actions/entry";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Event } from "@prisma/client";
+// import { useEvents } from "@/hooks/useEvents";
 
-interface TicketDetails {
-	id: string;
-	eventName: string;
-	date: string;
-	time: string;
-	location: string;
-	attendeeName: string;
+type TicketValidationProps = {
+	events: Event[]
 }
 
-export function TicketValidation() {
+export function TicketValidation({events}:TicketValidationProps) {
 	const [activeTab, setActiveTab] = useState<"manual" | "qr">("manual");
 	const [manualCode, setManualCode] = useState("");
 	const [isValidating, setIsValidating] = useState(false);
@@ -58,13 +56,19 @@ export function TicketValidation() {
 	);
 	const [showDialog, setShowDialog] = useState(false);
 	const showDialogRef = useRef<boolean>(false);
+	const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+
 	useEffect(() => {
 		showDialogRef.current = showDialog;
 	}, [showDialog]);
 
 	const handleValidate = async (code: string) => {
+		if (!selectedEventId) {
+			toast.error("Please select an event first.");
+			return;
+		}
 		setIsValidating(true);
-		toast.promise(validateEntryCode(code), {
+		toast.promise(validateEntryCode(code, selectedEventId), {
 			loading: "Validating ticket...",
 			success: (result) => {
 				if (result.ticket) {
@@ -122,63 +126,79 @@ export function TicketValidation() {
 						Ticket Validation
 					</CardTitle>
 					<CardDescription className='text-center'>
-						Enter the 6-digit code or scan the QR code
+						Select an event and validate tickets
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
-					<Tabs
-						value={activeTab}
-						onValueChange={handleTabChange}
-						className='w-full'
-					>
-						<TabsList className='grid grid-cols-2 w-full'>
-							<TabsTrigger value='manual'>Manual Entry</TabsTrigger>
-							<TabsTrigger value='qr'>QR Scan</TabsTrigger>
-						</TabsList>
-						<TabsContent value='manual'>
-							<form onSubmit={handleManualSubmit} className='space-y-4'>
-								<Input
-									type='text'
-									placeholder='Enter 6-digit code'
-									value={manualCode}
-									onChange={(e) => setManualCode(e.target.value)}
-									maxLength={6}
-									className='text-2xl text-center tracking-widest'
-								/>
-								<Button
-									type='submit'
-									className='w-full'
-									disabled={manualCode.length !== 6 || isValidating}
-								>
-									{isValidating ? "Validating..." : "Validate Ticket"}
-								</Button>
-							</form>
-						</TabsContent>
-						<TabsContent value='qr'>
-							<div className='flex flex-col items-center space-y-4'>
-								<div className='flex justify-center items-center bg-gray-200 dark:bg-gray-700 rounded-lg w-64 h-64'>
-									{activeTab === 'qr' && !isValidating ? (
-										<QrReader
-											onResult={(result, error) => {
-												if(result && !showDialogRef.current){
-														handleValidate(result.getText())
-												}
-											}}
-											constraints={{aspectRatio: 1,  facingMode: { ideal: "environment" } }}
-											className='w-full h-full'
-										/>
-									) : (
-										<div className="flex items-center justify-center">
-											<span className="loading loading-spinner loading-lg"></span>
-										</div>
-									)}
+					<div className="mb-4">
+						<Select onValueChange={(value) => setSelectedEventId(value)} >
+							<SelectTrigger>
+								<SelectValue placeholder="Select an event" />
+							</SelectTrigger>
+							<SelectContent>
+								{events?.map((event) => (
+									<SelectItem key={event.id} value={event.id}>
+										{event.name}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
+					{selectedEventId && (
+						<Tabs
+							value={activeTab}
+							onValueChange={handleTabChange}
+							className='w-full'
+						>
+							<TabsList className='grid grid-cols-2 w-full'>
+								<TabsTrigger value='manual'>Manual Entry</TabsTrigger>
+								<TabsTrigger value='qr'>QR Scan</TabsTrigger>
+							</TabsList>
+							<TabsContent value='manual'>
+								<form onSubmit={handleManualSubmit} className='space-y-4'>
+									<Input
+										type='text'
+										placeholder='Enter 6-digit code'
+										value={manualCode}
+										onChange={(e) => setManualCode(e.target.value)}
+										maxLength={6}
+										className='text-2xl text-center tracking-widest'
+									/>
+									<Button
+										type='submit'
+										className='w-full'
+										disabled={manualCode.length !== 6 || isValidating}
+									>
+										{isValidating ? "Validating..." : "Validate Ticket"}
+									</Button>
+								</form>
+							</TabsContent>
+							<TabsContent value='qr'>
+								<div className='flex flex-col items-center space-y-4'>
+									<div className='flex justify-center items-center bg-gray-200 dark:bg-gray-700 rounded-lg w-64 h-64'>
+										{activeTab === 'qr' && !isValidating ? (
+											<QrReader
+												onResult={(result, error) => {
+													if(result && !showDialogRef.current){
+															handleValidate(result.getText())
+													}
+												}}
+												constraints={{aspectRatio: 1,  facingMode: { ideal: "environment" } }}
+												className='w-full h-full'
+											/>
+										) : (
+											<div className="flex items-center justify-center">
+												<span className="loading loading-spinner loading-lg"></span>
+											</div>
+										)}
+									</div>
+									<p className='text-center text-gray-500 dark:text-gray-400'>
+										{activeTab === 'qr' ? 'Preparing camera...' : 'Position the QR code within the frame to scan'}
+									</p>
 								</div>
-								<p className='text-center text-gray-500 dark:text-gray-400'>
-									{activeTab === 'qr' ? 'Preparing camera...' : 'Position the QR code within the frame to scan'}
-								</p>
-							</div>
-						</TabsContent>
-					</Tabs>
+							</TabsContent>
+						</Tabs>
+					)}
 					<Dialog open={showDialog} onOpenChange={setShowDialog}>
 						<DialogContent className='shadow-2xl dark:shadow-purple-900/20 sm:max-w-[600px]'>
 							<DialogHeader>
