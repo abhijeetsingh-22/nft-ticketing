@@ -1,8 +1,10 @@
 "use client";
 
 import { BorderBeam } from "@/components/magicui/border-beam";
+import ShimmerButton from "@/components/magicui/shimmer-button";
 import TextShimmer from "@/components/magicui/text-shimmer";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { HoverBorderGradient } from "@/components/ui/hover-border-gradient";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { useInView } from "framer-motion";
@@ -32,19 +34,19 @@ export default function HeroSection() {
 				MintTix allows you to create, transact and store digital tickets
 				<br className='md:block hidden' /> on a carbon-neutral blockchain.
 			</p>
-			<Link
-				href='/signup'
-				className={cn(
-					buttonVariants({
-						size: "lg",
-						variant: "outline",
-					}),
-					"group mt-4 rounded-[2rem] px-6"
-				)}
-			>
-				Get Started
-				<ChevronRight className='ml-1 transition-all group-hover:translate-x-1 duration-300 ease-out size-4' />
-			</Link>
+			<div className='flex justify-center items-center'>
+				<Link href='/signup' className=''>
+					<HoverBorderGradient
+						containerClassName='rounded-full'
+						as='button'
+						className='flex items-center space-x-2 bg-white dark:bg-black text-black dark:text-white'
+					>
+						Get Started
+						<ChevronRight className='ml-1 transition-all group-hover:translate-x-1 duration-300 ease-out size-4' />
+					</HoverBorderGradient>
+				</Link>
+			</div>
+
 			<div
 				ref={ref}
 				className='relative after:[background:linear-gradient(to_top,hsl(var(--background))_30%,transparent)] after:z-50 after:absolute after:inset-0 opacity-0 mt-[8rem] animate-fade-up [--animation-delay:400ms] [perspective:2000px]'
