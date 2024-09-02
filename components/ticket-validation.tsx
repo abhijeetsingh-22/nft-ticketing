@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,17 +37,8 @@ import {
 import { toast } from "sonner";
 import { QrReader } from 'react-qr-reader';
 import { useEffect, useRef } from "react";
-
-// Mock function to simulate backend call
-const validateTicket = async (
-	code: string
-): Promise<{ valid: boolean; ticket?: TicketDetails }> => {
-	// Simulate API call delay
-	await new Promise((resolve) => setTimeout(resolve, 1000));
-
-
-	return { valid: true };
-};
+import { TicketWithEvent } from "@/db/types";
+import { validateEntryCode } from "@/server-actions/entry";
 
 interface TicketDetails {
 	id: string;
@@ -62,22 +53,21 @@ export function TicketValidation() {
 	const [activeTab, setActiveTab] = useState<"manual" | "qr">("manual");
 	const [manualCode, setManualCode] = useState("");
 	const [isValidating, setIsValidating] = useState(false);
-	const [validatedTicket, setValidatedTicket] = useState<TicketDetails | null>(
+	const [validatedTicket, setValidatedTicket] = useState<TicketWithEvent | null>(
 		null
 	);
 	const [showDialog, setShowDialog] = useState(false);
+	const showDialogRef = useRef<boolean>(false);
 	useEffect(() => {
-		return () => {
-			// Cleanup function to ensure camera is released when component unmounts
-		};
-	}, []);
+		showDialogRef.current = showDialog;
+	}, [showDialog]);
 
 	const handleValidate = async (code: string) => {
 		setIsValidating(true);
-		toast.promise(validateTicket(code), {
+		toast.promise(validateEntryCode(code), {
 			loading: "Validating ticket...",
 			success: (result) => {
-				if (result.valid && result.ticket) {
+				if (result.ticket) {
 					setValidatedTicket(result.ticket);
 					setShowDialog(true);
 					return "Ticket validated successfully!";
@@ -109,17 +99,21 @@ export function TicketValidation() {
 
 		if (value !== "qr") {
 			// Stop the video stream when switching away from the QR tab
-			const videoElement = document.querySelector("video");
+			stopCamera()
+		}
+	};
+	function stopCamera() {
+		const videoElement = document.querySelector("video");
 			if (videoElement) {
 				const stream = videoElement.srcObject as MediaStream;
 				if (stream) {
 					const tracks = stream.getTracks();
 					tracks.forEach((track) => track.stop());
 				}
-			}
 		}
-	};
-
+	}
+	
+	console.log("outside show dialog ",showDialog)
 	return (
 		<div className='flex justify-center items-center dark:bg-gray-900 p-4 min-h-[70vh]'>
 			<Card className='w-full max-w-md'>
@@ -166,12 +160,11 @@ export function TicketValidation() {
 									{activeTab === 'qr' && !isValidating ? (
 										<QrReader
 											onResult={(result, error) => {
-												if (result) {
-													handleQRScan(result.getText());
+												if(result && !showDialogRef.current){
+														handleValidate(result.getText())
 												}
-
 											}}
-											constraints={{ facingMode: 'environment' }}
+											constraints={{aspectRatio: 1,  facingMode: { ideal: "environment" } }}
 											className='w-full h-full'
 										/>
 									) : (
@@ -204,25 +197,25 @@ export function TicketValidation() {
 										</div>
 									</div>
 									<h3 className='mb-4 font-semibold text-2xl text-center'>
-										{validatedTicket.eventName}
+										{validatedTicket.event.name}
 									</h3>
 									<div className='gap-4 grid grid-cols-2'>
 										<div className='flex items-center'>
 											<Calendar className='mr-2 w-5 h-5 text-gray-500 dark:text-gray-400' />
-											<span>{validatedTicket.date}</span>
+											<span>{validatedTicket.event.startDate.toLocaleDateString()}</span>
 										</div>
 										<div className='flex items-center'>
 											<Clock className='mr-2 w-5 h-5 text-gray-500 dark:text-gray-400' />
-											<span>{validatedTicket.time}</span>
+											<span>{validatedTicket.event.startDate.toLocaleTimeString()}</span>
 										</div>
 										<div className='flex items-center col-span-2'>
 											<MapPin className='mr-2 w-5 h-5 text-gray-500 dark:text-gray-400' />
-											<span>{validatedTicket.location}</span>
+											<span>{validatedTicket.event.venueAddress}</span>
 										</div>
-										<div className='flex items-center col-span-2'>
+										{/* <div className='flex items-center col-span-2'>
 											<User className='mr-2 w-5 h-5 text-gray-500 dark:text-gray-400' />
-											<span>{validatedTicket.attendeeName}</span>
-										</div>
+											<span>{validatedTicket.}</span>
+										</div> */}
 									</div>
 								</div>
 							)}

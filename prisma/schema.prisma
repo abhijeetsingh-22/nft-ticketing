@@ -137,7 +137,7 @@ model Order {
 }
 model EntryCode{
   id String @id @default(cuid())
-  code String
+  code String @unique
   walletAddress String
   nftAddress String
   eventId String
