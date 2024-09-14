@@ -105,6 +105,116 @@ Not this exactly but something like this. Found this on the internet tbh.
 - NFTs are minted on the blockchain.
 - Owner of the NFT is the wallet that paid for the transaction to mint the NFT.
 
+# NFT Ticketing System Smart Contract (Solana + Anchor)
+
+This project is an NFT-based ticketing system built on the Solana blockchain using the Anchor framework. The platform allows event organizers to create events, where buyers can purchase tickets in the form of NFTs. The system ensures that:
+
+- **Organizers** can create events and set ticket prices.
+- **Buyers** can view and purchase event tickets.
+- Each **ticket** is an NFT transferred to the buyer’s wallet upon purchase.
+- **Secondary sales** give a commission to the organizer.
+- A **platform fee** is deducted from the first purchase.
+- Organizers are charged **rent** during event creation, which is later refunded.
+
+## Smart Contract Setup
+
+### Prerequisites
+
+Before setting up the project, ensure you have the following installed on your system:
+
+- [Rust](https://www.rust-lang.org/)
+- [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools)
+- [Anchor](https://www.anchor-lang.com/docs/installation)
+
+### 1. Install Rust
+
+Anchor is built on Rust, so you need to have Rust installed on your system. Run the following command to install Rust:
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+```
+
+Verify that Rust is installed successfully:
+
+```bash
+rustc --version
+```
+
+### 2. Install Solana CLI
+
+You also need the Solana CLI to interact with the Solana blockchain. Install the Solana CLI using this command:
+
+```bash
+sh -c "$(curl -sSfL https://release.solana.com/v1.10.29/install)"
+```
+
+After installation, make sure to add Solana to your system's path:
+
+```bash
+export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
+```
+
+Verify the installation:
+
+```bash
+solana --version
+```
+
+### 3. Install Anchor
+
+Next, you can install the Anchor CLI. Anchor is essential for developing Solana smart contracts.
+
+```bash
+cargo install --git https://github.com/coral-xyz/anchor --tag v0.29.0 anchor-cli --locked
+```
+
+Verify that Anchor is installed successfully:
+
+```bash
+anchor --version
+```
+
+### 4. Initialize the Anchor Project
+
+Once Anchor is installed, you can initialize your project using the following command:
+
+```bash
+anchor init ticketing_contract
+```
+
+This will create a new folder named `ticketing_contract` with the default Anchor project structure.
+
+### 5. Build and Deploy
+
+To build and deploy the contract, navigate to the project folder and follow these steps:
+
+1. Navigate to the project directory:
+
+   ```bash
+   cd ticketing_contract
+   ```
+
+2. Build the contract:
+
+   ```bash
+   anchor build
+   ```
+
+3. Deploy the contract to the Solana devnet:
+
+   ```bash
+   anchor deploy
+   ```
+
+Make sure the contract ID and other configurations are correctly set up before deployment.
+
+### 6. Configure Anchor IDL and Address
+
+After deploying the contract, Anchor will generate an IDL (Interface Definition Language) file. This IDL file is crucial for your front-end interaction with the contract.
+
+Ensure that the program ID is added to the `.env` or configuration files in your Next.js project for easy integration.
+
 # How to set up locally 
 
 ### Setup the repository with nextjs
