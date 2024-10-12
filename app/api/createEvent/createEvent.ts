@@ -32,7 +32,9 @@ export default async function createEvent(
   wallet: AnchorWallet,
   collectionAccount: web3.Keypair
 ) {
+  try {
   // Create AnchorProvider
+  console.log("Creating AnchorProvider...");
   const provider = new AnchorProvider(connection, wallet, {
     preflightCommitment: commitmentLevel,
   });
@@ -50,7 +52,7 @@ export default async function createEvent(
   const ticketPriceBN = new BN(ticketPrice);
   const maxTicketsBN = new BN(maxTickets);
 
-  try {
+  
     // Create the collection (event) on-chain using the Solana program
     const txn = await program.rpc.createCollection(
       eventName,           // Event name
